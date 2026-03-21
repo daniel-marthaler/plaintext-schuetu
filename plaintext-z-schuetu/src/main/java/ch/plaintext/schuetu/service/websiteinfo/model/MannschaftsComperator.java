@@ -3,7 +3,11 @@ package ch.plaintext.schuetu.service.websiteinfo.model;
 import java.io.Serializable;
 import java.util.Comparator;
 
+/**
+ * vergleicht mannschaften aufgrund deren klasse
+ */
 public class MannschaftsComperator implements Comparator<Mannschaft>, Serializable {
+
     private static final long serialVersionUID = 1L;
 
     @Override
