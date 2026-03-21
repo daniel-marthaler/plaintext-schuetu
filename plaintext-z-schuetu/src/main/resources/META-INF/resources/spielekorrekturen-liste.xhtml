@@ -1,0 +1,78 @@
+<!--suppress ALL -->
+
+
+<ui:composition xmlns:ui="jakarta.faces.facelets" xmlns:h="jakarta.faces.html"
+                xmlns:p="http://primefaces.org/ui" xmlns:f="jakarta.faces.core"
+                xmlns="http://www.w3.org/1999/xhtml" template="/template.xhtml">
+
+    <ui:define name="title">Spielekorrekturen</ui:define>
+
+    <ui:define name="page">
+
+        <br/>
+
+        <h:form id="fm">
+            <input type="hidden" name="_csrf" value="#{_csrf.token}"/>
+            <p:fieldset id="fs">
+
+                <p:messages/>
+
+                <br/>
+
+                <p:poll interval="60" update="fm:tbl"/>
+
+                <p:dataTable id="tbl" emptyMessage="-" widgetVar="tbl" var="row" value="#{lazySpielkorrekturenRowModel}"
+                             multiViewState="true" selection="#{lazySpielkorrekturenRowModel.selected}" rowIndexVar="ri"
+                             selectionMode="single" rowKey="#{row.id}" rows="20"
+                             paginator="true"
+                             paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                             rowsPerPageTemplate="20,40,60" lazy="true">
+
+                    <p:ajax event="rowSelect" listener="#{emadUI.r('spielekorrekturen-details.htm')}" global="false"/>
+
+                    <p:column headerText="Nr." style="width:10%;" value="#{row.spiel.idString}" filterBy="#{row.idP}"
+                              sortBy="#{row.idP}">
+                        <h:outputText value="#{row.spiel.idString}"/>
+                    </p:column>
+
+                    <p:column headerText="Start" style="width:10%;" value="#{row.spiel.start}" filterBy="#{row.startP}"
+                              sortBy="#{row.startP}">
+                        <h:outputText value="#{row.spiel.start}">
+                            <f:convertDateTime type="date" pattern="HH:mm (dd.MM)" timeZone="Europe/Zurich"/>
+                        </h:outputText>
+                    </p:column>
+
+                    <p:column headerText="Teams" style="width:30%;" value="#{row.names}" filterBy="#{row.namesP}"
+                              sortBy="#{row.namesP}">
+                        <h:outputText value="#{row.names}"/>
+                    </p:column>
+
+                    <p:column headerText="Resultat" style="width:10%;" value="#{row.spiel.start}">
+                        <h:outputText value="#{row.spiel.toreABestaetigt} : #{row.spiel.toreBBestaetigt}"/>
+                    </p:column>
+
+                    <p:column headerText="Eingetr." style="width:5%;" sortBy="#{row.eingetragenP}">
+                        <h:selectBooleanCheckbox value="#{row.eingetragenP}" disabled="true"/>
+                    </p:column>
+
+                    <p:column headerText="Eintrager" style="width:20%;" value="#{row.spiel.start}"
+                              filterBy="#{row.eintragerP}" sortBy="#{row.eintragerP}">
+                        <h:outputText value="#{row.eintragerP}"/>
+                    </p:column>
+
+                    <p:column headerText="Bem" style="width:20%;" value="#{row.bemerkungP}" sortBy="#{row.bemerkungP}">
+                        <h:selectBooleanCheckbox value="#{row.bemerkungP}" disabled="true"/>
+                    </p:column>
+
+                    <p:column headerText="Kontrolle" style="width:30%;" filterBy="#{row.kontrolleP}"
+                              sortBy="#{row.kontrolleP}">
+                        <h:outputText value="#{row.kontrolleP}"/>
+                    </p:column>
+
+                </p:dataTable>
+
+            </p:fieldset>
+        </h:form>
+    </ui:define>
+
+</ui:composition>

@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+
+<!--suppress ALL -->
+<ui:composition xmlns:ui="jakarta.faces.facelets"
+                xmlns:h="jakarta.faces.html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="jakarta.faces.core"
+                xmlns="http://www.w3.org/1999/xhtml" template="/template.xhtml">
+
+    <ui:define name="title">Spieltage</ui:define>
+
+    <ui:define name="page">
+
+        <p:messages/>
+        <br/>
+        <h:form id="fm">
+            <input type="hidden" name="_csrf" value="#{_csrf.token}"/>
+
+            <p:messages/>
+
+            <p:fieldset legend="Spieleinstellungen">
+                <h:panelGrid columns="3">
+
+                    Anzahl Spiele: #{spielzeilenBackingBean.anzahlSpiele} <br/>
+                    Anzahl Spielplätze: #{spielzeilenBackingBean.getVorhandeneSpielplaetze()}<br/>
+                    <br/>
+                    Anzahl Finalspiele: #{spielzeilenBackingBean.anzahlFinale}<br/>
+                    Anzahl Finalspielplätze:
+                    #{spielzeilenBackingBean.getVorhandeneFinalspielplaetze()}<br/>
+                    <br/>
+
+                </h:panelGrid>
+
+            </p:fieldset>
+
+            <br/>
+
+            <h:panelGrid columns="2">
+
+                <p:commandButton value="Eine Stunde dazu"
+                                 action="#{spielzeilenBackingBean.plusOneHour()}"
+                                 update="fm"
+                                 onstart="PF('blockIt').show()"
+                                 oncomplete="PF('blockIt').hide()"/>
+
+                <p:commandButton value="Spielzeiten Nachtragen"
+                                 action="#{spielzeilenService.spielZeitenAnpassen()}"
+                                 update="fm"
+                                 onstart="PF('blockIt').show()"
+                                 oncomplete="PF('blockIt').hide()"/>
+
+            </h:panelGrid>
+
+            <br/>
+
+            <p:fieldset legend="Spielzeiten definieren " rendered="#{spielzeilenBackingBean.isDefinemode()}">
+
+                <h:panelGrid columns="2">
+                    <p:commandButton value="Spiele Verteilen"
+                                     action="#{spielzeilenBackingBean.exitDefinemode()}"
+                                     ajax="true"
+                                     update="fm"
+                                     onstart="PF('blockIt').show()"
+                                     oncomplete="PF('blockIt').hide()"/>
+                </h:panelGrid>
+
+
+                <h:panelGrid columns="3" style="vertical-align:middle">
+
+                    <p:column>
+
+                        <p:dataTable var="zeile" value="#{spielzeilenBackingBean.samstag}">
+
+                            <p:column headerText="Samstag">
+                                <p:commandButton actionListener="#{spielzeilenBackingBean.togglePause(zeile.guid)}"
+                                                 update="fm"
+                                                 icon="ui-icon-cancel"
+                                                 rendered="#{zeile.pause}" onstart="PF('blockIt').show()" oncomplete="PF('blockIt').hide()">
+                                </p:commandButton>
+                                <p:commandButton actionListener="#{spielzeilenBackingBean.togglePause(zeile.guid)}"
+                                                 update="fm" icon="ui-icon-check"
+                                                 rendered="#{!zeile.pause}" onstart="PF('blockIt').show()" oncomplete="PF('blockIt').hide()">
+                                </p:commandButton>
+                            </p:column>
+
+                            <p:column headerText="Start">
+                                <h:outputText value="#{zeile.start}">
+                                    <f:convertDateTime type="date"
+                                                       pattern="HH:mm (dd.MM)"
+                                                       timeZone="Europe/Zurich"/>
+                                </h:outputText>
+
+                            </p:column>
+
+                        </p:dataTable>
+
+                    </p:column>
+                    <br/>
+                    <p:column>
+
+                        <p:dataTable var="zeile" value="#{spielzeilenBackingBean.sonntag}">
+                            <br/>
+                            <p:column headerText="Sonntag">
+                                <p:commandButton actionListener="#{spielzeilenBackingBean.togglePause(zeile.guid)}"
+                                                 update="fm"
+                                                 icon="ui-icon-cancel"
+                                                 rendered="#{zeile.pause}"
+                                                 onstart="PF('blockIt').show()"
+                                                 oncomplete="PF('blockIt').hide()">
+                                </p:commandButton>
+                                <p:commandButton actionListener="#{spielzeilenBackingBean.togglePause(zeile.guid)}"
+                                                 update="fm" icon="ui-icon-check"
+                                                 rendered="#{!zeile.pause}"
+                                                 onstart="PF('blockIt').show()"
+                                                 oncomplete="PF('blockIt').hide()">
+                                </p:commandButton>
+                            </p:column>
+
+                            <p:column headerText="Start">
+                                <h:outputText value="#{zeile.start}">
+                                    <f:convertDateTime type="date" pattern="HH:mm (dd.MM)" timeZone="Europe/Zurich"/>
+                                </h:outputText>
+                            </p:column>
+
+                        </p:dataTable>
+
+                    </p:column>
+
+                </h:panelGrid>
+            </p:fieldset>
+
+            <p:messages/>
+
+            <p:fieldset legend="Spiele vertauschen" rendered="#{!spielzeilenBackingBean.isDefinemode()}">
+
+                <h:panelGrid columns="3" style="vertical-align:middle">
+
+                    <p:column>
+
+                        <p:dataTable var="zeile" value="#{spielzeilenBackingBean.samstag}">
+
+                            <p:column headerText="Samstag">
+                                <h:outputText value="#{zeile.start}">
+                                    <f:convertDateTime type="date" pattern="HH:mm" timeZone="Europe/Zurich"/>
+                                </h:outputText>
+                            </p:column>
+
+                            <p:column headerText="A">
+                                <p:commandButton value="#{zeile.a.toStringSpieltage()}"
+                                                 action="#{spielzeilenBackingBean.setZeilea(zeile.tauschId)}"
+                                                 update="fm"
+                                                 disabled="#{zeile.adisabled}" onstart="PF('blockIt').show()" oncomplete="PF('blockIt').hide()">
+                                </p:commandButton>
+                            </p:column>
+
+                            <p:column headerText="B">
+                                <p:commandButton value="#{zeile.b.toStringSpieltage()}"
+                                                 action="#{spielzeilenBackingBean.setZeileb(zeile.tauschId)}"
+                                                 update="fm"
+                                                 disabled="#{zeile.bdisabled}" onstart="PF('blockIt').show()" oncomplete="PF('blockIt').hide()">
+                                </p:commandButton>
+                            </p:column>
+
+                            <p:column headerText="C">
+                                <p:commandButton value="#{zeile.c.toStringSpieltage()}"
+                                                 action="#{spielzeilenBackingBean.setZeilec(zeile.tauschId)}"
+                                                 update="fm"
+                                                 disabled="#{zeile.cdisabled}" onstart="PF('blockIt').show()" oncomplete="PF('blockIt').hide()">
+                                </p:commandButton>
+                            </p:column>
+
+                            <p:column headerText="D">
+                                <p:commandButton value="#{zeile.d.toStringSpieltage()}"
+                                                 action="#{spielzeilenBackingBean.setZeiled(zeile.tauschId)}"
+                                                 update="fm"
+                                                 disabled="#{zeile.ddisabled}" onstart="PF('blockIt').show()" oncomplete="PF('blockIt').hide()">
+                                </p:commandButton>
+                            </p:column>
+
+                        </p:dataTable>
+
+                    </p:column>
+                    <br/>
+                    <p:column>
+
+                        <p:dataTable var="zeile" value="#{spielzeilenBackingBean.sonntag}">
+
+                            <br/>
+
+                            <p:column headerText="Sonntag">
+                                <h:outputText value="#{zeile.start}">
+                                    <f:convertDateTime type="date" pattern="HH:mm" timeZone="Europe/Zurich"/>
+                                </h:outputText>
+                            </p:column>
+
+                            <p:column headerText="A">
+                                <p:commandButton value="#{zeile.a.toStringSpieltage()}"
+                                                 action="#{spielzeilenBackingBean.setZeilea(zeile.tauschId)}"
+                                                 update="fm"
+                                                 disabled="#{zeile.adisabled}" onstart="PF('blockIt').show()" oncomplete="PF('blockIt').hide()">
+                                </p:commandButton>
+                            </p:column>
+
+                            <p:column headerText="B">
+                                <p:commandButton value="#{zeile.b.toStringSpieltage()}"
+                                                 action="#{spielzeilenBackingBean.setZeileb(zeile.tauschId)}"
+                                                 update="fm"
+                                                 disabled="#{zeile.bdisabled}" onstart="PF('blockIt').show()" oncomplete="PF('blockIt').hide()">
+                                </p:commandButton>
+                            </p:column>
+
+                            <p:column headerText="C">
+                                <p:commandButton value="#{zeile.c.toStringSpieltage()}"
+                                                 action="#{spielzeilenBackingBean.setZeilec(zeile.tauschId)}"
+                                                 update="fm"
+                                                 disabled="#{zeile.cdisabled}" onstart="PF('blockIt').show()" oncomplete="PF('blockIt').hide()">
+                                </p:commandButton>
+                            </p:column>
+
+                            <p:column headerText="D">
+                                <p:commandButton value="#{zeile.d.toStringSpieltage()}"
+                                                 action="#{spielzeilenBackingBean.setZeiled(zeile.tauschId)}"
+                                                 update="fm"
+                                                 disabled="#{zeile.ddisabled}" onstart="PF('blockIt').show()" oncomplete="PF('blockIt').hide()">
+                                </p:commandButton>
+                            </p:column>
+
+                        </p:dataTable>
+                    </p:column>
+                </h:panelGrid>
+            </p:fieldset>
+
+        </h:form>
+    </ui:define>
+</ui:composition>

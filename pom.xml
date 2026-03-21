@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>4.0.4</version>
+    </parent>
+
+    <groupId>ch.plaintext</groupId>
+    <artifactId>plaintext-schuetu-parent</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <name>plaintext-schuetu-parent</name>
+    <description>Plaintext Schülerturnier Multi-Module Parent</description>
+
+    <properties>
+        <java.version>25</java.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <!-- Plaintext Root Framework -->
+        <plaintext-root.version>1.20.0</plaintext-root.version>
+
+        <!-- JSF & Primefaces -->
+        <primefaces.version>15.0.13</primefaces.version>
+        <joinfaces.version>6.0.4</joinfaces.version>
+
+        <!-- Build Tools -->
+        <build-helper-maven-plugin.version>3.6.1</build-helper-maven-plugin.version>
+        <lombok.version>1.18.44</lombok.version>
+    </properties>
+
+    <modules>
+        <module>plaintext-z-schuetu</module>
+        <module>plaintext-schuetu-webapp</module>
+    </modules>
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- Plaintext Root: benötigte Module -->
+            <dependency>
+                <groupId>ch.plaintext</groupId>
+                <artifactId>plaintext-root-webapp</artifactId>
+                <version>${plaintext-root.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.plaintext</groupId>
+                <artifactId>plaintext-root-interfaces</artifactId>
+                <version>${plaintext-root.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.plaintext</groupId>
+                <artifactId>plaintext-root-common</artifactId>
+                <version>${plaintext-root.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.plaintext</groupId>
+                <artifactId>plaintext-root-menu</artifactId>
+                <version>${plaintext-root.version}</version>
+            </dependency>
+
+            <!-- JoinFaces BOM -->
+            <dependency>
+                <groupId>org.joinfaces</groupId>
+                <artifactId>joinfaces-bom</artifactId>
+                <version>${joinfaces.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!-- Internal Modules -->
+            <dependency>
+                <groupId>ch.plaintext</groupId>
+                <artifactId>plaintext-z-schuetu</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <!-- Apache POI (Excel Export) -->
+            <dependency>
+                <groupId>org.apache.poi</groupId>
+                <artifactId>poi</artifactId>
+                <version>5.3.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.poi</groupId>
+                <artifactId>poi-ooxml</artifactId>
+                <version>5.3.0</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <repositories>
+        <repository>
+            <id>plaintext</id>
+            <url>https://maven.pkg.github.com/daniel-marthaler/plaintext-mvn</url>
+        </repository>
+    </repositories>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <inherited>false</inherited>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+        </plugins>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <configuration>
+                        <annotationProcessorPaths>
+                            <path>
+                                <groupId>org.projectlombok</groupId>
+                                <artifactId>lombok</artifactId>
+                                <version>${lombok.version}</version>
+                            </path>
+                        </annotationProcessorPaths>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>build-helper-maven-plugin</artifactId>
+                    <version>${build-helper-maven-plugin.version}</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+
+</project>

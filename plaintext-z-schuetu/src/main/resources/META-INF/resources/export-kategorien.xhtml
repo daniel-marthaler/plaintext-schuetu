@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+
+
+<!--suppress ALL -->
+<ui:composition xmlns:ui="jakarta.faces.facelets"
+                xmlns:h="jakarta.faces.html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns="http://www.w3.org/1999/xhtml" template="/template.xhtml">
+
+    <ui:define name="title">Kategorien für Turnier: #{gameSelectionHolder.game.model.gameName}</ui:define>
+
+    <ui:define name="page">
+
+        <p:messages/>
+        <br/>
+        <h:form id="fm">
+            <input type="hidden" name="_csrf" value="#{_csrf.token}"/>
+            <h:commandLink>
+                <p:graphicImage value="/static/images/excel.png"/>
+                <p:dataExporter type="xls" target="tbl" fileName="kategorien" pageOnly="true"/>
+            </h:commandLink>
+
+            <p:dataTable emptyMessage="leer" id="tbl" var="obj" value="#{heftliDumper.kategorien}" rowIndexVar="ri">
+
+                <p:column exportable="false">
+                    <h:outputText value="#{ri +1}"/>
+                </p:column>
+
+                <p:column headerText="Nr.">
+                    <h:outputText value="#{obj.get(0)}"/>
+                </p:column>
+
+                <p:column headerText="Schulhaus">
+                    <h:outputText value="#{obj.get(1)}"/>
+                </p:column>
+
+                <p:column headerText="Klasse">
+                    <h:outputText value="#{obj.get(2)}"/>
+                </p:column>
+
+
+            </p:dataTable>
+
+        </h:form>
+
+    </ui:define>
+
+</ui:composition>

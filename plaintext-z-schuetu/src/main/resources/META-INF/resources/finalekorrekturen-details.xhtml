@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+
+<!--suppress ALL -->
+<ui:composition xmlns:ui="jakarta.faces.facelets" xmlns:h="jakarta.faces.html"
+                xmlns:p="http://primefaces.org/ui" xmlns:f="jakarta.faces.core"
+                xmlns="http://www.w3.org/1999/xhtml" template="/template.xhtml">
+
+    <ui:define name="title">Finalspielkorrektur bearbeiten</ui:define>
+
+    <ui:define name="page">
+        <br/>
+        <h:form id="fm">
+            <input type="hidden" name="_csrf" value="#{_csrf.token}"/>
+
+            <p:messages/>
+
+            <h:panelGrid columns="2" id="inputelements">
+
+                <h:outputLabel value="Kategorie:"/>
+                <h:outputLabel value="#{finaleBackingBean.selected.name}"/>
+
+                <h:outputLabel value="Gr. Finale A:"
+                               rendered="#{finaleBackingBean.selected.getGrosserFinal() != null}"/>
+                <p:selectOneMenu id="gra" value="#{finaleBackingBean.grA}"
+                                 ajax="true" rendered="#{finaleBackingBean.selected.getGrosserFinal() != null}">
+                    <f:selectItem itemLabel="Mannschaft A auswählen" itemValue="null"/>
+                    <f:selectItems value="#{finaleBackingBean.selected.getMannschaften()}" var="sch"
+                                   itemLabel="#{sch.name}"
+                                   itemValue="#{sch.id}"/>
+                </p:selectOneMenu>
+
+                <h:outputLabel value="Gr. Finale B:"
+                               rendered="#{finaleBackingBean.selected.getGrosserFinal() != null}"/>
+                <p:selectOneMenu id="klb" value="#{finaleBackingBean.grB}"
+                                 ajax="true" rendered="#{finaleBackingBean.selected.getGrosserFinal() != null}">
+                    <f:selectItem itemLabel="Mannschaft B auswählen" itemValue=""/>
+                    <f:selectItems value="#{finaleBackingBean.selected.getMannschaften()}" var="sch"
+                                   itemLabel="#{sch.name}"
+                                   itemValue="#{sch.id}"/>
+                </p:selectOneMenu>
+
+                <h:outputLabel value="Kl. Finale A:" rendered="#{finaleBackingBean.selected.getKleineFinal() != null}"/>
+                <p:selectOneMenu id="kla" value="#{finaleBackingBean.klA}"
+                                 ajax="true" rendered="#{finaleBackingBean.selected.getKleineFinal() != null}">
+                    <f:selectItem itemLabel="Mannschaft A auswählen" itemValue="null"/>
+                    <f:selectItems value="#{finaleBackingBean.selected.getMannschaften()}" var="sch"
+                                   itemLabel="#{sch.name}"
+                                   itemValue="#{sch.id}"/>
+                </p:selectOneMenu>
+
+                <h:outputLabel value="Kl. Finale B:" rendered="#{finaleBackingBean.selected.getKleineFinal() != null}"/>
+                <p:selectOneMenu id="grb" value="#{finaleBackingBean.klB}"
+                                 ajax="true" rendered="#{finaleBackingBean.selected.getKleineFinal() != null}">
+                    <f:selectItem itemLabel="Mannschaft B auswählen" itemValue=""/>
+                    <f:selectItems value="#{finaleBackingBean.selected.getMannschaften()}" var="sch"
+                                   itemLabel="#{sch.name}"
+                                   itemValue="#{sch.id}"/>
+                </p:selectOneMenu>
+
+
+
+
+                <h:outputLabel value="Gr2. Finale A:"
+                               rendered="#{finaleBackingBean.selected.getGrosserfinal2() != null}"/>
+                <p:selectOneMenu id="gra2" value="#{finaleBackingBean.grA2}"
+                                 ajax="true" rendered="#{finaleBackingBean.selected.getGrosserfinal2() != null}">
+                    <f:selectItem itemLabel="Mannschaft A auswählen" itemValue="null"/>
+                    <f:selectItems value="#{finaleBackingBean.selected.getMannschaften()}" var="sch"
+                                   itemLabel="#{sch.name}"
+                                   itemValue="#{sch.id}"/>
+                </p:selectOneMenu>
+
+                <h:outputLabel value="Gr2. Finale B:"
+                               rendered="#{finaleBackingBean.selected.getGrosserfinal2() != null}"/>
+                <p:selectOneMenu id="grb2" value="#{finaleBackingBean.grB2}"
+                                 ajax="true" rendered="#{finaleBackingBean.selected.getGrosserfinal2() != null}">
+                    <f:selectItem itemLabel="Mannschaft B auswählen" itemValue=""/>
+                    <f:selectItems value="#{finaleBackingBean.selected.getMannschaften()}" var="sch"
+                                   itemLabel="#{sch.name}"
+                                   itemValue="#{sch.id}"/>
+                </p:selectOneMenu>
+
+
+                <h:outputLabel value="Gespeichert von:"/>
+                <h:outputLabel value="#{finaleBackingBean.selected.eintrager}"/>
+
+                <h:outputLabel value="Bemerkung:"/>
+                <p:inputTextarea label="Bemerkung" value="#{finaleBackingBean.selected.notitzen}" rows="6"
+                                 cols="33">
+                    <f:validateLength minimum="5"/>
+                </p:inputTextarea>
+
+                <h:outputLabel value="Nicht speichern beim neuberechnen (Anwaehlen bei Mannschaftsverschiebungen):"/>
+                <p:selectBooleanCheckbox id="neuberechnen"
+                                         value="#{finaleBackingBean.selected.nosave}"/>
+
+                <br/>
+                <h:panelGroup layout="block">
+                    <p:commandButton id="save" value="Speichern" action="#{finaleBackingBean.save()}"
+                                     update="@form" execute="@form"/>
+
+                    <p:commandButton id="abbrechen" value="Abbrechen"
+                                     action="#{emadUI.r('finalekorrekturen-liste.htm')}"
+                                     update="@form" execute="@form" immediate="true"/>
+                </h:panelGroup>
+
+
+            </h:panelGrid>
+
+        </h:form>
+
+    </ui:define>
+
+</ui:composition>

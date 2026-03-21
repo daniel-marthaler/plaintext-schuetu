@@ -1,0 +1,8 @@
+IMAGE_NAME=plaintext-schuetu
+WEBAPP_MODULE=plaintext-schuetu-webapp
+DEPLOY_PATH=/volume1/docker/plaintext-schuetu
+DB_NAME=plaintext_schuetu
+DB_CONTAINER_PREFIX=plaintext-schuetu
+TUI_TITLE=PLAINTEXT SCHUETU BUILD SYSTEM
+DEV_PORT=1131
+PROD_PORT=1132

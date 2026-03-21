@@ -1,0 +1,218 @@
+    <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--suppress ALL -->
+<ui:composition xmlns:ui="jakarta.faces.facelets"
+                xmlns:h="jakarta.faces.html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="jakarta.faces.core"
+                xmlns="http://www.w3.org/1999/xhtml"
+                template="template-noframe.xhtml">
+    <ui:define name="page">
+        <h:form id="fm">
+            <input type="hidden" name="_csrf" value="#{_csrf.token}"/>
+
+            <p:fieldset legend="#{einstellungen.websiteTurnierTitel}" style="margin-bottom:10px">
+                <h:outputText rendered="#{einstellungen.websiteEnableDownloadLink}"
+                              value="Anmeldeformular herunterladen, ausdrucken und einsenden: "/>
+                <h:outputLink rendered="#{einstellungen.websiteEnableDownloadLink}"
+                              value="#{einstellungen.websiteDownloadLink}">hier klicken <br/></h:outputLink>
+                <h:outputText rendered="#{einstellungen.websiteEnableProgrammDownloadLink}"
+                              value="Programmheft herunterladen: "/>
+                <h:outputLink rendered="#{einstellungen.websiteEnableProgrammDownloadLink}"
+                              value="#{einstellungen.websiteProgrammDownloadLink }">hier klicken <br/>
+                </h:outputLink>
+                <h:outputText rendered="#{einstellungen.mobileLinkOn}" value="Mobiles Manschaftsprogramm: "/>
+                <h:outputLink target="_new" rendered="#{einstellungen.mobileLinkOn}"
+                              value="#{einstellungen.mobileLink}">hier klicken <br/></h:outputLink>
+
+            </p:fieldset>
+
+            <p:tabView>
+                <p:tab title="Mädchenteams">
+                    <ui:repeat value="#{maedchen}" var="kat" varStatus="status">
+                        <p:dataTable id="tbl" var="mmannschaft" value="#{kat.mannschaften}">
+                            <p:columnGroup type="header">
+                                <p:row>
+                                    <p:column colspan="5" headerText="#{kat.name}" style="text-align:left"/>
+                                </p:row>
+                                <p:row>
+                                    <p:column headerText="Nr." style="text-align:left"/>
+                                    <p:column headerText="Klasse" style="text-align:left"/>
+                                    <p:column headerText="Captain" style="text-align:left"/>
+                                    <p:column headerText="Begleitperson" style="text-align:left"/>
+                                    <p:column headerText="Gr." style="text-align:right"/>
+                                </p:row>
+                            </p:columnGroup>
+                            <p:column>
+                                <h:outputText value="#{mmannschaft.nummer}"
+                                              rendered="#{(!einstellungen.websiteInMannschaftslistenmode and !einstellungen.isAnmeldephase()) or !thisyear}"/>
+                            </p:column>
+                            <p:column>
+                                [#{mmannschaft.klasse} #{mmannschaft.klassenname}]-#{mmannschaft.schulhaus}
+                            </p:column>
+                            <p:column>
+                                #{mmannschaft.captain}
+                            </p:column>
+                            <p:column>
+                                #{mmannschaft.begleitperson}
+                            </p:column>
+                            <p:column style="text-align:right">
+                                #{mmannschaft.spieler}
+                            </p:column>
+                            <p:columnGroup type="footer">
+                                <p:row>
+                                    <p:column colspan="4" footerText="Teilnehmerinnen Total: "
+                                              style="text-align:right"/>
+                                    <p:column style="text-align:right" footerText="#{kat.total}"/>
+                                </p:row>
+                            </p:columnGroup>
+                        </p:dataTable>
+                        <br/>
+                    </ui:repeat>
+                </p:tab>
+                <p:tab title="Knabenteams">
+                    <ui:repeat value="#{knaben}" var="kat" varStatus="status">
+                        <p:dataTable id="tbl" var="mmannschaft" value="#{kat.mannschaften}">
+                            <p:columnGroup type="header">
+                                <p:row>
+                                    <p:column colspan="5" headerText="#{kat.name}" style="text-align:left"/>
+                                </p:row>
+                                <p:row>
+                                    <p:column headerText="Nr." style="text-align:left"/>
+                                    <p:column headerText="Klasse" style="text-align:left"/>
+                                    <p:column headerText="Captain" style="text-align:left"/>
+                                    <p:column headerText="Begleitperson" style="text-align:left"/>
+                                    <p:column headerText="Gr." style="text-align:right"/>
+                                </p:row>
+                            </p:columnGroup>
+                            <p:column>
+                                <h:outputText value="#{mmannschaft.nummer}"
+                                              rendered="#{(!einstellungen.websiteInMannschaftslistenmode and !einstellungen.isAnmeldephase()) or !thisyear}"/>
+                            </p:column>
+                            <p:column>
+                                [#{mmannschaft.klasse} #{mmannschaft.klassenname}]-#{mmannschaft.schulhaus}
+                            </p:column>
+                            <p:column>
+                                #{mmannschaft.captain}
+                            </p:column>
+                            <p:column>
+                                #{mmannschaft.begleitperson}
+                            </p:column>
+                            <p:column style="text-align:right">
+                                #{mmannschaft.spieler}
+                            </p:column>
+                            <p:columnGroup type="footer">
+                                <p:row>
+                                    <p:column colspan="4" footerText="Teilnehmer Total: "
+                                              style="text-align:right"/>
+                                    <p:column style="text-align:right" footerText="#{kat.total}"/>
+                                </p:row>
+                            </p:columnGroup>
+                        </p:dataTable>
+                        <br/>
+                    </ui:repeat>
+                </p:tab>
+                <p:tab title="Gruppenspiele"
+                       rendered="#{(!einstellungen.websiteInMannschaftslistenmode and !einstellungen.isAnmeldephase()) or !thisyear}">
+                    <p:dataTable var="spiel" value="#{gruppenspiele}">
+                        <p:columnGroup type="header">
+                            <p:row>
+                                <p:column headerText="Zeit" style="text-align:left"/>
+                                <p:column headerText="Platz" style="text-align:left"/>
+                                <p:column colspan="2" headerText="Team A" style="text-align:left"/>
+                                <p:column colspan="2" headerText="Team B" style="text-align:left"/>
+                            </p:row>
+                        </p:columnGroup>
+                        <p:column>
+                            <h:outputText value="#{spiel.start}">
+                                <f:convertDateTime type="date" pattern="EEE HH:mm" timeZone="Europe/Zurich"/>
+                            </h:outputText>
+                        </p:column>
+                        <p:column>
+                            #{spiel.platz}
+                        </p:column>
+                        <p:column>
+                            #{spiel.mannschaftA.name}
+                        </p:column>
+                        <p:column>
+                            #{spiel.evaluateToreABestateigtString()}
+                        </p:column>
+                        <p:column>
+                            #{spiel.mannschaftB.name}
+                        </p:column>
+                        <p:column>
+                            #{spiel.evaluateToreBBestateigtString()}
+                        </p:column>
+
+                    </p:dataTable>
+                    <br/>
+                </p:tab>
+                <p:tab title="Finalspiele"
+                       rendered="#{(!einstellungen.websiteInMannschaftslistenmode and !einstellungen.isAnmeldephase()) or !thisyear}">
+                    <p:dataTable var="spiel" value="#{finalspiele}">
+                        <p:columnGroup type="header">
+                            <p:row>
+                                <p:column headerText="Zeit" style="text-align:left"/>
+                                <p:column headerText="Platz" style="text-align:left"/>
+                                <p:column headerText="Spiel" style="text-align:left"/>
+                                <p:column colspan="2" headerText="Team A" style="text-align:left"/>
+                                <p:column colspan="2" headerText="Team B" style="text-align:left"/>
+                            </p:row>
+                        </p:columnGroup>
+                        <p:column>
+                            <h:outputText value="#{spiel.start}">
+                                <f:convertDateTime type="date" pattern="EEE HH:mm" timeZone="Europe/Zurich"/>
+                            </h:outputText>
+                        </p:column>
+                        <p:column>
+                            #{spiel.platz}
+                        </p:column>
+                        <p:column>
+                            #{spiel.getWebsiteName()}
+                        </p:column>
+                        <p:column>
+                            #{spiel.mannschaftA.name}
+                        </p:column>
+                        <p:column>
+                            #{spiel.evaluateToreABestateigtString()}
+                        </p:column>
+                        <p:column>
+                            #{spiel.mannschaftB.name}
+                        </p:column>
+                        <p:column>
+                            #{spiel.evaluateToreBBestateigtString()}
+                        </p:column>
+                    </p:dataTable>
+                    <br/>
+                </p:tab>
+                <p:tab title="Rangliste"
+                       rendered="#{(!einstellungen.websiteInMannschaftslistenmode and !einstellungen.isAnmeldephase()) or !thisyear}">
+                    <p:dataTable id="Zeile" var="zeile" value="#{rangliste}">
+                        <f:facet name="header">
+                            Schlussrangliste
+                        </f:facet>
+                        <p:columnGroup type="header">
+                            <p:row>
+                                <p:column headerText=" "/>
+                                <p:column headerText="1.Rang"/>
+                                <p:column headerText="2.Rang"/>
+                                <p:column headerText="3.Rang"/>
+                                <p:column headerText="4.Rang"/>
+                            </p:row>
+                        </p:columnGroup>
+                        <p:subTable var="z" value="#{zeile.getAsZeilen()}">
+                            <f:facet name="header">
+                                #{zeile.name}
+                            </f:facet>
+                            <p:column>#{z.get(0)}</p:column>
+                            <p:column>#{z.get(1)}</p:column>
+                            <p:column>#{z.get(2)}</p:column>
+                            <p:column>#{z.get(3)}</p:column>
+                            <p:column>#{z.get(4)}</p:column>
+                        </p:subTable>
+                    </p:dataTable>
+                    <br/>
+                </p:tab>
+            </p:tabView>
+        </h:form>
+    </ui:define>
+</ui:composition>

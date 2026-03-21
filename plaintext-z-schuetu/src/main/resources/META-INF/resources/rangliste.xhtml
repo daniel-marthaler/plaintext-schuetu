@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--suppress ALL -->
+<ui:composition xmlns:ui="jakarta.faces.facelets"
+                xmlns:h="jakarta.faces.html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="jakarta.faces.core"
+                xmlns="http://www.w3.org/1999/xhtml"
+                template="/template.xhtml">
+
+
+    <ui:define name="title">Schlussrangliste</ui:define>
+
+    <ui:define name="page">
+
+        <br/>
+
+        <h:form id="fm">
+            <input type="hidden" name="_csrf" value="#{_csrf.token}"/>
+
+            <p:commandButton value="Print" type="button" icon="ui-icon-print" style="display:block;margin-bottom: 20px">
+                <p:printer target="Zeile"/>
+            </p:commandButton>
+
+            <p:dataTable id="Zeile" var="zeile"
+                         value="#{websiteInfoService.getRanglisteReal(gameSelectionHolder.getGameName())}">
+                <f:facet name="header">
+                    Schlussrangliste
+                </f:facet>
+                <p:columnGroup type="header">
+                    <p:row>
+                        <p:column headerText=" "/>
+                        <p:column headerText="3.Rang"/>
+                        <p:column headerText="2.Rang"/>
+                        <p:column headerText="1.Rang"/>
+                    </p:row>
+                </p:columnGroup>
+                <p:subTable var="z" value="#{zeile.getAsZeilen()}">
+                    <f:facet name="header">
+                        #{zeile.nameInverse}
+                    </f:facet>
+                    <p:column>#{z.get(0)}</p:column>
+                    <p:column>#{z.get(1)}</p:column>
+                    <p:column>#{z.get(2)}</p:column>
+                    <p:column>#{z.get(3)}</p:column>
+                </p:subTable>
+            </p:dataTable>
+
+        </h:form>
+    </ui:define>
+</ui:composition>

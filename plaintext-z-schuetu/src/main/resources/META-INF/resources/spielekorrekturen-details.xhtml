@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+
+<!--suppress ALL -->
+<ui:composition xmlns:ui="jakarta.faces.facelets" xmlns:h="jakarta.faces.html"
+                xmlns:p="http://primefaces.org/ui" xmlns:f="jakarta.faces.core"
+                xmlns="http://www.w3.org/1999/xhtml" template="/template.xhtml">
+
+    <ui:define name="title">Korrektur bearbeiten</ui:define>
+
+    <ui:define name="page">
+        <br/>
+        <p:messages/>
+
+
+        <h:form id="fm">
+            <input type="hidden" name="_csrf" value="#{_csrf.token}"/>
+
+            <h:panelGrid columns="2" id="inputelements">
+
+                <h:outputLabel value="Id:"/>
+                <h:outputLabel value="#{lazySpielkorrekturenRowModel.selected.spiel.idString}"/>
+
+                <h:outputLabel for="werta" value="#{lazySpielkorrekturenRowModel.selected.spiel.mannschaftA.name}"/>
+                <p:inputText id="werta" label="Tore A" value="#{lazySpielkorrekturenRowModel.selected.a}" size="3"/>
+
+                <h:outputLabel for="wertb" value="#{lazySpielkorrekturenRowModel.selected.spiel.mannschaftB.name} "/>
+                <p:inputText id="wertb" label="Tore B" value="#{lazySpielkorrekturenRowModel.selected.b}" size="3"/>
+
+
+                <h:outputLabel value="amSpielen"/>
+                <p:selectBooleanCheckbox  value="#{lazySpielkorrekturenRowModel.selected.spiel.amSpielen}"/>
+
+                <h:outputLabel value="fertigEingetragen"/>
+                <p:selectBooleanCheckbox  value="#{lazySpielkorrekturenRowModel.selected.spiel.fertigEingetragen}"/>
+
+
+                <h:outputLabel value="fertigBestaetigt"/>
+                <p:selectBooleanCheckbox  value="#{lazySpielkorrekturenRowModel.selected.spiel.fertigBestaetigt}"/>
+
+                <h:outputLabel value="Gespeichert von:"/>
+                <h:outputLabel value="#{lazySpielkorrekturenRowModel.selected.spiel.eintrager}"/>
+
+                <h:outputLabel value="Bemerkung:"/>
+                <p:inputTextarea label="Bemerkung" value="#{lazySpielkorrekturenRowModel.selected.notitzen}" rows="6"
+                                 cols="33">
+                    <f:validateLength minimum="5"/>
+                </p:inputTextarea>
+
+                <h:panelGroup id="button" layout="block">
+                    <p:commandButton id="submit" value="Speichern" action="#{lazySpielkorrekturenRowModel.save()}"
+                                     update="@form" execute="@form"/>
+                </h:panelGroup>
+
+                <h:panelGroup layout="block">
+                    <p:commandButton id="kontrolle" value="Kontrolle" action="#{lazySpielkorrekturenRowModel.kontr()}"
+                                     update="@form" execute="@form" immediate="true"/>
+                </h:panelGroup>
+
+            </h:panelGrid>
+
+        </h:form>
+
+    </ui:define>
+
+</ui:composition>

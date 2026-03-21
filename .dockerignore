@@ -1,0 +1,47 @@
+# Docker ignore file for plaintext-schuetu
+
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Maven build artifacts (EXCEPT the final JAR we need!)
+**/target/*
+!plaintext-schuetu-webapp/target/*.jar
+
+# Source files (we only need the JAR)
+**/src/
+
+# IDE
+.idea/
+*.iml
+.vscode/
+.settings/
+.project
+.classpath
+
+# Build scripts and documentation
+*.md
+README
+LICENSE
+build.sh
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+
+# Docker files
+Dockerfile
+.dockerignore
+docker-compose*.yaml
+docker-compose*.yml

@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+
+<!--suppress ALL -->
+<ui:composition xmlns:ui="jakarta.faces.facelets" xmlns:h="jakarta.faces.html"
+                xmlns:p="http://primefaces.org/ui" xmlns:f="jakarta.faces.core"
+                xmlns="http://www.w3.org/1999/xhtml" template="/template.xhtml">
+
+    <ui:define name="title">Turnier anlegen / auswählen </ui:define>
+
+    <ui:define name="page">
+        <br/>
+        <h:form id="fm">
+            <input type="hidden" name="_csrf" value="#{_csrf.token}"/>
+
+            <h:outputScript>
+                history.pushState(null, null, '/dashboard.htm');
+            </h:outputScript>
+
+            <p:messages/>
+            <p:fieldset>
+
+                <h:panelGrid id="grid" columns="1">
+
+                    <h:panelGrid columns="1" cellpadding="5">
+                        <p:commandButton value="Neu" onclick="PF('dlg2').show();"
+                                         rendered="#{emadSecWrapper.hasRole('root')}">
+                            <f:ajax execute="@form" render="@none"/>
+                        </p:commandButton>
+                    </h:panelGrid>
+
+                    <h:panelGrid columns="5" cellpadding="5">
+
+                        <h:outputText value="Phasen wechseln:"/>
+
+                        <p:commandButton id="anmeldung" value="Anmeldephase"
+                                         disabled="#{!gameSelectionHolder.game.model.spielPhase.equals('anmeldung')}"
+                                         actionListener="#{gameSelectionHolder.phaseAnmeldung()}"
+                                         update=":fm" onstart="PF('blockIt').show()" oncomplete="PF('blockIt').hide()"/>
+
+                        <p:commandButton id="katzuordnung" value="Kategoriezuordnung"
+                                         disabled="#{!gameSelectionHolder.game.model.spielPhase.equals('kategorie')}"
+                                         actionListener="#{gameSelectionHolder.phaseKategoriezuordnung()}"
+                                         update=":fm" onstart="PF('blockIt').show()" oncomplete="PF('blockIt').hide()"/>
+
+                        <p:commandButton id="spieltagezuordnung" value="Spieltagezuordnung"
+                                         disabled="#{!gameSelectionHolder.game.model.spielPhase.equals('spieltage')}"
+                                         actionListener="#{gameSelectionHolder.phaseSpielen()}"
+                                         update=":fm" onstart="PF('blockIt').show()" oncomplete="PF('blockIt').hide()"/>
+
+                        <p:commandButton id="spielzuordnung" value="Spielen"
+                                         disabled="#{!gameSelectionHolder.game.model.spielPhase.equals('spielen')}"
+                                         actionListener="#{gameSelectionHolder.phaseSpielen()}"
+                                         update=":fm" onstart="PF('blockIt').show()" oncomplete="PF('blockIt').hide()"/>
+
+                    </h:panelGrid>
+
+                </h:panelGrid>
+
+                <br/>
+
+                <p:dataTable emptyMessage="-" id="tbl" widgetVar="tbl" var="gm" value="#{gameBackingBean.displayGames()}" rowIndexVar="ri">
+
+                    <p:column sheaderText="Name" style="width:15%;">
+                        <h:outputText value="#{gm.gameName}"/>
+                    </p:column>
+
+                    <p:column headerText="läuft" style="width:30%;">
+                        <p:inputSwitch value="#{gm.initialisiert}" disabled="true" onLabel="läuft"
+                                       offLabel="läuft nicht"/>
+                    </p:column>
+
+                    <p:column headerText="Phase" style="width:30%;">
+                        <h:outputText value="#{gm.spielPhase}"/>
+                    </p:column>
+
+                    <p:column headerText="" style="width:30%;">
+                        <p:commandButton icon="fa fa-wrench" value="auswählen"  update="fm" onstart="PF('blockIt').show()" oncomplete="PF('blockIt').hide(),location.reload();"
+                                         action="#{gameSelectionHolder.selectGame(gm.gameName)}"
+                                         rendered="#{gm.initialisiert and !gm.gameName.equals(gameSelectionHolder.game.model.gameName)}"/>
+
+                        <p:commandButton icon="fa fa-wrench" value="initialisieren"  update="fm" onstart="PF('blockIt').show()" oncomplete="PF('blockIt').hide()"
+                                         action="#{gameRoot.selectGame(gm.gameName)}"
+                                         rendered="#{!gm.initialisiert and emadSecWrapper.hasRole('root')}" />
+                    </p:column>
+
+                    <p:column headerText="Phase" style="width:30%;" rendered="#{emadSecWrapper.hasRole('root')}">
+                        <p:commandButton icon="fa fa-wrench" value="löschen" update="fm" onstart="PF('blockIt').show()" oncomplete="PF('blockIt').hide()" action="#{gameService.deleteGame(gm.gameName)}">
+                            <p:confirm header="Achtung !!!" message="Turnier wirklich löschen" icon="ui-icon-alert"/>
+                            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                <p:commandButton value="Ja" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check"/>
+                                <p:commandButton value="Nein" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close"/>
+                            </p:confirmDialog>
+                        </p:commandButton>
+                    </p:column>
+
+                </p:dataTable>
+
+                <p:dialog header="Turnier erstellen" widgetVar="dlg2" id="dlg2id" resizable="true">
+                    <h:panelGrid columns="2" cellpadding="5">
+                        <h:outputLabel value="Name:"/>
+                        <p:inputText value="#{gameBackingBean.selected.gameName}"/>
+                        <f:facet name="footer">
+                            <br/>
+                            <p:commandButton value="Speichern" actionListener="#{gameBackingBean.save()}" update=":fm" oncomplete="PF('dlg2').hide()"/>
+                        </f:facet>
+                    </h:panelGrid>
+                </p:dialog>
+
+            </p:fieldset>
+        </h:form>
+    </ui:define>
+</ui:composition>

@@ -1,0 +1,43 @@
+<ui:composition xmlns:ui="jakarta.faces.facelets" xmlns:h="jakarta.faces.html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns="http://www.w3.org/1999/xhtml" template="/template-noframe.xhtml">
+
+    <ui:define name="title">Email Benachrichtigung für die Webseite der Feuerwehr Münsingen</ui:define>
+
+    <ui:define name="page">
+
+        <br/>
+
+        <p:fieldset id="fs">
+            <h:form id="fm">
+            <input type="hidden" name="_csrf" value="#{_csrf.token}"/>
+
+                <p:messages/>
+
+                <br/>
+
+                <h:panelGrid columns="1" id="grid">
+
+                    <p:outputLabel value="Email Adresse eintragen: "/>
+                    <p:inputText value="#{websiteKontaktBackingBean.kontakt.email}"
+                                 disabled="#{websiteKontaktBackingBean.kontakt.bestaetigt}"/>
+
+                    <h:outputText value="Benachrichtigung per Email bei neuem Einsatz auf der Webseite: "/>
+                    <p:selectBooleanCheckbox value="#{websiteKontaktBackingBean.kontakt.websiteupdate}"
+                                             disabled="#{!websiteKontaktBackingBean.kontakt.bestaetigt}"/>
+
+                    <br/>
+                    <p:commandButton id="submit" value="Speichern" actionListener="#{websiteKontaktBackingBean.save()}"
+                                     update="fm"/>
+
+                    <br/>
+                    <h:outputLink value="https://fwmuensingen.ch">Weiter: https://fwmuensingen.ch</h:outputLink>
+
+                </h:panelGrid>
+
+            </h:form>
+        </p:fieldset>
+    </ui:define>
+
+
+</ui:composition>

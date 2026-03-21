@@ -1,0 +1,361 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+
+<!--suppress ALL -->
+<ui:composition xmlns:ui="jakarta.faces.facelets"
+                xmlns:h="jakarta.faces.html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="jakarta.faces.core"
+                xmlns="http://www.w3.org/1999/xhtml" template="/template.xhtml">
+
+    <ui:define name="title">Spielhauptsteuerung</ui:define>
+
+    <ui:define name="page">
+
+        <p:messages/>
+        <br/>
+        <h:form id="fm">
+            <input type="hidden" name="_csrf" value="#{_csrf.token}"/>
+
+            <p:fieldset>
+                <br/>
+                <h:panelGrid columns="2" style="margin-bottom:10px" cellpadding="5">
+                    Phase: #{gameSelectionHolder.game.model.phase} <br/>
+                </h:panelGrid>
+
+            </p:fieldset>
+
+            <p:commandButton id="refresh" widgetWar="refresh" value="Refresh"  style="display: none"/>
+
+            <br/>
+
+            <p:fieldset legend="Einstellungen">
+                <p:tabView orientation="top" id="tabview">
+
+                    <p:tab title="Spielsteuerung">
+                        <h:panelGrid columns="2" cellpadding="10">
+
+                            <h:panelGrid columns="2" id="inputelements" style="margin-bottom:10px" cellpadding="5">
+
+                                <h:outputText value="Automatisch Zeit aufholen"/>
+                                <p:selectBooleanCheckbox id="autoaufholen"
+                                                         value="#{gameSelectionHolder.game.model.automatischesAufholen}">
+                                    <p:ajax event="change" listener="#{gameSelectionHolder.save()}"/>
+                                </p:selectBooleanCheckbox>
+
+                                <h:outputText id="output2" value="Aufholzeit in Sekunden: #{gameSelectionHolder.game.model.aufholzeitInSekunden}"/>
+
+                                <p:slider for="aufh_zeit" display="output2"
+                                          displayTemplate="Aufholzeit in Sekunden: {value}"
+                                          minValue="1"
+                                          maxValue="180">
+                                </p:slider>
+                                <h:inputHidden id="aufh_zeit"
+                                               value="#{gameSelectionHolder.game.model.aufholzeitInSekunden}"/>
+                                <br/>
+                                <h:outputText value="Mit aktueller Zeit starten"/>
+
+                                <p:selectBooleanCheckbox id="aktuellezeit" value="#{gameSelectionHolder.game.model.startJetzt}"/>
+
+                                <h:outputText value="Zeit einstellen"/>
+
+                                <p:calendar id="start" value="#{gameSelectionHolder.game.model.start}" pattern="dd.MM.yyyy H:mm:ss">
+                                    <p:ajax event="dateSelect"  listener="#{gameSelectionHolder.neueZeit()}"/>
+                                </p:calendar>
+
+                                <h:outputText value="Zeitverschnellerungsfaktor für Testläufe"/>
+
+                                <p:selectOneMenu id="output"
+                                                 value="#{gameSelectionHolder.game.model.verschnellerungsFaktor}"
+                                                 disabled="#{gameSelectionHolder.game.model.startJetzt}">
+                                    <f:selectItem itemLabel="1" itemValue="1"/>
+                                    <f:selectItem itemLabel="2" itemValue="2"/>
+                                    <f:selectItem itemLabel="3" itemValue="3"/>
+                                    <f:selectItem itemLabel="4" itemValue="4"/>
+                                    <f:selectItem itemLabel="5" itemValue="5"/>
+                                    <f:selectItem itemLabel="10" itemValue="10"/>
+                                    <f:selectItem itemLabel="15" itemValue="15"/>
+
+                                </p:selectOneMenu>
+
+                                <br/>
+                                <h:panelGrid columns="1" style="margin-bottom:10px" cellpadding="5">
+
+                                </h:panelGrid>
+                                <p:separator/>
+                                <p:separator/>
+                                <h:outputText value="Spielabbruch durch Speaker erlauben"/>
+                                <p:selectBooleanCheckbox
+                                        id="abbrechenZulassen"
+                                        value="#{gameSelectionHolder.game.model.abbrechenZulassen}">
+                                </p:selectBooleanCheckbox>
+
+                                <h:outputText value="Gong bei Spielende abspielen"/>
+                                <p:selectBooleanCheckbox
+                                        id="gongEinschalten"
+                                        value="#{gameSelectionHolder.game.model.gongEinschalten}">
+                                </p:selectBooleanCheckbox>
+
+                                <h:outputText value="Automatisch Plätze ansagen"/>
+                                <p:selectBooleanCheckbox
+                                        id="automatischesAnsagen"
+                                        value="#{gameSelectionHolder.game.model.automatischesAnsagen}">
+                                </p:selectBooleanCheckbox>
+
+                                <h:outputText value="Automatisch in den Vorbereitet Status wechseln"/>
+
+                                <p:selectBooleanCheckbox
+                                        id="automatischesVorbereiten"
+                                        value="#{gameSelectionHolder.game.model.automatischesVorbereiten}">
+                                </p:selectBooleanCheckbox>
+
+                                <h:outputText id="output3" value="Anzahl wartende Spiele beim Speaker: #{gameSelectionHolder.game.durchfuehrung.wartendSize}"/>
+                                <p:slider for="wartendSize" display="output3" displayTemplate="Anzahl wartende Spiele beim Speaker: {value}" minValue="1" maxValue="10">
+                                </p:slider>
+
+                                <h:outputText id="output4" value="Minuten fuer Vorbereitungsansage: #{gameSelectionHolder.game.durchfuehrung.minutenZumVorbereiten} "/>
+
+                                <p:slider for="minutenZumVorbereiten" display="output4"
+                                          displayTemplate="Minuten fuer Vorbereitungsansage: {value}"
+                                          minValue="1" maxValue="10" style="width:200px">
+                                </p:slider>
+
+                                <h:outputText id="output22" value="Pollrequests in Sekunden Speaker: #{gameSelectionHolder.game.model.pollrequestSpeaker} "/>
+                                <p:slider for="pollrequestsSpeaker2" display="output22" displayTemplate="Pollrequests in Sekunden Speaker: {value}" minValue="1" maxValue="30" style="width:200px">
+                                </p:slider>
+
+                                <p:separator/>
+                                <p:separator/>
+
+                            </h:panelGrid>
+                                <h:inputHidden id="pollrequestsSpeaker2" value="#{gameSelectionHolder.game.model.pollrequestSpeaker}"/>
+                                <h:inputHidden id="wartendSize" value="#{gameSelectionHolder.game.durchfuehrung.wartendSize}"/>
+                                <h:inputHidden id="minutenZumVorbereiten" value="#{gameSelectionHolder.game.durchfuehrung.minutenZumVorbereiten}"/>
+                            <p:commandButton  value="Speichern" listener="#{gameSelectionHolder.save()}" update="fm"/>
+
+                        </h:panelGrid>
+                    </p:tab>
+
+
+                    <p:tab id="websitepublisher" title="Websitepublisher">
+                        <h:panelGrid columns="2" style="margin-bottom:10px">
+
+                            <h:outputText value="Kategorien-, Spiele- und "/>
+                            <br/>
+                            <h:outputText value="Mannschaftsnummernanzeigen verbergen: "/>
+                            <p:selectBooleanCheckbox
+                                    id="websiteInMannschaftslistenmode"
+                                    value="#{gameSelectionHolder.game.model.websiteInMannschaftslistenmode}">
+                            </p:selectBooleanCheckbox>
+
+                            <p:separator/>
+                            <p:separator/>
+
+                            <h:outputText value="Link Anmeldung downloaden anzeigen "/>
+                            <p:selectBooleanCheckbox value="#{gameSelectionHolder.game.model.websiteEnableDownloadLink}" />
+
+                            <h:outputText value="Anmeldung Download Link: "/>
+                            <p:inputText value="#{gameSelectionHolder.game.model.websiteDownloadLink}" size="80">
+
+                            </p:inputText>
+                            <p:separator/>
+                            <p:separator/>
+
+                            <h:outputText value="Link Programm downloaden anzeigen "/>
+                            <p:selectBooleanCheckbox value="#{gameSelectionHolder.game.model.websiteEnableProgrammDownloadLink}">
+                            </p:selectBooleanCheckbox>
+
+                            <h:outputText value="Anmeldung Download Link: "/>
+                            <p:inputText value="#{gameSelectionHolder.game.model.websiteProgrammDownloadLink}" size="80">
+
+                            </p:inputText>
+
+                            <p:separator/>
+                            <p:separator/>
+
+                            <h:outputText value="Link zum mobilen Programm anzeigen"/>
+                            <p:selectBooleanCheckbox value="#{gameSelectionHolder.game.model.mobileLinkOn}" />
+
+                            <h:outputText value="Link für mobiles Programm: "/>
+                            <p:inputText value="#{gameSelectionHolder.game.model.mobileLink}" size="80">
+
+                            </p:inputText>
+
+                            <p:separator/>
+                            <p:separator/>
+
+                            <h:outputText value="Website Turnier Titel: "/>
+                            <p:inputText value="#{gameSelectionHolder.game.model.websiteTurnierTitel}" size="80">
+
+                            </p:inputText>
+
+                            <h:outputText value="Website Id: "/>
+                            <p:inputText value="#{gameSelectionHolder.game.model.websiteId}" size="6"/>
+
+
+                            <h:outputText value="Hochladen aktivieren: "/>
+                            <p:selectBooleanCheckbox value="#{gameSelectionHolder.game.model.uploadOn}" />
+
+                            <h:outputText value="Website Fix String: "/>
+                            <p:inputTextarea value="#{gameSelectionHolder.game.model.websiteFixString}" rows="12" cols="60"/>
+
+                            <h:outputText value="Jetzt hochladen)"/>
+                            <h:column>
+                                <p:commandButton id="dumpstat" actionListener="#{velocityReplacer.dump(gameSelectionHolder.game.model.gameName)}" value="hochladen" onstart="PF('blockIt').show()" oncomplete="PF('blockIt').hide()" disabled="#{!gameSelectionHolder.game.model.uploadOn}" />
+                            </h:column>
+
+                            <p:separator/>
+                            <p:separator/>
+
+                            <h:outputText value="Werbung auf Webseite"/>
+                            <h:column>
+                                <p:commandButton id="werbung" actionListener="#{werbungBackingBean.go()}" value="werbung" onstart="PF('blockIt').show()" oncomplete="PF('blockIt').hide()" />
+                            </h:column>
+
+                            <p:separator/>
+                            <p:separator/>
+
+                            <h:outputText value="Spiele Synchronisieren von Adresse: "/>
+                            <p:inputText value="#{gameSelectionHolder.game.model.backportSync}" size="60"/>
+
+                            <h:outputText value="Synchronisation laufen lassen: "/>
+                            <p:selectBooleanCheckbox value="#{gameSelectionHolder.game.model.backportSyncOn}"/>
+
+                            <h:outputText value="Spiele bereits synchronisiert: "/>
+                            <h:outputText value="#{gameSelectionHolder.game.backup.eintraege.size()}"/>
+
+                            <h:outputText value="Spiele bereit um von hier zu beziehen: "/>
+                            <h:outputText value="#{backupSyncProvider.getOutcount(gameSelectionHolder.game.model.getGameName())}"/>
+
+                            <h:outputText value="Eigene Sync Adresse: "/>
+                            <h:outputText value="#{backupSyncProvider.getOwnSync(gameSelectionHolder.game.model.getGameName())}"/>
+
+                            <p:separator/>
+                            <p:separator/>
+                            <h:outputText value="Alle Resultate neu berechnen"/>
+                            <h:column>
+                                <p:commandButton  actionListener="#{gameSelectionHolder.neuRechnen()}" value="Neu Rechnen" onstart="PF('blockIt').show()" oncomplete="PF('blockIt').hide()"/>
+                            </h:column>
+
+                            <p:separator/>
+                            <p:separator/>
+
+                            <p:commandButton  value="Speichern" action="#{gameSelectionHolder.save()}" onstart="PF('blockIt').show()" oncomplete="PF('blockIt').hide()" update="fm:tabview:dumpstat"/>
+
+                        </h:panelGrid>
+                    </p:tab>
+
+                    <p:tab id="Spielplanung" title="Spielplanung">
+
+                        <h:panelGrid id="panel2" columns="2" cellspacing="4" cellpadding="4">
+                            <h:outputText value="Bis- und mit Klassen haben 2 Pausen:"/>
+                            <p:inputText id="txt1"
+                                         value="#{gameSelectionHolder.game.model.zweiPausenBisKlasse}"
+                                         disabled="#{!gameSelectionHolder.isAnmeldung()}">
+
+                            </p:inputText>
+                            <br/>
+                            <p:slider for="txt1" minValue="0" maxValue="9" disabled="#{!gameSelectionHolder.isAnmeldung()}">
+
+                            </p:slider>
+
+                            <h:outputText value="Oberstufe spielt nur auf Platz C"/>
+                            <p:selectBooleanCheckbox id="txt5"
+                                                     value="#{gameSelectionHolder.game.model.groesser6AufC}"
+                                                     disabled="#{!gameSelectionHolder.isAnmeldung()}">
+
+                            </p:selectBooleanCheckbox>
+                            <h:outputText value="Oberstufe auf C fuer groesser =:"/>
+                            <p:inputText id="oberstufe"
+                                         value="#{gameSelectionHolder.game.model.groesser6AufCMin}"
+                                         disabled="#{!gameSelectionHolder.isAnmeldung()}">
+
+                            </p:inputText>
+                            <br/>
+                            <p:slider for="oberstufe" minValue="3" maxValue="8" disabled="#{!gameSelectionHolder.isAnmeldung()}" />
+
+                            <h:outputText value="Kategorien mit 2 Klassen haben 2 separate grosse Finale"/>
+                            <p:selectBooleanCheckbox id="txt2" value="#{gameSelectionHolder.game.model.behandleFinaleProKlassebeiZusammengefuehrten}" disabled="#{!gameSelectionHolder.isAnmeldung()}"/>
+
+                            <h:outputText value="Spielzeit Gruppenspiele:"/>
+                            <p:inputText id="spielzeitgruppetxt" value="#{gameSelectionHolder.game.model.spiellaenge}" disabled="#{!gameSelectionHolder.isAnmeldung()}"/>
+                            <br/>
+                            <p:slider for="spielzeitgruppetxt" minValue="5" maxValue="20" disabled="#{!gameSelectionHolder.isAnmeldung()}">
+                                <p:ajax event="slideEnd"  listener="#{gameSelectionHolder.save()}"/>
+                            </p:slider>
+
+                            <h:outputText value="Spielzeit Finalspiele:"/>
+                            <p:inputText id="spielzeittxt" value="#{gameSelectionHolder.game.model.spiellaengefinale}" disabled="#{!gameSelectionHolder.isAnmeldung()}">
+                                <p:ajax event="change"  listener="#{gameSelectionHolder.save()}"/>
+                            </p:inputText>
+                            <br/>
+                            <p:slider for="spielzeittxt" minValue="5" maxValue="20" disabled="#{!gameSelectionHolder.isAnmeldung()}">
+                                <p:ajax event="slideEnd"  listener="#{gameSelectionHolder.save()}"/>
+                            </p:slider>
+
+                            <h:outputText value="Spielpause:"/>
+                            <p:inputText id="spielpausetxt" value="#{gameSelectionHolder.game.model.pause}" disabled="#{!gameSelectionHolder.isAnmeldung()}">
+                                <p:ajax event="change"  listener="#{gameSelectionHolder.save()}"/>
+                            </p:inputText>
+                            <br/>
+                            <p:slider for="spielpausetxt" minValue="1" maxValue="15"
+                                      disabled="#{!gameSelectionHolder.isAnmeldung()}">
+                                <p:ajax event="slideEnd"  listener="#{gameSelectionHolder.save()}"/>
+                            </p:slider>
+
+                            <p:separator/>
+                            <p:separator/>
+
+                            <p:commandButton  value="Speichern" action="#{gameSelectionHolder.save()}" onstart="PF('blockIt').show()" oncomplete="PF('blockIt').hide()"/>
+
+                        </h:panelGrid>
+
+                    </p:tab>
+
+                    <p:tab title="Simulation" disabled="false">
+                        <h:panelGrid columns="2" cellpadding="10">
+
+                            <h:outputLabel for="ee" value="Resultatemethode"/>
+                            <p:selectOneMenu id="ee" value="#{simulationModel.methode}">
+                                <f:selectItem itemLabel="" itemValue="absteigend"/>
+                                <f:selectItem itemLabel="aufsteigend" itemValue="aufsteigend"/>
+                                <f:selectItem itemLabel="random9" itemValue="random9"/>
+                                <f:selectItem itemLabel="random3" itemValue="random3"/>
+                                <f:selectItem itemLabel="random2" itemValue="random2"/>
+                                <f:selectItem itemLabel="echt" itemValue="echt"/>
+                            </p:selectOneMenu>
+
+                            <h:outputText value="Simulation an (true/false)"/>
+                            <p:commandButton value="#{simulationModel.on}" id="sim" action="#{simulationModel.on(gameSelectionHolder.getGameName())}" update="fm:tabview:sim"/>
+
+                            <p:separator/>
+                            <p:separator/>
+
+                            <p:commandButton  value="Speichern" action="#{gameSelectionHolder.save()}" onstart="PF('blockIt').show()" oncomplete="PF('blockIt').hide()"/>
+
+                        </h:panelGrid>
+                    </p:tab>
+
+                    <p:tab title="Spieltage / Plätze" disabled="false">
+                        <h:panelGrid columns="2" cellpadding="10">
+
+                            <h:outputLabel value="Samstag"/>
+                            <p:calendar value="#{einstellungenBackingBean.samstag}" pattern="dd.MM.yyyy H:mm:ss"/>
+
+                            <h:outputLabel value="Sonntag"/>
+                            <p:calendar value="#{einstellungenBackingBean.sonntag}" pattern="dd.MM.yyyy H:mm:ss"/>
+
+                            <p:commandButton  value="neue Tage setzen" action="#{einstellungenBackingBean.persistDate()}" onstart="PF('blockIt').show()" oncomplete="PF('blockIt').hide()"/>
+
+                            <h:outputLabel value=""/>
+                            <p:commandButton  value="Plätze von Spielzeilen auf Spiele kopieren" action="#{einstellungenBackingBean.fixPlaetze()}" onstart="PF('blockIt').show()" oncomplete="PF('blockIt').hide()"/>
+
+                        </h:panelGrid>
+                    </p:tab>
+
+                </p:tabView>
+            </p:fieldset>
+
+        </h:form>
+
+    </ui:define>
+</ui:composition>

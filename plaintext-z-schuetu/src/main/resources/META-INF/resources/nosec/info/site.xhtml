@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!--suppress ALL -->
+<html xmlns:ui="jakarta.faces.facelets"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns="http://www.w3.org/1999/xhtml">
+
+<f:view contentType="text/html" encoding="UTF-8" locale="de">
+    <h:head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+        #{resetPW.check()}
+        #{emadSessionRegistryImpl.update()}
+        <link rel="shortcut icon" href="${request.contextPath}/static/images/favicon.ico"/>
+
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+
+        <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+
+        <link type="text/css" rel="stylesheet" href="/jakarta.faces.resource/theme.css.htm?ln=primefaces-omega"/>
+
+        <ui:insert name="title">
+            <title>
+                <h:outputText value="#{contextUtil.getApp()}"/>
+            </title>
+        </ui:insert>
+
+    </h:head>
+
+    <h:body>
+
+        <ui:insert name="main">
+            <ui:include src="include/main.xhtml"/>
+        </ui:insert>
+
+    </h:body>
+
+</f:view>
+</html>

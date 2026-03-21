@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+
+<!--suppress ALL -->
+<ui:composition xmlns:ui="jakarta.faces.facelets"
+                xmlns:h="jakarta.faces.html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="jakarta.faces.core"
+                xmlns="http://www.w3.org/1999/xhtml" template="/template.xhtml">
+
+
+    <ui:define name="title">Schiri Liste</ui:define>
+
+    <ui:define name="page">
+
+        <br/>
+        <br/>
+
+        <h:form id="fm">
+            <input type="hidden" name="_csrf" value="#{_csrf.token}"/>
+
+            <p:commandButton actionListener="#{schirisBackingBean.selectSchiri('null')}"
+                             icon="ui-icon-copy" update="fm"
+                             value="Schiri anlegen"/>
+
+            <h:outputLabel value=" | "/>
+
+            <h:outputLabel value="Einteilung aktivieren:"/>
+
+
+            <p:selectOneMenu id="b_anrede" value="#{schirisBackingBean.einteilen}">
+                <f:selectItem itemLabel="-" itemValue="-"/>
+                <f:selectItems value="#{schirisBackingBean.completeText('')}" var="dt" itemLabel="#{dt}" itemValue="#{dt}"/>
+                <p:ajax listener="#{schirisBackingBean.einteilen()}" update="fm"/>
+            </p:selectOneMenu>
+
+            <h:outputLabel value=" | " rendered="#{schirisBackingBean.schiris.size() lt 1}"/>
+
+            <p:selectOneMenu value="#{schirisBackingBean.copyJahr}" style="left" rendered="#{schirisBackingBean.schiris.size() lt 1}">
+                <f:selectItem itemLabel="Alle Schiris kopieren von" itemValue=""/>
+                <f:selectItems value="#{schirisBackingBean.getOldJahreGames()}" var="dt" itemLabel="#{dt}" itemValue="#{dt}"/>
+                <p:ajax listener="#{schirisBackingBean.copy()}" update="fm"/>
+            </p:selectOneMenu>
+
+            <br/>
+            <br/>
+
+            <p:dataTable selection="#{schirisBackingBean.selectedSchiri}"
+                         selectionMode="single"
+                         rowKey="#{schiri.id}"
+                         emptyMessage="leer"
+                         id="tbl"
+                         var="schiri"
+                         value="#{schirisBackingBean.schiris}"
+                         paginator="false"
+                         rowIndexVar="ri">
+
+                <p:ajax event="rowSelect" oncomplete="PF('dialog').show()" update="fm" global="false"/>
+
+                <p:column>
+                    <f:facet name="header">
+                        <h:outputText value="Vorname"/>
+                    </f:facet>
+                    <h:outputText value="#{schiri.vorname}"/>
+                </p:column>
+
+                <p:column>
+                    <f:facet name="header">
+                        <h:outputText value="Nachname"/>
+                    </f:facet>
+                    <h:outputText value="#{schiri.nachname}"/>
+                </p:column>
+
+                <p:column>
+                    <f:facet name="header">
+                        <h:outputText value="Aktiviert"/>
+                    </f:facet>
+                    <p:selectBooleanCheckbox id="skipdump"
+                                             value="#{schiri.aktiviert}"
+                                             ajax="true"/>
+                </p:column>
+
+
+            </p:dataTable>
+
+
+            <p:contextMenu for="tbl">
+                <p:menuitem value="Delete" update="tbl" icon="fa fa-flash" action="#{schirisBackingBean.delete()}"/>
+            </p:contextMenu>
+
+
+            <p:dialog header="Schiri bearbeiten" widgetVar="dialog" rendered="#{schirisBackingBean.selectedSchiri != null}" width="65vw">
+
+            <div class="ui-fluid">
+
+
+                <p:messages/>
+
+                <h:panelGrid columns="2" id="inputelements">
+
+                    <h:outputLabel for="skipdump" value="Aktiviert "/>
+                    <p:selectBooleanCheckbox id="skipdump" value="#{schirisBackingBean.selectedSchiri.aktiviert}" />
+
+
+                    <h:outputLabel for="vorname" value="Vorname "/>
+                    <p:inputText id="vorname" label="Vorname" value="#{schirisBackingBean.selectedSchiri.vorname}" size="25"/>
+
+                    <h:outputLabel for="nachname" value="Nachname "/>
+                    <p:inputText id="nachname" label="Nachname" value="#{schirisBackingBean.selectedSchiri.nachname}" size="25"/>
+
+                    <h:outputLabel for="einteilung" value="Einteilung "/>
+                    <p:autoComplete id="einteilung" dropdown="true" value="#{schirisBackingBean.selectedSchiri.einteilung}" completeMethod="#{schirisBackingBean.completeText}" />
+
+                    <h:panelGroup  layout="block">
+                        <p:commandButton value="Speichern" action="#{schirisBackingBean.save()}" execute="@form" update="@form"/>
+                    </h:panelGroup>
+
+                </h:panelGrid>
+
+
+            </div>
+
+
+            </p:dialog>
+
+
+        </h:form>
+
+    </ui:define>
+
+</ui:composition>

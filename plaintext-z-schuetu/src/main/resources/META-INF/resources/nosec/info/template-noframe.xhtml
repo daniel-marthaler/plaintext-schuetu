@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:ui="jakarta.faces.facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pe="http://primefaces.org/ui/extensions"
+      lang="en">
+
+<h:head id = "head">
+    <f:facet name="first">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+        <meta name="apple-mobile-web-app-capable" content="yes"/>
+    </f:facet>
+    <title>
+        <ui:insert name="title">Resultate</ui:insert>
+    </title>
+    <h:outputScript name="js/layout.js" library="freya-layout"/>
+
+
+</h:head>
+
+<p:blockUI id="blockIt" widgetVar="blockIt" block="body">
+    Bitte warten...<br/>
+    <p:graphicImage value="static/images/ajax-loader1.gif" cache="false"/>
+</p:blockUI>
+
+<h:body id="body" styleClass="#{guestPreferences.inputStyleClass}">
+
+    <div class="layout-wrapper layout-topbar-#{guestPreferences.topbarTheme} layout-menu-#{guestPreferences.menuTheme} #{guestPreferences.menuMode}">
+
+
+        <div class="layout-main">
+            <div class="layout-content">
+                <ui:fragment id = "page">
+                <ui:insert name="page"></ui:insert>
+                </ui:fragment>
+            </div>
+        </div>
+
+        <p:ajaxStatus style="width:32px;height:32px;position:fixed;right:7px;bottom:7px">
+            <f:facet name="start">
+                <i class="pi pi-spin pi-spinner ajax-loader" aria-hidden="true"></i>
+            </f:facet>
+
+            <f:facet name="complete">
+                <h:outputText value=""/>
+            </f:facet>
+        </p:ajaxStatus>
+        <div class="layout-mask modal-in"></div>
+    </div>
+
+    <h:outputStylesheet name="css/primeicons.css" library="freya-layout"/>
+    <h:outputStylesheet name="css/primeflex.min.css" library="freya-layout"/>
+    <h:outputStylesheet name="css/#{guestPreferences.layout}.css" library="freya-layout"/>
+    <h:outputStylesheet name="theme.css" library="primefaces-freya-#{guestPreferences.theme}"/>
+
+    <h:form id="fmsx">
+            <input type="hidden" name="_csrf" value="#{_csrf.token}"/>
+        <pe:remoteCommand id="setSize" name="setSize" actionListener="#{sessionBackingBean.setSize}" update="#{sessionBackingBean.sizeUpdate}">
+            <pe:methodSignature parameters="java.lang.Integer, java.lang.Integer"/>
+            <pe:methodParam name="hoehe"/>
+            <pe:methodParam name="breite"/>
+        </pe:remoteCommand>
+    </h:form>
+
+    #{sessionBackingBean.setSizeUpdate('')}
+    #{defaultBackingBean.logincheck()}
+
+    <script type="text/javascript">
+                    var id;
+                    $(window).resize(function() {
+                        clearTimeout(id);
+                        id = setTimeout(doneResizing, 100);
+                    });
+                    function doneResizing(){
+                        setSize(document.documentElement.clientHeight, document.documentElement.clientWidth);
+                    }
+                    setSize(document.documentElement.clientHeight, document.documentElement.clientWidth);
+
+    </script>
+
+</h:body>
+
+</html>

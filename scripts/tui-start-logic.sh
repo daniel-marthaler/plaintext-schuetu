@@ -1,0 +1,1 @@
+/Users/mad/.plaintext-scripts/tui-start-logic.sh

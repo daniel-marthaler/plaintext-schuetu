@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+
+<!--suppress ALL -->
+<ui:composition xmlns:ui="jakarta.faces.facelets"
+                xmlns:h="jakarta.faces.html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="jakarta.faces.core"
+                xmlns="http://www.w3.org/1999/xhtml" template="/template.xhtml">
+
+    <ui:define name="title">Penalty bearbeiten</ui:define>
+
+    <ui:define name="page">
+
+        <h:outputScript>
+            history.pushState(null, null, '/admin-penalty-details.htm');
+        </h:outputScript>
+
+        <p:fieldset>
+            <br/>
+            <p:messages/>
+
+            <h:form id="fm">
+            <input type="hidden" name="_csrf" value="#{_csrf.token}"/>
+                <h:panelGrid columns="1">
+
+
+                    <p:dataTable id="mann" var="mannsch" value="#{penaltyBackingBean.selected.finalList}"
+                                 draggableRows="true">
+                        <p:ajax event="rowReorder" listener="#{penaltyBackingBean.onRowReorder}" update=":fm"/>
+                        <f:facet name="header">
+                            <p:commandButton id="pen"
+                                             value="PENALTY EINTRAGEN -> Neue Reihenfolge: #{penaltyBackingBean.selected.toString()} Original Reihenfolge: #{penaltyBackingBean.selected.getReihenfolgeOrig()} (Verschieben unten !!!)"
+                                             actionListener="#{penaltyBackingBean.selected.save()}" update="@form"/>
+                        </f:facet>
+                        <p:column>
+                            <h:outputText value="#{mannsch.getName()}"/>
+                        </p:column>
+
+                    </p:dataTable>
+
+
+                    <p:commandButton id="submit" value="Speichern"
+                                     action="#{penaltyBackingBean.save()}" ajax="false"/>
+
+
+                </h:panelGrid>
+            </h:form>
+        </p:fieldset>
+
+    </ui:define>
+
+</ui:composition>

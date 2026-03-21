@@ -1,0 +1,60 @@
+spring:
+  application:
+    name: plaintext-schuetu
+  profiles:
+    active: dev
+    include:
+      - discovery
+  config:
+    import: optional:./plconfig/spring/application.yml
+  main:
+    allow-circular-references: true
+    allow-bean-definition-overriding: true
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+  datasource:
+    url: jdbc:postgresql://localhost:5434/plaintext_schuetu
+    username: plaintext
+    password: plaintext
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    open-in-view: true
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+    out-of-order: true
+    validate-on-migrate: false
+
+server:
+  port: 8080
+  compression:
+    enabled: true
+    mime-types: application/json,application/xml,text/html,text/plain
+
+joinfaces:
+  faces-servlet:
+    url-mappings:
+      - "*.jsf"
+      - "*.xhtml"
+      - "*.html"
+      - "/faces/*"
+  primefaces:
+    theme: freya-yellow-dark
+
+plaintext:
+  stage: ${PLAINTEXT_ENV:dev}
+  menu:
+    scan-package: ch.plaintext
+
+logging:
+  level:
+    ch.plaintext: DEBUG
+    org.springframework: INFO

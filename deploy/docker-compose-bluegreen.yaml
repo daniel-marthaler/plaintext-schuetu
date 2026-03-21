@@ -1,0 +1,211 @@
+services:
+
+  # ─── Nginx Reverse Proxy ───────────────────────────────────────
+  plaintext-schuetu-nginx:
+    image: nginx:1.27-alpine
+    container_name: plaintext-schuetu-nginx
+    ports:
+      - "1131:1131"
+      - "1132:1132"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./nginx/templates:/etc/nginx/templates:ro
+    restart: unless-stopped
+    depends_on:
+      - plaintext-schuetu-int-blue
+      - plaintext-schuetu-prod-blue
+
+  # ─── INT Blue ──────────────────────────────────────────────────
+  plaintext-schuetu-int-blue:
+    image: plaintext-schuetu:1.0.0
+    container_name: plaintext-schuetu-int-blue
+    environment:
+      JAVA_OPTS: "-Xmx1g -Xms512m -Duser.timezone=Europe/Zurich"
+      SPRING_PROFILES_ACTIVE: prod,postgres
+      SPRING_DATASOURCE_URL: jdbc:postgresql://plaintext-schuetu-db-int:5432/plaintext_schuetu
+      SPRING_DATASOURCE_USERNAME: plaintext
+      SPRING_DATASOURCE_PASSWORD: plaintext
+      PLAINTEXT_ENV: int
+      PLAINTEXT_APP_NAME: "Plaintext Schuetu INT"
+      PLAINTEXT_APP_URL: "http://192.168.1.224:1131"
+    volumes:
+      - ./plaintext-schuetu-int-blue/logs:/app/logs
+    depends_on:
+      plaintext-schuetu-db-int:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: "2"
+          memory: 2048M
+        reservations:
+          memory: 512M
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      start_period: 60s
+      retries: 3
+    restart: unless-stopped
+
+  # ─── INT Green ─────────────────────────────────────────────────
+  plaintext-schuetu-int-green:
+    image: plaintext-schuetu:1.0.0
+    container_name: plaintext-schuetu-int-green
+    environment:
+      JAVA_OPTS: "-Xmx1g -Xms512m -Duser.timezone=Europe/Zurich"
+      SPRING_PROFILES_ACTIVE: prod,postgres
+      SPRING_DATASOURCE_URL: jdbc:postgresql://plaintext-schuetu-db-int:5432/plaintext_schuetu
+      SPRING_DATASOURCE_USERNAME: plaintext
+      SPRING_DATASOURCE_PASSWORD: plaintext
+      PLAINTEXT_ENV: int
+      PLAINTEXT_APP_NAME: "Plaintext Schuetu INT"
+      PLAINTEXT_APP_URL: "http://192.168.1.224:1131"
+    volumes:
+      - ./plaintext-schuetu-int-green/logs:/app/logs
+    depends_on:
+      plaintext-schuetu-db-int:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: "2"
+          memory: 2048M
+        reservations:
+          memory: 512M
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      start_period: 60s
+      retries: 3
+    restart: unless-stopped
+    profiles:
+      - green-int
+
+  # ─── PROD Blue ─────────────────────────────────────────────────
+  plaintext-schuetu-prod-blue:
+    image: plaintext-schuetu:1.0.0
+    container_name: plaintext-schuetu-prod-blue
+    environment:
+      JAVA_OPTS: "-Xmx1g -Xms512m -Duser.timezone=Europe/Zurich"
+      SPRING_PROFILES_ACTIVE: prod,postgres
+      SPRING_DATASOURCE_URL: jdbc:postgresql://plaintext-schuetu-db-prod:5432/plaintext_schuetu
+      SPRING_DATASOURCE_USERNAME: plaintext
+      SPRING_DATASOURCE_PASSWORD: plaintext
+      PLAINTEXT_ENV: prod
+      PLAINTEXT_APP_NAME: "Plaintext Schuetu PROD"
+      PLAINTEXT_APP_URL: "http://192.168.1.224:1132"
+    volumes:
+      - ./plaintext-schuetu-prod-blue/logs:/app/logs
+    depends_on:
+      plaintext-schuetu-db-prod:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: "2"
+          memory: 2048M
+        reservations:
+          memory: 512M
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      start_period: 60s
+      retries: 3
+    restart: unless-stopped
+
+  # ─── PROD Green ────────────────────────────────────────────────
+  plaintext-schuetu-prod-green:
+    image: plaintext-schuetu:1.0.0
+    container_name: plaintext-schuetu-prod-green
+    environment:
+      JAVA_OPTS: "-Xmx1g -Xms512m -Duser.timezone=Europe/Zurich"
+      SPRING_PROFILES_ACTIVE: prod,postgres
+      SPRING_DATASOURCE_URL: jdbc:postgresql://plaintext-schuetu-db-prod:5432/plaintext_schuetu
+      SPRING_DATASOURCE_USERNAME: plaintext
+      SPRING_DATASOURCE_PASSWORD: plaintext
+      PLAINTEXT_ENV: prod
+      PLAINTEXT_APP_NAME: "Plaintext Schuetu PROD"
+      PLAINTEXT_APP_URL: "http://192.168.1.224:1132"
+    volumes:
+      - ./plaintext-schuetu-prod-green/logs:/app/logs
+    depends_on:
+      plaintext-schuetu-db-prod:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: "2"
+          memory: 2048M
+        reservations:
+          memory: 512M
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      start_period: 60s
+      retries: 3
+    restart: unless-stopped
+    profiles:
+      - green-prod
+
+  # ─── INT Database ──────────────────────────────────────────────
+  plaintext-schuetu-db-int:
+    image: postgres:18.3-alpine
+    container_name: plaintext-schuetu-db-int
+    environment:
+      POSTGRES_DB: plaintext_schuetu
+      POSTGRES_USER: plaintext
+      POSTGRES_PASSWORD: plaintext
+    ports:
+      - "15451:5432"
+    volumes:
+      - ./plaintext-schuetu-db-int:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U plaintext -d plaintext_schuetu"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # ─── PROD Database ─────────────────────────────────────────────
+  plaintext-schuetu-db-prod:
+    image: postgres:18.3-alpine
+    container_name: plaintext-schuetu-db-prod
+    environment:
+      POSTGRES_DB: plaintext_schuetu
+      POSTGRES_USER: plaintext
+      POSTGRES_PASSWORD: plaintext
+    ports:
+      - "15452:5432"
+    volumes:
+      - ./plaintext-schuetu-db-prod:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U plaintext -d plaintext_schuetu"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # ─── PROD Database Backup ──────────────────────────────────────
+  plaintext-schuetu-db-backup:
+    image: prodrigestivill/postgres-backup-local:18-alpine
+    container_name: plaintext-schuetu-db-backup
+    environment:
+      POSTGRES_HOST: plaintext-schuetu-db-prod
+      POSTGRES_DB: plaintext_schuetu
+      POSTGRES_USER: plaintext
+      POSTGRES_PASSWORD: plaintext
+      SCHEDULE: "@daily"
+      BACKUP_KEEP_DAYS: 7
+      BACKUP_KEEP_WEEKS: 4
+      BACKUP_KEEP_MONTHS: 6
+    volumes:
+      - ./backups/scheduled:/backups
+    depends_on:
+      plaintext-schuetu-db-prod:
+        condition: service_healthy
+    restart: unless-stopped

@@ -1,0 +1,13 @@
+services:
+  postgres:
+    image: postgres:18.3-alpine
+    container_name: plaintext-schuetu-db
+    environment:
+      POSTGRES_DB: plaintext_schuetu
+      POSTGRES_USER: plaintext
+      POSTGRES_PASSWORD: plaintext
+    ports:
+      - "5434:5432"
+    volumes:
+      - ~/plaintext-schuetu-db:/var/lib/postgresql/data
+    restart: unless-stopped

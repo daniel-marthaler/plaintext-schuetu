@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--suppress ALL -->
+<ui:composition xmlns:ui="jakarta.faces.facelets"
+                xmlns:h="jakarta.faces.html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="jakarta.faces.core"
+                xmlns="http://www.w3.org/1999/xhtml"
+                template="template-noframe.xhtml">
+    <ui:define name="page">
+        <h:form id="fm">
+            <input type="hidden" name="_csrf" value="#{_csrf.token}"/>
+
+            <p:dataTable var="spiel" value="#{infomonitorController.getFinalspiele()}">
+
+                <f:facet name="header">
+                    Finalspiele
+                </f:facet>
+
+                <p:columnGroup type="header">
+                    <p:row>
+                        <p:column headerText="Zeit" style="text-align:left"/>
+                        <p:column headerText="Platz" style="text-align:left"/>
+                        <p:column headerText="Spiel" style="text-align:left"/>
+                        <p:column colspan="2" headerText="Team A" style="text-align:left"/>
+                        <p:column colspan="2" headerText="Team B" style="text-align:left"/>
+                    </p:row>
+                </p:columnGroup>
+
+                <p:column rendered="#{spiel.finaleBekannt}">
+                    <h:outputText value="#{spiel.start}">
+                        <f:convertDateTime type="date" pattern="EEE HH:mm" timeZone="Europe/Zurich"/>
+                    </h:outputText>
+                </p:column>
+                <p:column rendered="#{spiel.finaleBekannt}">
+                    #{spiel.platz}
+                </p:column>
+                <p:column rendered="#{spiel.finaleBekannt}">
+                    #{spiel.getWebsiteName()}
+                </p:column>
+                <p:column rendered="#{spiel.finaleBekannt}">
+                    #{spiel.mannschaftA.name}
+                </p:column>
+                <p:column rendered="#{spiel.finaleBekannt}">
+                    #{spiel.evaluateToreABestateigtString()}
+                </p:column>
+                <p:column rendered="#{spiel.finaleBekannt}">
+                    #{spiel.mannschaftB.name}
+                </p:column>
+                <p:column rendered="#{spiel.finaleBekannt}">
+                    #{spiel.evaluateToreBBestateigtString()}
+                </p:column>
+
+                <p:column rendered="#{!spiel.finaleBekannt}">
+                    <h:outputText value="#{spiel.start}">
+                        <f:convertDateTime type="date" pattern="EEE HH:mm" timeZone="Europe/Zurich"/>
+                    </h:outputText>
+                </p:column>
+                <p:column rendered="#{!spiel.finaleBekannt}">
+                    #{spiel.platz}
+                </p:column>
+                <p:column rendered="#{!spiel.finaleBekannt}">
+                    #{spiel.getWebsiteName()}
+                </p:column>
+                <p:column colspan="4" rendered="#{!spiel.finaleBekannt}">
+                    <b> #{spiel.finalspieleBekanntAm}</b>
+                </p:column>
+
+            </p:dataTable>
+            <br/>
+        </h:form>
+    </ui:define>
+</ui:composition>

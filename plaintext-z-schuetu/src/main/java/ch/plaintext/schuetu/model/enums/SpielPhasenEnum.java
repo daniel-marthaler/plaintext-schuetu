@@ -1,0 +1,5 @@
+package ch.plaintext.schuetu.model.enums;
+
+public enum SpielPhasenEnum {
+    A_ANMELDEPHASE, B_KATEGORIE_ZUORDNUNG, C_SPIELTAGE_DEFINIEREN, D_SPIELE_ZUORDNUNG, E_SPIELBEREIT, F_SPIELEN, G_ABGESCHLOSSEN
+}

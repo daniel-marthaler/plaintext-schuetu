@@ -1,0 +1,57 @@
+<!--suppress ALL -->
+
+
+<ui:composition xmlns:ui="jakarta.faces.facelets" xmlns:h="jakarta.faces.html"
+                xmlns:p="http://primefaces.org/ui" xmlns:f="jakarta.faces.core"
+                xmlns="http://www.w3.org/1999/xhtml" template="/template.xhtml">
+
+    <ui:define name="title">Penaltykorrekturen</ui:define>
+
+    <ui:define name="page">
+
+        <br/>
+
+        <h:form id="fm">
+            <input type="hidden" name="_csrf" value="#{_csrf.token}"/>
+            <p:fieldset id="fs">
+
+                <p:messages/>
+
+                <br/>
+
+                <p:dataTable emptyMessage="leer" id="tbl" var="obj" selection="#{penaltyBackingBean.selected}"
+                             selectionMode="single" rowKey="#{obj.id}"
+                             value="#{penaltyRepository.findByGame(gameSelectionHolder.game.model.gameName)}"
+                             paginator="false" rowIndexVar="ri">
+
+                    <p:ajax event="rowSelect" listener="#{emadUI.r('penaltykorrekturen-details.htm')}" global="false"/>
+
+                    <p:column headerText="Erstellt.">
+                        <h:outputText value="#{obj.creationdate}">
+                            <f:convertDateTime type="date" pattern="HH:mm (dd.MM)" timeZone="Europe/Zurich"/>
+                        </h:outputText>
+                    </p:column>
+
+                    <p:column headerText="Gespielt">
+                        <h:outputText value="#{obj.gespielt}"/>
+                    </p:column>
+
+                    <p:column headerText="Bestaetigt">
+                        <h:outputText value="#{obj.bestaetigt}"/>
+                    </p:column>
+
+                    <p:column headerText="reihenfolgeOrig">
+                        <h:outputText value="#{obj.reihenfolgeOrig}"/>
+                    </p:column>
+
+                    <p:column headerText="reihenfolge">
+                        <h:outputText value="#{obj.reihenfolge}"/>
+                    </p:column>
+
+                </p:dataTable>
+
+            </p:fieldset>
+        </h:form>
+    </ui:define>
+
+</ui:composition>

@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+
+<!--suppress ALL -->
+<ui:composition xmlns:ui="jakarta.faces.facelets" xmlns:h="jakarta.faces.html"
+                xmlns:p="http://primefaces.org/ui" xmlns:f="jakarta.faces.core"
+                xmlns="http://www.w3.org/1999/xhtml" xmlns:pe="http://primefaces.org/ui/extensions"
+                template="/template.xhtml">
+
+    <ui:define name="title">Speaker</ui:define>
+
+    <ui:define name="page">
+
+
+        <style>
+
+        .red{
+            background-color:red!important;
+            color: white!important;
+            font-weight: bolder;
+        }
+
+        </style>
+
+
+        <br/>
+        <h:form id="fm">
+            <input type="hidden" name="_csrf" value="#{_csrf.token}"/>
+
+            <p:poll interval="#{gameSelectionHolder.game.model.pollrequestSpeaker}" update="fm:zeit"/>
+
+            <p:poll interval="5" update="fm:stabelle,fm:vtabelle,fm:wtabelle,fm:btabelle"/>
+
+            <h:panelGrid columns="4"
+                         rendered="#{!gameSelectionHolder.game.model.startJetzt and emadSecWrapper.hasRole('admin')}">
+
+                <p:commandButton value="Add #{gameSelectionHolder.game.zeit.add} Sekunden" ajax="false"
+                                 action="#{gameSelectionHolder.game.zeit.add()}"
+                                 update="fm:stabelle,fm:vtabelle,fm:wtabelle,fm:btabelle"/>
+
+                <p:inputText value="#{gameSelectionHolder.game.zeit.add}" size="20"/>
+
+                <p:calendar id="start" value="#{gameSelectionHolder.game.model.start}" pattern="dd.MM.yyyy H:mm:ss">
+                    <p:ajax event="dateSelect" update="fm" listener="#{gameSelectionHolder.neueZeit()}"/>
+                </p:calendar>
+
+                <p:commandButton actionListener="#{gameSelectionHolder.game.zeit.spielzeitEinholen60()}" value="60 Sekunden aufholen" update="fm"/>
+
+                <br/>
+
+            </h:panelGrid>
+
+            <b>
+                <h:outputText style="font-size: 18pt" id="zeit"
+                              value="Echte Zeit #{gameSelectionHolder.game.zeit.richtigeZeit} - Spiel Zeit: #{gameSelectionHolder.game.zeit.spielZeit} - Verspätung: #{gameSelectionHolder.game.zeit.spielzeitVerspaetung()}"/>
+            </b>
+
+            <br/>
+            <h:panelGrid columns="1" id="inputelements">
+
+                <br/>
+
+                <p:dataTable style="width:80%;" emptyMessage="leer" id="dataTablePen" var="penalty"
+                             value="#{gameSelectionHolder.game.durchfuehrung.getPenaltyAnstehend()}"
+                             rendered="#{!gameSelectionHolder.game.durchfuehrung.getPenaltyAnstehend().isEmpty()}">
+
+                    <p:column headerText="Penalty">
+                        <p:commandButton id="pen" value="#{penalty.toString()}"
+                                         actionListener="#{gameSelectionHolder.game.durchfuehrung.setPenaltyGespielt(penalty.id)}"
+                                         update="@form"/>
+                    </p:column>
+
+                </p:dataTable>
+
+                <h:outputText value="Wartende Spiele" style="font-size: 18pt"/>
+
+                <p:dataTable emptyMessage="leer" id="wtabelle" var="zeile"
+                             value="#{gameSelectionHolder.game.durchfuehrung.list1Wartend}">
+
+                    <p:column headerText="Start">
+                        <h:outputText value="#{zeile.start}">
+                            <f:convertDateTime type="date" pattern="HH:mm (dd.MM.yy)" timeZone="Europe/Zurich"/>
+                        </h:outputText>
+                    </p:column>
+
+                    <p:column>
+                        <f:facet name="header">Platz A
+                        </f:facet>
+                        <h:outputText value="#{zeile.a}" styleClass="#{zeile.a.getFarbe()}"/>
+                    </p:column>
+                    <p:column>
+                        <f:facet name="header">Platz B
+                        </f:facet>
+                        <h:outputText value="#{zeile.b}" styleClass="#{zeile.b.getFarbe()}"/>
+                    </p:column>
+                    <p:column>
+                        <f:facet name="header">Platz C
+                        </f:facet>
+                        <h:outputText value="#{zeile.c}" styleClass="#{zeile.c.getFarbe()}"/>
+                    </p:column>
+
+                    <p:column>
+                        <f:facet name="header">Platz D
+                        </f:facet>
+                        <h:outputText value="#{zeile.d}" styleClass="#{zeile.d.getFarbe()}"/>
+                    </p:column>
+
+                    <p:column>
+                        <f:facet name="header">
+                        </f:facet>
+                        <p:commandButton action="no" icon="ui-icon-check" disabled="true"/>
+                    </p:column>
+
+                </p:dataTable>
+
+                <h:outputText value="Zum Vorbereiten" style="font-size: 18pt"/>
+
+                <p:dataTable emptyMessage="leer" id="vtabelle" var="zeile"
+                             value="#{gameSelectionHolder.game.durchfuehrung.list2ZumVorbereiten}">
+
+                    <p:column headerText="Start">
+                        <h:outputText value="#{zeile.start}">
+                            <f:convertDateTime type="date" pattern="HH:mm (dd.MM.yy)" timeZone="Europe/Zurich"/>
+                        </h:outputText>
+                    </p:column>
+
+                    <p:column>
+                        <f:facet name="header">Platz A
+                        </f:facet>
+                        <h:outputText value="#{zeile.a}" styleClass="#{zeile.a.getFarbe()}"/>
+                    </p:column>
+                    <p:column>
+                        <f:facet name="header">Platz B
+                        </f:facet>
+                        <h:outputText value="#{zeile.b}" styleClass="#{zeile.b.getFarbe()}"/>
+                    </p:column>
+                    <p:column>
+                        <f:facet name="header">Platz C
+                        </f:facet>
+                        <h:outputText value="#{zeile.c}" styleClass="#{zeile.c.getFarbe()}"/>
+                    </p:column>
+
+                    <p:column>
+                        <f:facet name="header">Platz D
+                        </f:facet>
+                        <h:outputText value="#{zeile.d}" styleClass="#{zeile.d.getFarbe()}"/>
+                    </p:column>
+
+                    <p:column>
+                        <f:facet name="header"/>
+                        <p:commandButton id="b11" icon="ui-icon-check"
+                                         disabled="#{!gameSelectionHolder.game.durchfuehrung.readyToVorbereiten}"
+                                         update="fm" ajax="false"
+                                         actionListener="#{gameSelectionHolder.game.durchfuehrung.vorbereitet()}"/>
+                    </p:column>
+
+                </p:dataTable>
+
+                <h:outputText value="Wartet auf Start" style="font-size: 18pt"/>
+
+                <pe:timer id="wtimer" timeout="#{gameSelectionHolder.game.durchfuehrung.countdownToStart.sekundenToGo}"
+                          format="mm:ss" update="fm"
+                          rendered="#{gameSelectionHolder.game.durchfuehrung.list3Vorbereitet.size() > 0}"/>
+
+                <p:dataTable emptyMessage="leer" id="btabelle" var="zeile"
+                             value="#{gameSelectionHolder.game.durchfuehrung.list3Vorbereitet}">
+
+
+                    <p:column headerText="Start / Countdown">
+                        <h:outputText value="#{zeile.start}">
+                            <f:convertDateTime type="date" pattern="HH:mm (dd.MM.yy)" timeZone="Europe/Zurich"/>
+                        </h:outputText>
+                        <h:outputText value=" "/>
+
+                    </p:column>
+
+                    <p:column>
+                        <f:facet name="header">Platz A
+                        </f:facet>
+                        <h:outputText value="#{zeile.a}" styleClass="#{zeile.a.getFarbe()}"/>
+                    </p:column>
+                    <p:column>
+                        <f:facet name="header">Platz B
+                        </f:facet>
+                        <h:outputText value="#{zeile.b}" styleClass="#{zeile.b.getFarbe()}"/>
+                    </p:column>
+                    <p:column>
+                        <f:facet name="header">Platz C
+                        </f:facet>
+                        <h:outputText value="#{zeile.c}" styleClass="#{zeile.c.getFarbe()}"/>
+                    </p:column>
+
+                    <p:column>
+                        <f:facet name="header">Platz D
+                        </f:facet>
+                        <h:outputText value="#{zeile.d}" styleClass="#{zeile.d.getFarbe()}"/>
+                    </p:column>
+
+                    <p:column>
+                        <f:facet name="header">
+                        </f:facet>
+                        <p:commandButton id="play" icon="ui-icon-check" widgetVar="plpl"
+                                         disabled="#{!gameSelectionHolder.game.durchfuehrung.readyToSpielen}"
+                                         actionListener="#{gameSelectionHolder.game.durchfuehrung.spielen()}"
+                                         update="fm" ajax="false">
+                        </p:commandButton>
+
+                    </p:column>
+
+                </p:dataTable>
+
+
+                <div align="left">
+                    <h:outputText value="Am Spielen" style="font-size: 18pt"/>
+                </div>
+
+                <pe:timer id="stimer" timeout="#{gameSelectionHolder.game.durchfuehrung.countdown.sekundenToGo}"
+                          format="mm:ss" update="fm"
+                          rendered="#{gameSelectionHolder.game.durchfuehrung.list4Spielend.size() > 0}"/>
+
+                <p:dataTable emptyMessage="leer" id="stabelle" var="zeile"
+                             value="#{gameSelectionHolder.game.durchfuehrung.list4Spielend}">
+
+                    <p:column headerText="Start / Timer" style="width: 15%">
+                        <h:outputText value="#{zeile.start}">
+                            <f:convertDateTime type="date" pattern="HH:mm (dd.MM.yy)" timeZone="Europe/Zurich"/>
+                        </h:outputText>
+                        <h:outputText value=" "/>
+                    </p:column>
+
+                    <p:column>
+                        <f:facet name="header">Platz A
+                        </f:facet>
+                        <h:outputText value="#{zeile.a}" styleClass="#{zeile.a.getFarbe()}"/>
+                    </p:column>
+                    <p:column>
+                        <f:facet name="header">Platz B
+                        </f:facet>
+                        <h:outputText value="#{zeile.b}" styleClass="#{zeile.b.getFarbe()}"/>
+                    </p:column>
+                    <p:column>
+                        <f:facet name="header">Platz C
+                        </f:facet>
+                        <h:outputText value="#{zeile.c}" styleClass="#{zeile.c.getFarbe()}"/>
+                    </p:column>
+
+                    <p:column>
+                        <f:facet name="header">Platz D
+                        </f:facet>
+                        <h:outputText value="#{zeile.d}" styleClass="#{zeile.d.getFarbe()}"/>
+                    </p:column>
+
+                    <p:column style="width: 10%" rendered="#{gameSelectionHolder.game.model.abbrechenZulassen}">
+                        <f:facet name="header">
+                        </f:facet>
+                        <p:commandButton icon="ui-icon-check" update="fm" ajax="false"
+                                         actionListener="#{gameSelectionHolder.game.durchfuehrung.beenden()}"
+                                         disabled="#{!gameSelectionHolder.game.model.abbrechenZulassen}">
+                        </p:commandButton>
+                    </p:column>
+
+                </p:dataTable>
+
+            </h:panelGrid>
+
+            <p:remoteCommand name="enter" action="#{gameSelectionHolder.game.durchfuehrung.enter()}"
+                             update="fm:stabelle,fm:vtabelle,fm:wtabelle,fm:btabelle"/>
+
+            <script>
+                $(document).off('keydown').on('keydown', function(){
+                    if(event.keyCode == 13){
+                        enter();
+                        return false;
+                    }
+                   })
+
+            </script>
+
+        </h:form>
+
+    </ui:define>
+</ui:composition>

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+
+<!--suppress ALL -->
+<ui:composition xmlns:ui="jakarta.faces.facelets"
+                xmlns:h="jakarta.faces.html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="jakarta.faces.core"
+                xmlns="http://www.w3.org/1999/xhtml" template="/template.xhtml">
+
+
+    <ui:define name="title">Matrix</ui:define>
+
+    <ui:define name="page">
+
+        <br/>
+        <br/>
+
+        <h:form id="fm">
+            <input type="hidden" name="_csrf" value="#{_csrf.token}"/>
+            <div id="main">
+                <div class="page_margins">
+                    <div class="page">
+                        <div class="inset">
+
+                            <p:fieldset legend="Schiri-Zettel">
+
+                                <h:panelGrid columns="2" id="inputelements">
+
+                                    <p:selectOneButton value="#{beobachterBean.schiriAuswahl}">
+                                        <f:selectItem itemLabel="Gruppe" itemValue="gruppe"/>
+                                        <f:selectItem itemLabel="Finale" itemValue="finale"/>
+                                        <p:ajax event="change" update="schiri"
+                                                actionListener="#{beobachterBean.schiriAuswahl}"/>
+                                    </p:selectOneButton>
+
+                                    <p:commandButton action="newmannschaft_view" icon="ui-icon-print"
+                                                     ajax="false">
+                                        <p:printer target="schiri"/>
+                                    </p:commandButton>
+
+                                </h:panelGrid>
+
+                                <h:panelGrid columns="1" id="inputelements2">
+
+                                    <h:panelGroup id="schiri" layout="block">
+                                        <h:outputText value="#{beobachterBean.getSchiriZettel()}"
+                                                      escape="false"/>
+                                    </h:panelGroup>
+                                </h:panelGrid>
+
+
+                            </p:fieldset>
+
+
+                        </div>
+                        <br/>
+                    </div>
+                </div>
+            </div>
+        </h:form>
+
+    </ui:define>
+
+</ui:composition>

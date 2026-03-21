@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+
+<!--suppress ALL -->
+<ui:composition xmlns:ui="jakarta.faces.facelets"
+                xmlns:h="jakarta.faces.html"
+                xmlns="http://www.w3.org/1999/xhtml" template="/template.xhtml">
+
+
+    <ui:define name="title">Matrix</ui:define>
+
+    <ui:define name="page">
+
+        <br/>
+        <br/>
+
+        <h:panelGroup id="matrix" layout="block">
+            <h:outputText value="#{beobachterBean.getMatrix()}" escape="false"/>
+        </h:panelGroup>
+
+    </ui:define>
+
+</ui:composition>

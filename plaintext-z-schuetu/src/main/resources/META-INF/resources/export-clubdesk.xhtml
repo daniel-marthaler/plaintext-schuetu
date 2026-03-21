@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+
+
+<!--suppress ALL -->
+<ui:composition xmlns:ui="jakarta.faces.facelets"
+                xmlns:h="jakarta.faces.html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="jakarta.faces.core"
+                xmlns="http://www.w3.org/1999/xhtml" template="/template.xhtml">
+
+    <ui:define name="title">Mannschaften für Turnier: #{gameSelectionHolder.game.model.gameName} Clubdesk Export</ui:define>
+
+    <ui:define name="page">
+
+        <p:messages/>
+        <br/>
+        <h:form id="fm">
+            <input type="hidden" name="_csrf" value="#{_csrf.token}"/>
+
+            <h:commandLink>
+                <p:graphicImage value="/static/images/excel.png"/>
+                <p:dataExporter type="xls" target="tbl" fileName="clubdesk-export" pageOnly="true"/>
+            </h:commandLink>
+
+
+            <h:commandLink>
+                <p:graphicImage value="/static/images/csv.png"/>
+                <p:dataExporter type="csv" target="tbl" fileName="clubdesk-export" pageOnly="true"/>
+            </h:commandLink>
+
+
+            <p:dataTable emptyMessage="leer" id="tbl" var="mannschaft" value="#{gameSelectionHolder.game.findMannschaftenMitDuplikatserkennung()}" rowIndexVar="ri">
+
+                <p:column exportable="false">
+                    <f:facet name="nr">
+                        <h:outputText value="Nr."/>
+                    </f:facet>
+                    <h:outputText value="#{ri +1}"/>
+                </p:column>
+
+                <p:column  headerText="Anrede" filterMatchMode="contains">
+                    <h:outputText value="#{mannschaft.begleitpersonAnrede}"/>
+                </p:column>
+
+                <p:column headerText="Nachname">
+                    <h:outputText value="#{mannschaft.begleitperson2Name}"/>
+                </p:column>
+
+                <p:column headerText="Vorname">
+                    <h:outputText value="#{mannschaft.begleitperson2Vorname}"/>
+                </p:column>
+
+                <p:column  headerText="Adresse">
+                    <h:outputText value="#{mannschaft.begleitpersonStrasse}"/>
+                </p:column>
+
+                <p:column  headerText="PLZ">
+                    <h:outputText value="#{mannschaft.getBegleitpersonPLZ()}"/>
+                </p:column>
+
+                <p:column  headerText="Ort">
+                    <h:outputText value="#{mannschaft.getBegleitpersonOrt()}"/>
+                </p:column>
+
+                <p:column  headerText="E-Mail">
+                    <h:outputText value="#{mannschaft.begleitpersonEmail}"/>
+                </p:column>
+
+                <p:column headerText="Turnier">
+                    <h:outputText value="#{gameSelectionHolder.game.model.gameName}"/>
+                </p:column>
+
+                <p:column headerText="Mannschaft">
+                    <h:outputText value="#{mannschaft.name}"/>
+                </p:column>
+
+                <p:column headerText="Schulhaus">
+                    <h:outputText value="#{mannschaft.schulhaus}"/>
+                </p:column>
+
+                <p:column headerText="AnzahlSpieler">
+                    <h:outputText value="#{mannschaft.anzahlSpieler}"/>
+                </p:column>
+
+                <p:column headerText="Doppelt">
+                    <h:outputText value="#{mannschaft.doppelterBetreuer}"/>
+                </p:column>
+
+            </p:dataTable>
+
+        </h:form>
+
+    </ui:define>
+
+</ui:composition>

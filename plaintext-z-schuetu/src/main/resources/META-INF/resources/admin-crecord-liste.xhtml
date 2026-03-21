@@ -1,0 +1,61 @@
+<!--suppress ALL -->
+
+
+<ui:composition xmlns:ui="jakarta.faces.facelets" xmlns:h="jakarta.faces.html"
+                xmlns:p="http://primefaces.org/ui" xmlns:f="jakarta.faces.core"
+                xmlns="http://www.w3.org/1999/xhtml" template="/template.xhtml">
+
+    <ui:define name="title">C Records</ui:define>
+
+    <ui:define name="page">
+
+        <br/>
+
+        <h:form id="fm">
+            <input type="hidden" name="_csrf" value="#{_csrf.token}"/>
+            <p:fieldset id="fs">
+
+                <p:messages/>
+
+                <br/>
+
+                <p:dataTable emptyMessage="leer" id="tbl" var="korrektur"
+                             value="#{korrekturRepository.findByGame(gameSelectionHolder.game.model.gameName)}"
+                             paginator="false" rowIndexVar="ri">
+
+                    <p:column>
+                        <f:facet name="id">
+                            <h:outputText value="Nr."/>
+                        </f:facet>
+                        <h:outputText value="#{korrektur.id}"/>
+                    </p:column>
+
+                    <p:column>
+                        <f:facet name="header">
+                            <h:outputText value="Typ"/>
+                        </f:facet>
+                        <h:outputText value="#{korrektur.typ}"/>
+                    </p:column>
+
+                    <p:column>
+                        <f:facet name="header">
+                            <h:outputText value="Wert"/>
+                        </f:facet>
+                        <h:outputText value="#{korrektur.wert}"/>
+                    </p:column>
+
+                    <p:column>
+                        <f:facet name="header">
+                            <h:outputText value="Test"/>
+                        </f:facet>
+                        <h:outputText value="#{korrektur.game}"/>
+                    </p:column>
+
+                </p:dataTable>
+
+
+            </p:fieldset>
+        </h:form>
+    </ui:define>
+
+</ui:composition>

@@ -1,0 +1,414 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+
+<!--suppress ALL -->
+<ui:composition xmlns:ui="jakarta.faces.facelets"
+                xmlns:h="jakarta.faces.html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="jakarta.faces.core"
+                xmlns="http://www.w3.org/1999/xhtml" template="/template.xhtml">
+
+    <ui:define name="title">Mannschaft bearbeiten</ui:define>
+
+    <ui:define name="page">
+
+        <h:outputScript>
+            history.pushState(null, null, '/mannschaft-details.htm');
+        </h:outputScript>
+
+
+        <p:fieldset>
+            <br/>
+            <p:messages/>
+
+
+            <div class="ui-fluid">
+            <div class="ui-g">
+            <div class="ui-g-12">
+            <div class="card">
+
+
+            <h:form id="fm">
+            <input type="hidden" name="_csrf" value="#{_csrf.token}"/>
+                <p:panelGrid columns="2" class="ui-g-12">
+
+
+                    <h:panelGrid columns="2" id="inputelements">
+                        <h:outputLabel for="name" value="Name "/>
+                        <p:inputText id="name" label="Name"
+                                     value="#{mannschaftBackingBean.selected.name}" size="5" disabled="true"/>
+
+                        <h:outputLabel for="mannschaftsnamen" value="Mannschaftsnamen "/>
+                        <p:inputText id="mannschaftsnamen" label="Mannschaftsnamen"
+                                     value="#{mannschaftBackingBean.selected.nickname}" size="40">
+
+                        </p:inputText>
+
+                        <h:outputLabel for="farbe" value="Farbe "/>
+                        <p:inputText id="farbe" label="Farbe"
+                                     value="#{mannschaftBackingBean.selected.farbe}" size="40">
+
+                        </p:inputText>
+
+                        <h:outputLabel for="captain" value="Captain "/>
+                        <p:inputText id="captain" label="Capitain"
+                                     value="#{mannschaftBackingBean.selected.captainName}" size="40"  disabled="true"></p:inputText>
+
+                        <h:outputLabel for="captainv" value="Captain Vorname"/>
+                        <p:inputText id="captainv" label="Capitain Vorname"
+                                     value="#{mannschaftBackingBean.selected.captain2Vorname}" size="40"></p:inputText>
+
+                        <h:outputLabel for="captainn" value="Captain Name"/>
+                        <p:inputText id="captainn" label="Capitain Name"
+                                     value="#{mannschaftBackingBean.selected.captain2Name}" size="40">
+
+                        </p:inputText>
+
+                        <h:outputLabel for="captainTelefon" value="Captain Telefon"/>
+                        <p:inputMask id="captainTelefon" label="captainTelefon"
+                                     value="#{mannschaftBackingBean.selected.captainTelefon}"
+                                     mask="999 999 99 99" size="40">
+                        </p:inputMask>
+
+                        <h:outputLabel for="captainEmail" value="Captain Email"/>
+                        <p:inputText id="captainEmail" label="captainEmail"
+                                     value="#{mannschaftBackingBean.selected.captainEmail}" size="40">
+                        </p:inputText>
+
+                        <h:outputLabel for="b_anrede" value="Begleitperson Anrede"/>
+                        <p:selectOneMenu id="b_anrede" value="#{mannschaftBackingBean.selected.begleitpersonAnrede}">
+                            <f:selectItem itemLabel="An" itemValue="An"/>
+                            <f:selectItem itemLabel="Frau" itemValue="Frau"/>
+                            <f:selectItem itemLabel="Herr" itemValue="Herr"/>
+                        </p:selectOneMenu>
+
+                        <h:outputLabel for="begleitperson" value="Begleitperson"/>
+                        <p:inputText id="begleitperson" label="Begleitperson"
+                                     value="#{mannschaftBackingBean.selected.begleitpersonName}" size="40" disabled="true">
+
+                        </p:inputText>
+
+                        <h:outputLabel for="begleitpersonv" value="Begleitperson Vorname"/>
+                        <p:inputText id="begleitpersonv" label="Begleitperson Vorname"
+                                     value="#{mannschaftBackingBean.selected.begleitperson2Vorname}" size="40">
+
+                        </p:inputText>
+
+                        <h:outputLabel for="begleitpersonn" value="Begleitperson Name"/>
+                        <p:inputText id="begleitpersonn" label="Begleitperson Name"
+                                     value="#{mannschaftBackingBean.selected.begleitperson2Name}" size="40" >
+
+                        </p:inputText>
+
+                        <h:outputLabel for="b_strasse" value="Begleitperson Strasse"/>
+                        <p:inputText id="b_strasse"
+                                     value="#{mannschaftBackingBean.selected.begleitpersonStrasse}" size="40"/>
+
+                        <h:outputLabel for="b_ort" value="Begleitperson Ort"/>
+                        <p:inputText id="b_ort"
+                                     value="#{mannschaftBackingBean.selected.begleitpersonPLZOrt}" size="40"/>
+
+                        <h:outputLabel for="begleitpersonTelefon" value="Begleitperson Telefon"/>
+                        <p:inputMask id="begleitpersonTelefon" label="begleitpersonTelefon"
+                                     value="#{mannschaftBackingBean.selected.begleitpersonTelefon}"
+                                     mask="999 999 99 99" size="40">
+                        </p:inputMask>
+
+                        <h:outputLabel for="begleitpersonEmail" value="Begleitperson Email"/>
+                        <p:inputText id="begleitpersonEmail" label="begleitpersonEmail"
+
+                                     value="#{mannschaftBackingBean.selected.begleitpersonEmail}" size="40">
+
+                        </p:inputText>
+
+                        <h:outputLabel for="klasseb" value="Klassenbezeichner (Bsp: b für 2b)"/>
+                        <p:inputText id="klasseb" label="Klassenbezeichner"
+                                     value="#{mannschaftBackingBean.selected.klassenBezeichnung}" size="5">
+
+                        </p:inputText>
+
+                        <h:outputLabel for="gr" value="GR (Bsp: A / B)"/>
+                        <p:inputText id="gr" label="GR(A/B), dort wo mehr als 7 Mannschaften da sind"
+                                     value="#{mannschaftBackingBean.selected.gr}" size="5"/>
+
+
+                        <h:outputLabel for="schulhaus" value="Schulhaus "/>
+                        <p:inputText id="schulhaus" label="Schulhaus"
+                                     value="#{mannschaftBackingBean.selected.schulhaus}" size="40">
+
+                        </p:inputText>
+
+                        <h:outputLabel for="spieler" value="Anzahl Spieler "/>
+
+
+                        <p:selectOneMenu id="spieler" value="#{mannschaftBackingBean.selected.anzahlSpieler}">
+                            <f:selectItem itemLabel="1" itemValue="1"/>
+                            <f:selectItem itemLabel="2" itemValue="2"/>
+                            <f:selectItem itemLabel="3" itemValue="3"/>
+                            <f:selectItem itemLabel="4" itemValue="4"/>
+                            <f:selectItem itemLabel="5" itemValue="5"/>
+                            <f:selectItem itemLabel="6" itemValue="6"/>
+                            <f:selectItem itemLabel="7" itemValue="7"/>
+                            <f:selectItem itemLabel="8" itemValue="8"/>
+                            <f:selectItem itemLabel="9" itemValue="9"/>
+                            <f:selectItem itemLabel="10" itemValue="10"/>
+                            <f:selectItem itemLabel="11" itemValue="11"/>
+                            <f:selectItem itemLabel="12" itemValue="12"/>
+                            <f:selectItem itemLabel="13" itemValue="13"/>
+                            <f:selectItem itemLabel="14" itemValue="14"/>
+                            <f:selectItem itemLabel="15" itemValue="15"/>
+                        </p:selectOneMenu>
+
+                        <h:outputLabel for="klasse" value="Klasse"/>
+                        <p:selectOneMenu id="klasse" value="#{mannschaftBackingBean.selected.klasse}"
+                                         event="onchange" disabled="#{! gameSelectionHolder.isAnmeldung()}">
+                            <f:selectItem itemLabel="1" itemValue="1"/>
+                            <f:selectItem itemLabel="2" itemValue="2"/>
+                            <f:selectItem itemLabel="3" itemValue="3"/>
+                            <f:selectItem itemLabel="4" itemValue="4"/>
+                            <f:selectItem itemLabel="5" itemValue="5"/>
+                            <f:selectItem itemLabel="6" itemValue="6"/>
+                            <f:selectItem itemLabel="7" itemValue="7"/>
+                            <f:selectItem itemLabel="8" itemValue="8"/>
+                            <f:selectItem itemLabel="9" itemValue="9"/>
+                        </p:selectOneMenu>
+
+                        <h:outputLabel for="geschlecht" value="M / K"/>
+                        <p:selectOneMenu id="geschlecht"
+                                         value="#{mannschaftBackingBean.selected.geschlecht}"
+                                         disabled="#{! gameSelectionHolder.isAnmeldung()}">
+                            <f:selectItem itemLabel="Knaben" itemValue="K"/>
+                            <f:selectItem itemLabel="M&#228;dchen" itemValue="M"/>
+                        </p:selectOneMenu>
+
+                        <h:outputLabel for="spielwunsch" value="Spielwunsch"/>
+                        <p:selectOneMenu id="spielwunsch"
+                                         value="#{mannschaftBackingBean.selected.spielWunschHint}"
+                                         event="onchange" disabled="#{! gameSelectionHolder.isAnmeldung()}">
+                            <f:selectItem itemLabel="-" itemValue=""/>
+                            <f:selectItem itemLabel="Samstag" itemValue="morgen"/>
+                            <f:selectItem itemLabel="Samstag Nachmittag (Bitte nicht benutzen)"
+                                          itemValue="nachmittag"/>
+                            <f:selectItem itemLabel="Sonntag Morgen" itemValue="sonntag"/>
+                        </p:selectOneMenu>
+
+                        <h:outputLabel for="notizen" value="Notizen"/>
+                        <p:inputTextarea id="notizen" rows="5" cols="30"
+                                         value="#{mannschaftBackingBean.selected.notizen}"
+                                         autoResize="false"/>
+
+                        <h:outputLabel value="Disqualifiziert"/>
+                        <p:selectBooleanCheckbox
+                                id="disqualifiziert"
+                                value="#{mannschaftBackingBean.selected.disqualifiziert}">
+                        </p:selectBooleanCheckbox>
+<br/><br/>
+                        <p:panelGrid id="button" columns="1" layout="flex">
+
+
+                            <p:commandButton id="submit" value="Speichern"
+                                             action="#{mannschaftBackingBean.save()}" execute="@form"
+                                             update="@form"/>
+
+                            <p:commandButton action="mannschaft-liste.htm?faces-redirect=true" icon="pi pi-backward" value="Zurück"  ajax="false" immediate="true"/>
+
+
+                            <p:commandButton value="Löschen" action="#{mannschaftBackingBean.delete()}">
+                                <p:confirm header="Bitte Bestätigen" message="Wirklich löschen?"
+                                           icon="ui-icon-alert" rendered="#{gameSelectionHolder.isAnmeldung()}"/>
+                            </p:commandButton>
+
+                            <p:confirmDialog global="true" showEffect="fade" hideEffect="explode">
+                                <p:commandButton value="Ja" type="button" styleClass="ui-confirmdialog-yes"
+                                                 icon="ui-icon-check" action="delete" ajax="false"/>
+                                <p:commandButton value="Nein" type="button" styleClass="ui-confirmdialog-no"
+                                                 icon="ui-icon-close"/>
+                            </p:confirmDialog>
+
+                        </p:panelGrid>
+
+                        <p:tooltip for="submit" value="Mannschaft speichern" showEffect="fade" hideEffect="fade"/>
+
+                        <p:watermark for="captain" value="Vorname und Name"/>
+                        <p:watermark for="captainEmail" value="Emailadresse"/>
+                        <p:watermark for="captainTelefon" value="Telefonnummer (optional)"/>
+                        <p:watermark for="b_ort" value="PLZ und Ort"/>
+                        <p:watermark for="begleitperson" value="Vorname und Name"/>
+                        <p:watermark for="begleitperson" value="Vorname und Name"/>
+                        <p:watermark for="begleitpersonTelefon" value="Telefonnummer"/>
+                        <p:watermark for="begleitpersonEmail" value="Emailadresse"/>
+
+                    </h:panelGrid>
+
+
+                    <!-- -->
+
+
+                    <h:panelGrid columns="2" rendered="#{mannschaftBackingBean.kopierenEnabled()}">
+
+                        <h:outputLabel value="Quelle für Kopie"/>
+
+                        <h:panelGroup layout="block">
+
+                            <p:selectOneMenu value="#{mannschaftBackingBean.copyMannschaftFrom}" style="left"
+                                             ajax="true">
+                                <f:selectItem itemLabel="Kopieren von Turnier" itemValue=""/>
+                                <f:selectItems value="#{mannschaftBackingBean.getOldJahreGames()}" var="dt" itemLabel="#{dt}"
+                                               itemValue="#{dt}"/>
+                                <p:ajax update="fm"/>
+                            </p:selectOneMenu>
+
+                            <p:selectOneMenu value="#{mannschaftBackingBean.selectOldId}" style="left" ajax="true"
+                                             filter="true" filterMatchMode="contains">
+
+                                <f:selectItem itemLabel="Begleitperson wählen" itemValue=""/>
+                                <f:selectItems value="#{mannschaftBackingBean.getOldMannschaften()}" var="mn"
+                                               itemLabel="#{mn.begleitpersonName}" itemValue="#{mn}"/>
+
+                                <p:ajax event="change" listener="#{mannschaftBackingBean.oldSelect()}" update="fm"/>
+                            </p:selectOneMenu>
+                        </h:panelGroup>
+
+
+                        <h:outputLabel value="Mannschaftsnamen "/>
+                        <p:inputText label="Mannschaftsnamen"
+                                     value="#{mannschaftBackingBean.selectedOl.nickname}" size="40">
+
+                        </p:inputText>
+
+                        <h:outputLabel value="Farbe "/>
+                        <p:inputText label="Farbe"
+                                     value="#{mannschaftBackingBean.selectedOl.farbe}" size="40">
+
+                        </p:inputText>
+
+                        <h:outputLabel value="Captain "/>
+                        <p:inputText label="Capitain" value="#{mannschaftBackingBean.selectedOl.captainName}" size="40">
+
+                        </p:inputText>
+
+                        <h:outputLabel value="Captain Telefon"/>
+                        <p:inputMask label="captainTelefon" value="#{mannschaftBackingBean.selectedOl.captainTelefon}"
+                                     mask="999 999 99 99" size="40"/>
+
+                        <h:outputLabel value="Captain Email"/>
+                        <p:inputText label="captainEmail" value="#{mannschaftBackingBean.selectedOl.captainEmail}"
+                                     size="40"/>
+
+                        <h:outputLabel value="Begleitperson Anrede"/>
+                        <p:selectOneMenu value="#{mannschaftBackingBean.selectedOl.begleitpersonAnrede}">
+                            <f:selectItem itemLabel="An" itemValue="An"/>
+                            <f:selectItem itemLabel="Frau" itemValue="Frau"/>
+                            <f:selectItem itemLabel="Herr" itemValue="Herr"/>
+                        </p:selectOneMenu>
+
+                        <h:outputLabel value="Begleitperson Name"/>
+                        <p:inputText label="Begleitperson" value="#{mannschaftBackingBean.selectedOl.begleitpersonName}"
+                                     size="40">
+
+                        </p:inputText>
+
+                        <h:outputLabel value="Begleitperson Strasse"/>
+                        <p:inputText value="#{mannschaftBackingBean.selectedOl.begleitpersonStrasse}" size="40"/>
+
+                        <h:outputLabel value="Begleitperson Ort"/>
+                        <p:inputText value="#{mannschaftBackingBean.selectedOl.begleitpersonPLZOrt}" size="40"/>
+
+                        <h:outputLabel value="Begleitperson Telefon"/>
+                        <p:inputMask label="begleitpersonTelefon"
+                                     value="#{mannschaftBackingBean.selectedOl.begleitpersonTelefon}"
+                                     mask="999 999 99 99" size="40"/>
+
+                        <h:outputLabel value="Begleitperson Email"/>
+                        <p:inputText label="begleitpersonEmail"
+                                     value="#{mannschaftBackingBean.selectedOl.begleitpersonEmail}" size="40">
+
+                        </p:inputText>
+
+                        <h:outputLabel value="Klassenbezeichner (Bsp: b für 2b)"/>
+                        <p:inputText label="Klassenbezeichner"
+                                     value="#{mannschaftBackingBean.selectedOl.klassenBezeichnung}" size="5">
+
+                        </p:inputText>
+
+                        <h:outputLabel value="Schulhaus "/>
+                        <p:inputText label="Schulhaus" value="#{mannschaftBackingBean.selectedOl.schulhaus}" size="40">
+
+                        </p:inputText>
+
+                        <h:outputLabel value="Anzahl Spieler "/>
+
+                        <p:selectOneMenu value="#{mannschaftBackingBean.selectedOl.anzahlSpieler}">
+                            <f:selectItem itemLabel="1" itemValue="1"/>
+                            <f:selectItem itemLabel="2" itemValue="2"/>
+                            <f:selectItem itemLabel="3" itemValue="3"/>
+                            <f:selectItem itemLabel="4" itemValue="4"/>
+                            <f:selectItem itemLabel="5" itemValue="5"/>
+                            <f:selectItem itemLabel="6" itemValue="6"/>
+                            <f:selectItem itemLabel="7" itemValue="7"/>
+                            <f:selectItem itemLabel="8" itemValue="8"/>
+                            <f:selectItem itemLabel="9" itemValue="9"/>
+                            <f:selectItem itemLabel="10" itemValue="10"/>
+                            <f:selectItem itemLabel="11" itemValue="11"/>
+                            <f:selectItem itemLabel="12" itemValue="12"/>
+                            <f:selectItem itemLabel="13" itemValue="13"/>
+                            <f:selectItem itemLabel="14" itemValue="14"/>
+                            <f:selectItem itemLabel="15" itemValue="15"/>
+                        </p:selectOneMenu>
+
+                        <h:outputLabel value="Klasse"/>
+                        <p:selectOneMenu value="#{mannschaftBackingBean.selectedOl.klasse}" event="onchange"
+                                         disabled="#{! gameSelectionHolder.isAnmeldung()}">
+                            <f:selectItem itemLabel="1" itemValue="1"/>
+                            <f:selectItem itemLabel="2" itemValue="2"/>
+                            <f:selectItem itemLabel="3" itemValue="3"/>
+                            <f:selectItem itemLabel="4" itemValue="4"/>
+                            <f:selectItem itemLabel="5" itemValue="5"/>
+                            <f:selectItem itemLabel="6" itemValue="6"/>
+                            <f:selectItem itemLabel="7" itemValue="7"/>
+                            <f:selectItem itemLabel="8" itemValue="8"/>
+                            <f:selectItem itemLabel="9" itemValue="9"/>
+                        </p:selectOneMenu>
+
+                        <h:outputLabel value="M / K"/>
+                        <p:selectOneMenu
+                                value="#{mannschaftBackingBean.selectedOl.geschlecht}"
+                                disabled="#{! gameSelectionHolder.isAnmeldung()}">
+                            <f:selectItem itemLabel="Knaben" itemValue="K"/>
+                            <f:selectItem itemLabel="M&#228;dchen" itemValue="M"/>
+                        </p:selectOneMenu>
+
+                        <h:outputLabel value="Spielwunsch"/>
+                        <p:selectOneMenu
+                                value="#{mannschaftBackingBean.selectedOl.spielWunschHint}"
+                                event="onchange" disabled="#{! gameSelectionHolder.isAnmeldung()}">
+                            <f:selectItem itemLabel="-" itemValue=""/>
+                            <f:selectItem itemLabel="Samstag" itemValue="morgen"/>
+                            <f:selectItem itemLabel="Samstag Nachmittag (Bitte nicht benutzen)"
+                                          itemValue="nachmittag"/>
+                            <f:selectItem itemLabel="Sonntag Morgen" itemValue="sonntag"/>
+                        </p:selectOneMenu>
+
+                        <h:outputLabel value="Notizen"/>
+                        <p:inputTextarea rows="5" cols="30"
+                                         value="#{mannschaftBackingBean.selectedOl.notizen}"
+                                         autoResize="false"/>
+
+                        <h:panelGroup layout="block">
+                            <p:commandButton action="#{mannschaftBackingBean.copyOld()}" icon="fa fa-backward"
+                                             value="kopieren" execute="@form"
+                                             update="@form"/>
+                        </h:panelGroup>
+
+                    </h:panelGrid>
+
+                </p:panelGrid>
+            </h:form>
+            </div>
+            </div>
+            </div>
+            </div>
+        </p:fieldset>
+
+    </ui:define>
+
+</ui:composition>

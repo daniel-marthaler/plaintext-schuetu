@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+
+<!--suppress ALL -->
+<ui:composition xmlns:ui="jakarta.faces.facelets"
+                xmlns:h="jakarta.faces.html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="jakarta.faces.core"
+                xmlns="http://www.w3.org/1999/xhtml" template="/template.xhtml">
+
+    <ui:define name="title">Alle Kategorien</ui:define>
+
+    <ui:define name="page">
+
+        <p:messages/>
+        <br/>
+        <h:form id="fm">
+            <input type="hidden" name="_csrf" value="#{_csrf.token}"/>
+
+            <p:fieldset>
+
+                <ui:repeat value="#{kategorieBackingBean.getKategorien()}" var="kategorie" varStatus="status">
+                    <br/>
+
+                    <p:dataTable id="tbl" var="mannschaft" value="#{kategorie.mannschaften}">
+
+                        <f:facet name="header">
+                            <h:outputText value="#{kategorie.name}"/>
+                        </f:facet>
+
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="Name"/>
+                            </f:facet>
+                            <h:outputText value="#{mannschaft.name}"/>
+                        </p:column>
+
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="Captain"/>
+                            </f:facet>
+                            <h:outputText value="#{mannschaft.captain2Vorname} #{mannschaft.captain2Name}"/>
+                        </p:column>
+
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="Begleitperson"/>
+                            </f:facet>
+                            <h:outputText value="#{mannschaft.begleitperson2Vorname} #{mannschaft.begleitperson2Name}"/>
+                        </p:column>
+
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="Schulhaus"/>
+                            </f:facet>
+                            <h:outputText value="#{mannschaft.schulhaus}"/>
+                        </p:column>
+
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="Klasse"/>
+                            </f:facet>
+                            <h:outputText
+                                    value="#{mannschaft.klasse} - #{mannschaft.klassenBezeichnung}"/>
+                        </p:column>
+
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="Spieler"/>
+                            </f:facet>
+                            <h:outputText value="#{mannschaft.anzahlSpieler}"/>
+                        </p:column>
+
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="GR (A/B)"/>
+                            </f:facet>
+                            <h:outputText value="#{mannschaft.gr}"/>
+                        </p:column>
+
+                        <p:column size="2" lable="Spielwunsch">
+                            <p:commandButton action="#{kategorieBackingBean.spielwunschEintragen(kategorie.id)}"
+                                             value="#{kategorie.spielwunsch.toString()}" update=":fm" ajax="true"/>
+                        </p:column>
+
+                        <p:column size="2" lable="Verschieben">
+
+                            <p:commandButton
+                                    action="#{kategorieBackingBean.manuelleZuordnungDurchziehen(mannschaft.name,'-')}"
+                                    rendered="#{!kategorie.getFirst()}" icon="ui-icon-circle-arrow-n" update=":fm"
+                                    ajax="true"/>
+
+                            <p:commandButton
+                                    action="#{kategorieBackingBean.manuelleZuordnungDurchziehen(mannschaft.name, '+')}"
+                                    rendered="#{!kategorie.getLast()}" icon="ui-icon-circle-arrow-s" update=":fm"
+                                    ajax="true"/>
+
+                        </p:column>
+                    </p:dataTable>
+                </ui:repeat>
+
+            </p:fieldset>
+            <br/>
+        </h:form>
+
+    </ui:define>
+</ui:composition>

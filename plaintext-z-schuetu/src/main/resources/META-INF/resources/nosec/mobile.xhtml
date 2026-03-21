@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<ui:composition xmlns:ui="jakarta.faces.facelets"
+                xmlns:h="jakarta.faces.html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="jakarta.faces.core"
+                xmlns="http://www.w3.org/1999/xhtml"
+                template="info/template-noframe.xhtml">
+
+    <ui:define name="page">
+
+        <script type="text/javascript">
+		    var timeout = setTimeout("location.reload(true);", 60000);
+        </script>
+
+
+        <div class="ui-fluid">
+        <div class="ui-g">
+        <div class="ui-g-12">
+        <div class="card">
+
+
+        <h:form id="fm">
+            <input type="hidden" name="_csrf" value="#{_csrf.token}"/>
+
+            <p:blockUI block="fm" trigger="iconOnly"/>
+
+                <h:panelGrid columns="2" class="ui-g-12">
+
+                    <p:selectOneMenu id="k" value="#{mobileController.mannschaftAuswahl}" filter="true" filterMatchMode="contains" onchange="submit()">
+                        <f:selectItem itemLabel="Team wählen" itemValue="0"/>
+                        <f:selectItems value="#{mobileController.mannschaften}" var="entry" itemLabel="#{mobileController.mannschaften.get(entry)}" itemValue="#{entry}"/>
+                        <p:ajax update="fm" event="change" action="#{mobileController.mannschaftAuswahl}" onstart="PF('block').show()" oncomplete="PF('block').hide()"/>
+                    </p:selectOneMenu>
+
+                    <p:commandButton  id="iconOnly" update="fm" actionListener="#{mobileController.load}" icon="pi pi-refresh" title="neu Laden"  />
+
+                </h:panelGrid>
+
+
+            <br/><br/> <br/><br/>
+
+            <p:fieldset id="gr" legend="Gruppenspiele" style="margin-bottom:20px">
+
+                <p:dataTable emptyMessage="leer" id="tbl" var="spiel" value="#{mobileController.getSpiele()}">
+
+                <p:column headerText="Zeit" style="width:20%">
+                    <h:outputText style="font-weight:bold;color: #{spiel.color}" value="#{spiel.start}"/>
+                </p:column>
+
+                    <p:column headerText="Platz" style="width:15%" >
+                        <h:outputText style="font-weight:bold;color: #{spiel.color}" value="#{spiel.platz}"/>
+                    </p:column>
+
+                    <p:column headerText="Gegner" style="width:45%" >
+                        <h:outputText style="font-weight:bold;color: #{spiel.color}" value="#{spiel.gegner}"/>
+                    </p:column>
+
+                    <p:column headerText="Resultat" style="width:20%">
+                        <h:outputText style="font-weight:bold;color: #{spiel.color}" value="#{spiel.resultat}"/>
+                    </p:column>
+
+                </p:dataTable>
+
+
+            </p:fieldset>
+
+            <p:fieldset id="fn" legend="Finale" >
+                    <h:outputText style="font-weight:bold;color: #{mobileController.getFinale().get(0).getColor()}" value="#{mobileController.getFinale().get(0).getZeile()}"/>
+            </p:fieldset>
+
+
+        </h:form>
+
+        </div>
+    </div>
+</div>
+        </div>
+
+    </ui:define>
+</ui:composition>

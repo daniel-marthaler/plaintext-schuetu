@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+
+<!--suppress ALL -->
+<ui:composition xmlns:ui="jakarta.faces.facelets"
+                xmlns:h="jakarta.faces.html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="jakarta.faces.core"
+                xmlns:a="jakarta.faces.passthrough"
+                xmlns="http://www.w3.org/1999/xhtml" template="/template.xhtml">
+
+    <ui:define name="title">Spiele Eintragen</ui:define>
+
+    <ui:define name="page">
+
+        <h:form id="fm">
+            <input type="hidden" name="_csrf" value="#{_csrf.token}"/>
+
+            <p:poll interval="60" update="fm:mann"/>
+
+            <p:growl severity="error" style="'font-size' : '12pt','width' : '100px'"/>
+
+            <p:commandButton action="#{eintragenBackingBean.eintragen()}" icon="" value="eintragen"
+                             execute="@form" update="@form" disabled="#{!eintragenBackingBean.eintragOK()}"/>
+
+
+            <br/>
+
+            <br/> <br/>
+
+            <p:dataTable id="mann" var="mannsch" value="#{eintragenBackingBean.penalty.finalList}" draggableRows="true"
+                         rendered="#{eintragenBackingBean.getPenalty() != null}">
+                <p:ajax event="rowReorder" listener="#{eintragenBackingBean.onRowReorder}" update=":fm"/>
+                <f:facet name="header">
+                    <p:commandButton id="pen"
+                                     value="PENALTY EINTRAGEN -> Neue Reihenfolge: #{eintragenBackingBean.getPenalty().toString()} Original Reihenfolge: #{eintragenBackingBean.getPenalty().getReihenfolgeOrig()} (Verschieben unten !!!)"
+                                     actionListener="#{eintragenBackingBean.penaltyEintragen()}" update="@form"/>
+                </f:facet>
+                <p:column>
+                    <h:outputText value="#{mannsch.getName()}"/>
+                </p:column>
+
+            </p:dataTable>
+            <br/>
+            <br/>
+            <p:dataTable selection="#{eintragenBackingBean.selected}" selectionMode="single" rowKey="#{spiel.id}"
+                         emptyMessage="leer" id="tbl" var="spiel"
+                         value="#{eintragenBackingBean.getEinzutragende()}"
+                         paginator="false" rowIndexVar="ri">
+
+                <p:ajax event="rowSelect" update="fm" global="false"/>
+
+                <p:column id="id" style="width: 10%">
+                    <f:facet name="header">
+                        <h:outputText value="ID"/>
+                    </f:facet>
+                    <h:outputText value="#{spiel.idString}"/>
+                </p:column>
+
+                <p:column id="platz" style="width: 10%">
+                    <f:facet name="header">
+                        <h:outputText value="Platz"/>
+                    </f:facet>
+                    <h:outputText value="#{spiel.platz}"/>
+                </p:column>
+
+                <p:column id="start">
+                    <f:facet name="header">
+                        <h:outputText value="Start"/>
+                    </f:facet>
+
+                    <h:outputText value="#{spiel.start}">
+                        <f:convertDateTime type="date"
+                                           pattern="HH:mm"
+                                           timeZone="Europe/Zurich"/>
+                    </h:outputText>
+
+                </p:column>
+
+                <p:column id="mannschaft">
+                    <f:facet name="header">
+                        <h:outputText value="Mannschaften"/>
+                    </f:facet>
+                    <h:outputText value="#{spiel}"/>
+                </p:column>
+
+            </p:dataTable>
+
+            <h:panelGroup>
+
+            </h:panelGroup>
+
+            <h:panelGroup id="Schirizettel" rendered="#{eintragenBackingBean.selected != null}">
+
+                <br/><br/>
+                <table id="sch" style="border:2px solid black; font-size:18pt" border="4" cellpadding="5"
+                       cellspacing="0" height="300" width="700">
+                    <tbody>
+                    <tr>
+                        <td colspan="2"><b> Platz
+                            <h:outputText value="#{eintragenBackingBean.selected.getPlatz()}"/>
+                            um
+                            <h:outputText value="#{eintragenBackingBean.selected.start}">
+                                <f:convertDateTime type="date"
+                                                   pattern="HH:mm"
+                                                   timeZone="Europe/Zurich"/>
+                            </h:outputText>
+
+                            <h:outputText value=" "/>
+
+                            <p:selectOneMenu filter="true" filterMatchMode="contains"  id="hallo" value="#{eintragenBackingBean.selectedSchiri}" size="60"
+                                             ajax="true">
+                                <f:selectItem itemLabel="Schiri auswählen..." itemValue=""/>
+                                <f:selectItems value="#{schirisBackingBean.getAktiveSchiris()}" var="sch"
+                                               itemLabel="#{sch.vorname} #{sch.nachname}"
+                                               itemValue="#{sch.shName}"/>
+                                <p:ajax event="change" update="fm"/>
+
+                            </p:selectOneMenu>
+
+                        </b></td>
+                    </tr>
+                    <tr>
+                        <td colspan="1" align="left"><b>
+                            <h:outputText value="#{eintragenBackingBean.selected.getMannschaftA().getName()}"/>
+                        </b> Farbe:
+                            <h:outputText value="#{eintragenBackingBean.selected.getMannschaftA().getFarbe()}">
+
+                            </h:outputText>
+                            Tore:
+                            <p:inputText a:autofocus="true" id="toreA"
+                                         value="#{eintragenBackingBean.selected.toreA}"
+                                         size="2" onclick="this.setSelectionRange(0, this.value.length)">
+                                <f:validateDoubleRange minimum="0" maximum="30"/>
+                                <p:ajax event="change" update="fm" />
+                                <p:ajax event="keyup"  update="fm"/>
+                            </p:inputText>
+
+                        </td>
+                        <td rowspan="4" colspan="1">
+
+                            <h1>
+                                <h:outputText value="#{eintragenBackingBean.selected.idString}"/>
+                            </h1>
+                        </td>
+                    </tr>
+                    <tr align="center">
+                        <td colspan="1" rowspan="1">1 <input disabled="disabled" name="1" value="1" type="checkbox"/>2
+                            <input disabled="disabled" name="1"
+                                   value="1"
+                                   type="checkbox"/>3
+                            <input disabled="disabled" name="1" value="1" type="checkbox"/>4 <input disabled="disabled"
+                                                                                                    name="1" value="1"
+                                                                                                    type="checkbox"/>5
+                            <input disabled="disabled" name="1" value="1" type="checkbox"/>6 <input disabled="disabled"
+                                                                                                    name="1" value="1"
+                                                                                                    type="checkbox"/>7
+                            <input disabled="disabled" name="1" value="1" type="checkbox"/>8 <input disabled="disabled"
+                                                                                                    name="1" value="1"
+                                                                                                    type="checkbox"/>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td colspan="1" align="left"><b>
+                            <h:outputText value="#{eintragenBackingBean.selected.getMannschaftB().getName()}"/>
+                        </b> Farbe:
+                            <h:outputText value="#{eintragenBackingBean.selected.getMannschaftB().getFarbe()}"/>
+
+                            Tore:
+                            <p:inputText id="toreB"
+                                         value="#{eintragenBackingBean.selected.toreB}"
+                                         size="2" onclick="this.setSelectionRange(0, this.value.length)">
+                                <f:validateDoubleRange minimum="0" maximum="30"/>
+                                <p:ajax event="change" update="fm" />
+                                <p:ajax event="keyup"  update="fm"/>
+                            </p:inputText>
+                        </td>
+                    </tr>
+                    <tr align="center">
+                        <td colspan="1" rowspan="1">1 <input disabled="disabled" name="1" value="1" type="checkbox"/>2
+                            <input disabled="disabled" name="1"
+                                   value="1"
+                                   type="checkbox"/>3
+                            <input disabled="disabled" name="1" value="1" type="checkbox"/>4 <input disabled="disabled"
+                                                                                                    name="1" value="1"
+                                                                                                    type="checkbox"/>5
+                            <input disabled="disabled" name="1" value="1" type="checkbox"/>6 <input disabled="disabled"
+                                                                                                    name="1" value="1"
+                                                                                                    type="checkbox"/>7
+                            <input disabled="disabled" name="1" value="1" type="checkbox"/>8 <input disabled="disabled"
+                                                                                                    name="1" value="1"
+                                                                                                    type="checkbox"/>
+                        </td>
+                    </tr>
+
+                    </tbody>
+                </table>
+
+                <br/>
+                <br/>
+
+            </h:panelGroup>
+
+        </h:form>
+
+    </ui:define>
+
+</ui:composition>

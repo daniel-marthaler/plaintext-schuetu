@@ -1,0 +1,55 @@
+<!--suppress ALL -->
+
+
+<ui:composition xmlns:ui="jakarta.faces.facelets" xmlns:h="jakarta.faces.html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns="http://www.w3.org/1999/xhtml" template="/template.xhtml">
+
+    <ui:define name="title">Finalspielkorrekturen</ui:define>
+
+    <ui:define name="page">
+
+        <br/>
+
+        <h:form id="fm">
+            <input type="hidden" name="_csrf" value="#{_csrf.token}"/>
+            <p:fieldset id="fs">
+
+                <p:messages/>
+
+                <br/>
+
+                <p:dataTable emptyMessage="leer" id="tbl" var="obj" selection="#{finaleBackingBean.selected}"
+                             selectionMode="single" rowKey="#{obj.id}"
+                             value="#{finaleBackingBean.getKategorien()}"
+                             paginator="false" rowIndexVar="ri">
+
+                    <p:ajax event="rowSelect" listener="#{finaleBackingBean.select()}" global="false"/>
+
+                    <p:column headerText="Kategorie">
+                        <h:outputText value="#{obj.name}"/>
+                    </p:column>
+
+                    <p:column headerText="kleiner Final">
+                        <h:outputText value="#{obj.kleineFinal}"/>
+                    </p:column>
+
+                    <p:column headerText="grosser Final">
+                        <h:outputText value="#{obj.grosserFinal}"/>
+                    </p:column>
+
+                    <p:column headerText="Eintrager">
+                        <h:outputText value="#{obj.eintrager}"/>
+                    </p:column>
+
+                    <p:column headerText="Notizen">
+                        <h:outputText value="#{obj.notitzen}"/>
+                    </p:column>
+
+                </p:dataTable>
+
+            </p:fieldset>
+        </h:form>
+    </ui:define>
+
+</ui:composition>

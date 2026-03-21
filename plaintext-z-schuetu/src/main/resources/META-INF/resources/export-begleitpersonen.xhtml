@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+
+
+<!--suppress ALL -->
+<ui:composition xmlns:ui="jakarta.faces.facelets"
+                xmlns:h="jakarta.faces.html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="jakarta.faces.core"
+                xmlns="http://www.w3.org/1999/xhtml" template="/template.xhtml">
+
+    <ui:define name="title">Mannschaften für Turnier: #{gameSelectionHolder.game.model.gameName}</ui:define>
+
+    <ui:define name="page">
+
+        <p:messages/>
+        <br/>
+        <h:form id="fm">
+            <input type="hidden" name="_csrf" value="#{_csrf.token}"/>
+            <h:commandLink>
+                <p:graphicImage value="/static/images/excel.png"/>
+                <p:dataExporter type="xls" target="tbl" fileName="begleitpersonen" pageOnly="true"/>
+            </h:commandLink>
+
+
+            <p:dataTable emptyMessage="leer" id="tbl" var="mannschaft"
+                         value="#{gameSelectionHolder.game.findMannschaften()}" rowIndexVar="ri">
+
+                <p:column exportable="false">
+                    <f:facet name="nr">
+                        <h:outputText value="Nr."/>
+                    </f:facet>
+                    <h:outputText value="#{ri +1}"/>
+                </p:column>
+
+                <p:column id="name" filterBy="name" headerText="Name" filterMatchMode="contains">
+                    <h:outputText value="#{mannschaft.name}"/>
+                </p:column>
+
+
+                <p:column id="begleitpersonAnrede" headerText="Anrede" filterMatchMode="contains">
+                    <h:outputText value="#{mannschaft.begleitpersonAnrede}"/>
+                </p:column>
+
+                <p:column id="begleitpersonName" headerText="Begleitperson" filterMatchMode="contains">
+                    <h:outputText value="#{mannschaft.begleitperson2Vorname} #{mannschaft.begleitperson2Name}"/>
+                </p:column>
+
+                <p:column id="begleitpersonStrasse" headerText="Strasse" filterMatchMode="contains">
+                    <h:outputText value="#{mannschaft.begleitpersonStrasse}"/>
+                </p:column>
+
+                <p:column id="begleitpersonAdresse" headerText="Adresse" filterMatchMode="contains">
+                    <h:outputText value="#{mannschaft.begleitpersonPLZOrt}"/>
+                </p:column>
+
+                <p:column id="begleitpersonTel" headerText="Tel" filterMatchMode="contains">
+                    <h:outputText value="#{mannschaft.begleitpersonTelefon}"/>
+                </p:column>
+
+                <p:column id="begleitpersonMail" headerText="Mail" filterMatchMode="contains">
+                    <h:outputText value="#{mannschaft.begleitpersonEmail}"/>
+                </p:column>
+
+                <p:column id="schulhaus" filterBy="schulhaus" headerText="Schulhaus" filterMatchMode="contains">
+                    <h:outputText value="#{mannschaft.schulhaus}"/>
+                </p:column>
+
+                <p:column>
+                    <f:facet name="header">
+                        <h:outputText value="Klasse"/>
+                    </f:facet>
+                    <h:outputText value="#{mannschaft.klasse} - #{mannschaft.klassenBezeichnung}"/>
+                </p:column>
+
+
+                <p:column exportable="false">
+                    <f:facet name="header">
+                        <h:outputText value="Notizen"/>
+                    </f:facet>
+                    <p:commandButton id="notizenButton" icon="ui-icon-note"
+                                     onclick="PF('dlge#{ri}').show();" type="button"
+                                     rendered="#{mannschaft.notizen.length() > 0}"/>
+                    <p:dialog id="notizen_dialog" header="Notizen zu dieser Mannschaft"
+                              widgetVar="dlge#{ri}" showEffect="drop" hideEffect="drop" height="200"
+                              width="400">
+                        <h:outputText value="#{mannschaft.notizen}"/>
+                    </p:dialog>
+                </p:column>
+
+            </p:dataTable>
+
+
+        </h:form>
+
+    </ui:define>
+
+</ui:composition>

@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+
+<!--suppress ALL -->
+<ui:composition xmlns:ui="jakarta.faces.facelets"
+                xmlns:h="jakarta.faces.html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="jakarta.faces.core"
+                xmlns="http://www.w3.org/1999/xhtml" template="/template.xhtml">
+
+    <ui:define name="title">Mannschaften für Turnier: #{gameSelectionHolder.game.model.gameName}</ui:define>
+
+    <ui:define name="page">
+
+        <p:messages/>
+        <br/>
+        <h:form id="fm">
+            <input type="hidden" name="_csrf" value="#{_csrf.token}"/>
+
+            <h:panelGrid columns="3">
+                <p:commandButton value="Neue Mannschaft" action="#{mannschaftBackingBean.neu()}"/>
+
+                <p:selectOneMenu value="#{mannschaftBackingBean.copyJahr}" style="left" ajax="true"
+                                 rendered="#{gameSelectionHolder.game.findMannschaften().isEmpty()}">
+                    <f:selectItem itemLabel="Mannschaften kopieren " itemValue=""/>
+                    <f:selectItems value="#{mannschaftBackingBean.getOldJahre()}" var="dt" itemLabel="#{dt}"
+                                   itemValue="#{dt}"/>
+                    <p:ajax listener="#{mannschaftBackingBean.copy()}" update="fm"/>
+                </p:selectOneMenu>
+
+                <p:selectOneMenu value="#{mannschaftBackingBean.copyJahr}" style="left" ajax="true"
+                                 rendered="#{gameSelectionHolder.game.findMannschaften().isEmpty()}">
+                    <f:selectItem itemLabel="Mannschaften von Turnier kopieren " itemValue=""/>
+                    <f:selectItems value="#{mannschaftBackingBean.getOldJahreGames()}" var="dt" itemLabel="#{dt}"
+                                   itemValue="#{dt}"/>
+                    <p:ajax listener="#{mannschaftBackingBean.copyGame()}" update="fm"/>
+                </p:selectOneMenu>
+
+            </h:panelGrid>
+
+            <br/><br/>
+
+            <p:dataTable emptyMessage="leer" selection="#{mannschaftBackingBean.selected}" selectionMode="single"
+                         rowKey="#{mannschaft.id}" widgetVar="msch" id="tbl" var="mannschaft"
+                         value="#{gameSelectionHolder.game.findMannschaften()}" rowIndexVar="ri">
+
+                <p:ajax event="rowSelect" listener="#{emadUI.r('mannschaft-details.htm')}" global="false"/>
+
+                <p:column>
+                    <f:facet name="nr">
+                        <h:outputText value="Nr."/>
+                    </f:facet>
+                    <h:outputText value="#{ri +1}"/>
+                </p:column>
+
+                <p:column id="name" filterBy="name" headerText="Name" filterMatchMode="contains">
+                    <h:outputText value="#{mannschaft.name}"/>
+                </p:column>
+
+                <p:column id="captainName" filterBy="captainName" headerText="Captain"
+                          filterMatchMode="contains">
+                    <h:outputText value="#{mannschaft.captain2Vorname} #{mannschaft.captain2Name}"/>
+                </p:column>
+
+                <p:column id="begleitpersonName" filterBy="begleitpersonName" headerText="Begleitperson"
+                          filterMatchMode="contains">
+                    <h:outputText value="#{mannschaft.begleitperson2Vorname} #{mannschaft.begleitperson2Name}"/>
+                </p:column>
+
+                <p:column id="schulhaus" filterBy="schulhaus" headerText="Schulhaus"
+                          filterMatchMode="contains">
+
+                    <h:outputText value="#{mannschaft.schulhaus}"/>
+                </p:column>
+
+                <p:column>
+                    <f:facet name="header">
+                        <h:outputText value="M / K"/>
+                    </f:facet>
+                    <h:outputText value="#{mannschaft.geschlecht}"/>
+                </p:column>
+
+                <p:column>
+                    <f:facet name="header">
+                        <h:outputText value="GR (A/B)"/>
+                    </f:facet>
+                    <h:outputText value="#{mannschaft.gr}"/>
+                </p:column>
+
+                <p:column>
+                    <f:facet name="header">
+                        <h:outputText value="Klasse"/>
+                    </f:facet>
+                    <h:outputText value="#{mannschaft.klasse} - #{mannschaft.klassenBezeichnung}"/>
+                </p:column>
+
+                <p:column>
+                    <f:facet name="header">
+                        <h:outputText value="Spieler"/>
+                    </f:facet>
+                    <h:outputText value="#{mannschaft.anzahlSpieler}"/>
+                </p:column>
+
+                <p:column>
+                    <f:facet name="header">
+                        <h:outputText value="Notizen"/>
+                    </f:facet>
+                    <p:commandButton id="notizenButton" icon="ui-icon-note"
+                                     onclick="PF('dlge#{ri}').show();" type="button"
+                                     rendered="#{mannschaft.notizen.length() > 0}"/>
+                    <p:dialog id="notizen_dialog" header="Notizen zu dieser Mannschaft"
+                              widgetVar="dlge#{ri}" showEffect="drop" hideEffect="drop" height="200"
+                              width="400">
+                        <h:outputText value="#{mannschaft.notizen}"/>
+                    </p:dialog>
+                </p:column>
+
+            </p:dataTable>
+
+        </h:form>
+
+    </ui:define>
+
+</ui:composition>
