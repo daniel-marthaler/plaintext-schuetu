@@ -4,8 +4,6 @@ import ch.plaintext.schuetu.service.DevStrategy;
 import ch.plaintext.schuetu.service.Game;
 import ch.plaintext.schuetu.service.GameRoot;
 import ch.plaintext.schuetu.service.ResultateVerarbeiter;
-import ch.plaintext.schuetu.service.dropbox.DropboxConnectorImpl;
-import ch.plaintext.schuetu.service.utils.XstreamUtil;
 import ch.plaintext.schuetu.service.websiteinfo.model.*;
 import ch.plaintext.schuetu.model.Einstellungen;
 import ch.plaintext.schuetu.entity.Kategorie;
@@ -50,10 +48,6 @@ public class WebsiteInfoService {
     @Autowired
     private SpielRepository spielRepository;
 
-    // TODO: Dropbox integration - re-enable when DropboxConnectorImpl is fully implemented
-    @Autowired(required = false)
-    private DropboxConnectorImpl dropboxConnector;
-
     @Autowired
     private GameRoot games;
 
@@ -74,10 +68,6 @@ public class WebsiteInfoService {
         this.getRangliste(jahr);
         this.getEinstellungen(jahr);
 
-        // TODO: Dropbox integration
-        if (dropboxConnector != null) {
-            dropboxConnector.saveOldGame(jahr, XstreamUtil.serializeToString(jetzt));
-        }
     }
 
     public List<Spiel> getGruppenspiele(String jahr) {
@@ -124,30 +114,7 @@ public class WebsiteInfoService {
     }
 
     public WebsiteInfoJahresDump getOldJahredump(String jahr) {
-        WebsiteInfoJahresDump dump = alt.get(jahr);
-        if (dump == null) {
-
-            // TODO: Dropbox integration
-            if (dropboxConnector == null) {
-                return null;
-            }
-
-            Map<String, String> str = dropboxConnector.loadOldGames();
-            for (String key : str.keySet()) {
-                Object obj = XstreamUtil.deserializeFromString(str.get(key));
-                if (obj instanceof WebsiteInfoJahresDump) {
-                    WebsiteInfoJahresDump ob = (WebsiteInfoJahresDump) obj;
-                    this.alt.put(key, ob);
-                }
-            }
-        } else {
-            return dump;
-        }
-        WebsiteInfoJahresDump dump2 = alt.get(jahr);
-        if (dump2 != null) {
-            return dump2;
-        }
-        return dump;
+        return alt.get(jahr);
     }
 
     public void initOldJahresdump() {

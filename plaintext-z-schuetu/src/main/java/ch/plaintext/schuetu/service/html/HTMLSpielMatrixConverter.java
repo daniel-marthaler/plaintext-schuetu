@@ -4,7 +4,7 @@ import ch.plaintext.schuetu.entity.Gruppe;
 import ch.plaintext.schuetu.entity.Kategorie;
 import ch.plaintext.schuetu.entity.Mannschaft;
 import ch.plaintext.schuetu.entity.Spiel;
-import ch.plaintext.schuetu.model.comperators.SpielMannschaftsnamenComperator;
+import ch.plaintext.schuetu.model.comparators.SpielMannschaftsnamenComparator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -105,7 +105,7 @@ public class HTMLSpielMatrixConverter {
             }
             int iSpalte = 0;
             boolean linefin = false;
-            tempSpiele.sort(new SpielMannschaftsnamenComperator());
+            tempSpiele.sort(new SpielMannschaftsnamenComparator());
             for (final Spiel spiel : tempSpiele) {
                 if ((iZeile == iSpalte) || linefin) {
                     stringBuilder.append("<td bgcolor='white'>&nbsp;</td>");

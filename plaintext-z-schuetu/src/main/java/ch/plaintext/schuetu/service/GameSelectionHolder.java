@@ -7,7 +7,7 @@ import ch.plaintext.schuetu.service.websiteinfo.VelocityReplacer;
 import ch.plaintext.schuetu.entity.GameModel;
 import ch.plaintext.schuetu.entity.Kategorie;
 import ch.plaintext.schuetu.entity.Spiel;
-import ch.plaintext.schuetu.model.comperators.SpielZeitComperator;
+import ch.plaintext.schuetu.model.comparators.SpielZeitComparator;
 import ch.plaintext.schuetu.repository.GameRepository;
 import ch.plaintext.schuetu.repository.KategorieRepository;
 import ch.plaintext.schuetu.repository.SpielRepository;
@@ -141,7 +141,7 @@ public class GameSelectionHolder {
 
     public List<Spiel> readAllSpiele() {
         List<Spiel> spiele = spielRepository.findByGame(getGameName());
-        spiele.sort(new SpielZeitComperator());
+        spiele.sort(new SpielZeitComparator());
         return spiele;
     }
 

@@ -23,7 +23,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <!-- Plaintext Root Framework -->
-        <plaintext-root.version>1.20.0</plaintext-root.version>
+        <plaintext-root.version>1.32.0</plaintext-root.version>
 
         <!-- JSF & Primefaces -->
         <primefaces.version>15.0.13</primefaces.version>
@@ -89,6 +89,20 @@
                 <groupId>org.apache.poi</groupId>
                 <artifactId>poi-ooxml</artifactId>
                 <version>5.3.0</version>
+            </dependency>
+
+            <!-- Apache Velocity (Template Engine) -->
+            <dependency>
+                <groupId>org.apache.velocity</groupId>
+                <artifactId>velocity-engine-core</artifactId>
+                <version>2.4.1</version>
+            </dependency>
+
+            <!-- HtmlCleaner -->
+            <dependency>
+                <groupId>net.sourceforge.htmlcleaner</groupId>
+                <artifactId>htmlcleaner</artifactId>
+                <version>2.29</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

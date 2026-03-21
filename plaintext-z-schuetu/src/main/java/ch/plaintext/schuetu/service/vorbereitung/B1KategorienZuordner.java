@@ -3,7 +3,7 @@ package ch.plaintext.schuetu.service.vorbereitung;
 import ch.plaintext.schuetu.entity.Gruppe;
 import ch.plaintext.schuetu.entity.Kategorie;
 import ch.plaintext.schuetu.entity.Mannschaft;
-import ch.plaintext.schuetu.model.comperators.MannschaftsNamenComperator;
+import ch.plaintext.schuetu.model.comparators.MannschaftsNameComparator;
 import ch.plaintext.schuetu.model.enums.SpielTageszeit;
 import ch.plaintext.schuetu.repository.GruppeRepository;
 import ch.plaintext.schuetu.repository.KategorieRepository;
@@ -70,7 +70,7 @@ public class B1KategorienZuordner {
                     if (kategorieMinusOne != null && kategorieMinusOne.getGruppeA().getMannschaften().size() > 0) {
                         List<Mannschaft> manns = temp.getGruppeA().getMannschaften();
                         for (Mannschaft mannschaft : manns) { mannschaft.setGruppe(kategorieMinusOne.getGruppeA()); kategorieMinusOne.getGruppeA().getMannschaften().add(mannschaft); }
-                        kategorieMinusOne.getGruppeA().getMannschaften().sort(new MannschaftsNamenComperator());
+                        kategorieMinusOne.getGruppeA().getMannschaften().sort(new MannschaftsNameComparator());
                         map.remove(keyActual);
                         for (Mannschaft mt : temp.getGruppeA().getMannschaften()) { mt.setGruppe(null); this.mannschaftRepo.save(mt); }
                         for (Mannschaft mt : temp.getGruppeB().getMannschaften()) { mt.setGruppe(null); this.mannschaftRepo.save(mt); }
@@ -85,7 +85,7 @@ public class B1KategorienZuordner {
     private boolean plusOneBigger(Map<String, Kategorie> map, String keyActual, Kategorie temp, Kategorie kategoriePlusOne) {
         List<Mannschaft> manns = temp.getGruppeA().getMannschaften();
         for (Mannschaft mannschaft : manns) { mannschaft.setGruppe(kategoriePlusOne.getGruppeA()); kategoriePlusOne.getGruppeA().getMannschaften().add(mannschaft); }
-        kategoriePlusOne.getGruppeA().getMannschaften().sort(new MannschaftsNamenComperator());
+        kategoriePlusOne.getGruppeA().getMannschaften().sort(new MannschaftsNameComparator());
         map.remove(keyActual);
         Gruppe a = temp.getGruppeA(); Gruppe b = temp.getGruppeB();
         a.setKategorie(null); b.setKategorie(null);

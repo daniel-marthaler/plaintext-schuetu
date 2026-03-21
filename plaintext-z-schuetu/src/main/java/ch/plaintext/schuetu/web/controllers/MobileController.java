@@ -3,7 +3,7 @@ package ch.plaintext.schuetu.web.controllers;
 import ch.plaintext.schuetu.service.mobile.MatchInfoService;
 import ch.plaintext.schuetu.service.utils.DateUtil;
 import ch.plaintext.schuetu.entity.Spiel;
-import ch.plaintext.schuetu.model.comperators.SpielZeitComperator;
+import ch.plaintext.schuetu.model.comparators.SpielZeitComparator;
 import ch.plaintext.schuetu.model.enums.SpielEnum;
 import ch.plaintext.schuetu.repository.SpielRepository;
 import lombok.Getter;
@@ -77,7 +77,7 @@ public class MobileController {
         }
 
         List<Spiel> spiele = srepo.findSpielFromMannschaft(matchinfo.getMannschaftByName(mannschaftAuswahl).getId());
-        spiele.sort(new SpielZeitComperator());
+        spiele.sort(new SpielZeitComparator());
 
         boolean finaleok = false;
 

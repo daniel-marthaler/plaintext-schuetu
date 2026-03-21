@@ -3,7 +3,7 @@ package ch.plaintext.schuetu.web;
 import ch.plaintext.schuetu.service.GameSelectionHolder;
 import ch.plaintext.schuetu.entity.Kategorie;
 import ch.plaintext.schuetu.entity.Mannschaft;
-import ch.plaintext.schuetu.model.comperators.KategorieNameComperator;
+import ch.plaintext.schuetu.model.comparators.KategorieNameComparator;
 import ch.plaintext.schuetu.model.enums.SpielTageszeit;
 import ch.plaintext.schuetu.repository.KategorieRepository;
 import ch.plaintext.schuetu.repository.MannschaftRepository;
@@ -81,7 +81,7 @@ public class KategorieBackingBean {
         Kategorie quelle = null;
         Kategorie ziel = null;
 
-        katListe.sort(new KategorieNameComperator());
+        katListe.sort(new KategorieNameComparator());
 
         Mannschaft verschieben = null;
 

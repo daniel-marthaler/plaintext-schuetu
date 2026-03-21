@@ -43,6 +43,8 @@ if [[ -n "$1" ]]; then
         build|b)        exec "$SCRIPT_DIR/build.sh" ;;
         start-pg|pg)    exec "$HOME/.plaintext-scripts/start-postgres.sh" ;;
         stop-pg)        exec "$HOME/.plaintext-scripts/stop-postgres.sh" ;;
+        playwright-build|pb)  do_playwright_build; exit $? ;;
+        playwright-running|pr) do_playwright_running; exit $? ;;
         help|-h|--help)
             echo -e "${FG_BLUE}${BOLD}${TUI_TITLE}${RESET}"
             echo ""
@@ -77,6 +79,8 @@ MENU_LABELS+=("Modules (toggle modules)")
 MENU_LABELS+=("Build (build.sh)")
 MENU_LABELS+=("Start Postgres")
 MENU_LABELS+=("Stop Postgres")
+MENU_LABELS+=("Playwright (build+test)")
+MENU_LABELS+=("Playwright (app running)")
 MENU_TOTAL=${#MENU_LABELS[@]}
 MENU_MAX_IDX=$((MENU_TOTAL - 1))
 
@@ -291,6 +295,16 @@ tell application "Terminal"
 end tell
 EOF
             STATUS_MSG="Stop Postgres opened in new Terminal"
+            STATUS_COLOR="$FG_GREEN"
+            ;;
+        8) # Playwright build+test - open in new terminal
+            osascript -e "tell application \"Terminal\" to do script \"cd \\\"${SCRIPT_DIR}\\\" && ./start playwright-build\"" 2>/dev/null || true
+            STATUS_MSG="Playwright (build+test) opened in new Terminal"
+            STATUS_COLOR="$FG_GREEN"
+            ;;
+        9) # Playwright against running app - open in new terminal
+            osascript -e "tell application \"Terminal\" to do script \"cd \\\"${SCRIPT_DIR}\\\" && ./start playwright-running\"" 2>/dev/null || true
+            STATUS_MSG="Playwright (app running) opened in new Terminal"
             STATUS_COLOR="$FG_GREEN"
             ;;
     esac

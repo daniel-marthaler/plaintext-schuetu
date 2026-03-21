@@ -5,7 +5,7 @@ import ch.plaintext.schuetu.service.websiteinfo.WebsiteInfoService;
 import ch.plaintext.schuetu.entity.Kategorie;
 import ch.plaintext.schuetu.entity.Mannschaft;
 import ch.plaintext.schuetu.entity.Spiel;
-import ch.plaintext.schuetu.model.comperators.GenericSorter;
+import ch.plaintext.schuetu.model.comparators.GenericSorter;
 import ch.plaintext.schuetu.repository.MannschaftRepository;
 import ch.plaintext.schuetu.repository.SpielRepository;
 import lombok.extern.slf4j.Slf4j;

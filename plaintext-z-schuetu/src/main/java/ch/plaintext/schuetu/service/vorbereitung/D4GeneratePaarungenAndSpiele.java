@@ -6,7 +6,7 @@ import ch.plaintext.schuetu.entity.Gruppe;
 import ch.plaintext.schuetu.entity.Kategorie;
 import ch.plaintext.schuetu.entity.Mannschaft;
 import ch.plaintext.schuetu.entity.Spiel;
-import ch.plaintext.schuetu.model.comperators.KategorieNameComperator;
+import ch.plaintext.schuetu.model.comparators.KategorieNameComparator;
 import ch.plaintext.schuetu.repository.GruppeRepository;
 import ch.plaintext.schuetu.repository.KategorieRepository;
 import ch.plaintext.schuetu.repository.MannschaftRepository;
@@ -29,7 +29,7 @@ public class D4GeneratePaarungenAndSpiele {
     public void generatPaarungenAndSpiele(String game) {
         int spieleCount = 0;
         List<Kategorie> list = kategorieRepo.findByGame(game);
-        list.sort(new KategorieNameComperator());
+        list.sort(new KategorieNameComparator());
         for (Kategorie kategorie : list) {
             if (kategorie.getGruppeA() == null) { continue; }
             final List<Mannschaft> a = kategorie.getGruppeA().getMannschaften();

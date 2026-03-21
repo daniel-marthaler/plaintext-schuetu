@@ -6,7 +6,7 @@ import ch.plaintext.schuetu.entity.GameModel;
 import ch.plaintext.schuetu.entity.Kategorie;
 import ch.plaintext.schuetu.entity.Mannschaft;
 import ch.plaintext.schuetu.entity.Spiel;
-import ch.plaintext.schuetu.model.comperators.MannschaftsNamenComperator;
+import ch.plaintext.schuetu.model.comparators.MannschaftsNameComparator;
 import ch.plaintext.schuetu.model.enums.SpielEnum;
 import ch.plaintext.schuetu.repository.KategorieRepository;
 import ch.plaintext.schuetu.repository.MannschaftRepository;
@@ -109,8 +109,8 @@ public class C3MannschaftenAufteiler {
             Mannschaft mm = kategorie.getGruppeA().getMannschaften().remove(i);
             mm.setGruppe(kategorie.getGruppeB()); kategorie.getGruppeB().getMannschaften().add(mm);
         }
-        kategorie.getGruppeB().getMannschaften().sort(new MannschaftsNamenComperator());
-        kategorie.getGruppeA().getMannschaften().sort(new MannschaftsNamenComperator());
+        kategorie.getGruppeB().getMannschaften().sort(new MannschaftsNameComparator());
+        kategorie.getGruppeA().getMannschaften().sort(new MannschaftsNameComparator());
         kategorie = kategorieRepo.save(kategorie);
         dreiBis7Mannschaften(kategorie, model);
         kategorie = kategorieRepo.save(kategorie);

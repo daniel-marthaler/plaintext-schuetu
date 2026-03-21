@@ -2,7 +2,7 @@ package ch.plaintext.schuetu.service.utils;
 
 import ch.plaintext.schuetu.entity.Kategorie;
 import ch.plaintext.schuetu.entity.Mannschaft;
-import ch.plaintext.schuetu.model.comperators.MannschaftsNamenComperator;
+import ch.plaintext.schuetu.model.comparators.MannschaftsNameComparator;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
@@ -26,10 +26,10 @@ public class SysoutHelper {
             }
 
             List<Mannschaft> listA = key.getGruppeA().getMannschaften();
-            listA.sort(new MannschaftsNamenComperator());
+            listA.sort(new MannschaftsNameComparator());
 
             List<Mannschaft> listB = key.getGruppeB().getMannschaften();
-            listB.sort(new MannschaftsNamenComperator());
+            listB.sort(new MannschaftsNameComparator());
 
             log.info("" + " " + name + "   a --> " + listA);
             if (key.getGruppeB() != null) {

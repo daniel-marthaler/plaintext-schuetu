@@ -10,7 +10,7 @@ import ch.plaintext.schuetu.entity.Kategorie;
 import ch.plaintext.schuetu.entity.Mannschaft;
 import ch.plaintext.schuetu.entity.Penalty;
 import ch.plaintext.schuetu.entity.Spiel;
-import ch.plaintext.schuetu.model.comperators.MannschaftsNamenComperator;
+import ch.plaintext.schuetu.model.comparators.MannschaftsNameComparator;
 import ch.plaintext.schuetu.model.enums.SpielEnum;
 import ch.plaintext.schuetu.model.ranglistensortierung.RanglisteneintragHistorie;
 import ch.plaintext.schuetu.model.ranglistensortierung.RanglisteneintragZeile;
@@ -54,6 +54,9 @@ public class ResultateVerarbeiter implements GameConnectable {
 
     @Autowired
     private BackupSyncProvider syncProvider;
+
+    @Autowired
+    private PenaltyLoaderFactory penaltyLoaderFactory;
 
     private Game game;
 
@@ -279,13 +282,13 @@ public class ResultateVerarbeiter implements GameConnectable {
         rangListe = map.get(katName);
 
         if (rangListe == null) {
-            rangListe = new RanglisteneintragHistorie(spiel, null, null, game.getModel().getGameName());
+            rangListe = new RanglisteneintragHistorie(spiel, null, null, game.getModel().getGameName(), penaltyLoaderFactory::getPenalty);
         } else {
-            rangListe = new RanglisteneintragHistorie(spiel, rangListe, null, game.getModel().getGameName());
+            rangListe = new RanglisteneintragHistorie(spiel, rangListe, null, game.getModel().getGameName(), penaltyLoaderFactory::getPenalty);
         }
 
         if (rangListe.isPenaltyAuswertungNoetig()) {
-            rangListe = new RanglisteneintragHistorie(null, rangListe, null, game.getModel().getGameName());
+            rangListe = new RanglisteneintragHistorie(null, rangListe, null, game.getModel().getGameName(), penaltyLoaderFactory::getPenalty);
         }
 
         map.put(katName, rangListe);
@@ -298,13 +301,13 @@ public class ResultateVerarbeiter implements GameConnectable {
             rangListe = map.get(katName + "_A");
 
             if (rangListe == null) {
-                rangListe = new RanglisteneintragHistorie(spiel, null, Boolean.TRUE, game.getModel().getGameName());
+                rangListe = new RanglisteneintragHistorie(spiel, null, Boolean.TRUE, game.getModel().getGameName(), penaltyLoaderFactory::getPenalty);
             } else {
-                rangListe = new RanglisteneintragHistorie(spiel, rangListe, Boolean.TRUE, game.getModel().getGameName());
+                rangListe = new RanglisteneintragHistorie(spiel, rangListe, Boolean.TRUE, game.getModel().getGameName(), penaltyLoaderFactory::getPenalty);
             }
 
             if (rangListe.isPenaltyAuswertungNoetig()) {
-                rangListe = new RanglisteneintragHistorie(null, rangListe, Boolean.TRUE, game.getModel().getGameName());
+                rangListe = new RanglisteneintragHistorie(null, rangListe, Boolean.TRUE, game.getModel().getGameName(), penaltyLoaderFactory::getPenalty);
             }
 
             map.put(katName + "_A", rangListe);
@@ -318,12 +321,12 @@ public class ResultateVerarbeiter implements GameConnectable {
             rangListe = map.get(katName + "_B");
 
             if (rangListe == null) {
-                rangListe = new RanglisteneintragHistorie(spiel, null, Boolean.FALSE, game.getModel().getGameName());
+                rangListe = new RanglisteneintragHistorie(spiel, null, Boolean.FALSE, game.getModel().getGameName(), penaltyLoaderFactory::getPenalty);
             } else {
-                rangListe = new RanglisteneintragHistorie(spiel, rangListe, Boolean.FALSE, game.getModel().getGameName());
+                rangListe = new RanglisteneintragHistorie(spiel, rangListe, Boolean.FALSE, game.getModel().getGameName(), penaltyLoaderFactory::getPenalty);
             }
             if (rangListe.isPenaltyAuswertungNoetig()) {
-                rangListe = new RanglisteneintragHistorie(null, rangListe, Boolean.FALSE, game.getModel().getGameName());
+                rangListe = new RanglisteneintragHistorie(null, rangListe, Boolean.FALSE, game.getModel().getGameName(), penaltyLoaderFactory::getPenalty);
             }
 
             map.put(katName + "_B", rangListe);
@@ -358,9 +361,9 @@ public class ResultateVerarbeiter implements GameConnectable {
             }
 
             // die richtige reihenfolge
-            klein.sort(new MannschaftsNamenComperator());
-            gross.sort(new MannschaftsNamenComperator());
-            zweiteGross.sort(new MannschaftsNamenComperator());
+            klein.sort(new MannschaftsNameComparator());
+            gross.sort(new MannschaftsNameComparator());
+            zweiteGross.sort(new MannschaftsNameComparator());
 
             // gross setzen immer
             kat.getGrosserFinal().setMannschaftA(gross.get(0));

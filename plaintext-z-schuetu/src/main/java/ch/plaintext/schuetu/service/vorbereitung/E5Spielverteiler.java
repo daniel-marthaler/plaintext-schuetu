@@ -6,7 +6,7 @@ import ch.plaintext.schuetu.entity.GameModel;
 import ch.plaintext.schuetu.entity.Kategorie;
 import ch.plaintext.schuetu.entity.Spiel;
 import ch.plaintext.schuetu.entity.SpielZeile;
-import ch.plaintext.schuetu.model.comperators.KategorieKlasseUndGeschlechtComperator;
+import ch.plaintext.schuetu.model.comparators.KategorieKlasseUndGeschlechtComparator;
 import ch.plaintext.schuetu.model.enums.PlatzEnum;
 import ch.plaintext.schuetu.model.enums.SpielTageszeit;
 import ch.plaintext.schuetu.repository.KategorieRepository;
@@ -100,7 +100,7 @@ public class E5Spielverteiler {
 
     private void behandleFinalspielzeilen(String game) {
         List<Kategorie> kategorien = katRepo.findByGame(game);
-        kategorien.sort(new KategorieKlasseUndGeschlechtComperator());
+        kategorien.sort(new KategorieKlasseUndGeschlechtComparator());
         List<SpielZeile> finalspieleZeilen = spielzeilenRepo.findFinalSpielZeilen(game);
         List<SpielZeile> finalspieleZeilenGeaendert = new ArrayList<>();
         List<Spiel> spieleGeaendert = new ArrayList<>();

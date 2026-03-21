@@ -40,7 +40,9 @@ public class KorrekturWrapper extends LazyDataModel<SpielKorrektur> {
 
         List<Spiel> spiele = repo.findByGame(game);
         for (Spiel spiel : spiele) {
-            datasourceTemp.add(spiel.getSpielKorrektur());
+            SpielKorrektur korrektur = new SpielKorrektur();
+            korrektur.setSpiel(spiel);
+            datasourceTemp.add(korrektur);
         }
 
         BeanComparator<SpielKorrektur> comp = new BeanComparator<>("startP");

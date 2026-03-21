@@ -1,4 +1,13 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["config:recommended"]
+  "extends": ["config:recommended"],
+  "registryAliases": {
+    "plaintext-mvn": "https://maven.pkg.github.com/daniel-marthaler/plaintext-mvn"
+  },
+  "packageRules": [
+    {
+      "matchPackagePrefixes": ["ch.plaintext"],
+      "registryUrls": ["https://maven.pkg.github.com/daniel-marthaler/plaintext-mvn"]
+    }
+  ]
 }
