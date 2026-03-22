@@ -1,5 +1,6 @@
 -- Default admin user for plaintext-schuetu
 -- Password: admin (bcrypt encoded)
+-- Only insert if table exists and user doesn't exist yet
 INSERT INTO dbauthuser (id, username, password, email, enabled, mandat, deleted, created_date)
 VALUES (
     nextval('dbauthuser_id_seq'),
