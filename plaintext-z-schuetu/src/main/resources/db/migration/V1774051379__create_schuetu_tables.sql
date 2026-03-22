@@ -198,7 +198,7 @@ CREATE TABLE korrektur (
 );
 
 -- Text (Key-Value Text Storage)
-CREATE TABLE text2 (
+CREATE TABLE IF NOT EXISTS text2 (
     id              BIGSERIAL PRIMARY KEY,
     text_key        VARCHAR(256),
     text_value      text,
