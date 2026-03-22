@@ -5,8 +5,8 @@ import ch.plaintext.schuetu.model.CreationDateProvider;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.OrderColumn;
 import java.util.Date;
 
 /**
@@ -26,7 +26,7 @@ public class Korrektur extends SuperModel implements CreationDateProvider {
 
     private String wert = null;
 
-    @OrderColumn
+    @Column
     private long reihenfolge;
 
 }
