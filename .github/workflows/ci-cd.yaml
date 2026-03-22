@@ -26,4 +26,5 @@ jobs:
       database-name: plaintext_schuetu
       dev-url: 'http://192.168.1.224:1131'
       prod-url: 'http://192.168.1.224:1132'
+      integration-tests-enabled: true
     secrets: inherit
