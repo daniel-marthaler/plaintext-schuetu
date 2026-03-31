@@ -28,7 +28,7 @@ public class Gruppe extends SuperModel implements CreationDateProvider {
 
     private static final String GRUPPENKUERZEL = "Gr";
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL)
     private Kategorie kategorie = null;
 
     private GeschlechtEnum geschlecht = null;

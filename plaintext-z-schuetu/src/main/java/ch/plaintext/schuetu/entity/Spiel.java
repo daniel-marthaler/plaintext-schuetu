@@ -11,7 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Transient;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -89,13 +89,13 @@ public class Spiel extends SuperModel implements CreationDateProvider {
     @Transient
     private int mannschaftBId;
 
-    @OneToOne(optional = true)
+    @ManyToOne(optional = true)
     private Mannschaft mannschaftA;
 
-    @OneToOne(optional = true)
+    @ManyToOne(optional = true)
     private Mannschaft mannschaftB;
 
-    @OneToOne
+    @ManyToOne
     private Schiri schiri;
 
     private String schiriName;

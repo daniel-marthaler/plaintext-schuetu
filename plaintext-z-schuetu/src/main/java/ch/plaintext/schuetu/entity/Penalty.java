@@ -39,7 +39,7 @@ public class Penalty extends SuperModel implements CreationDateProvider {
     private boolean gespielt = false;
     private boolean bestaetigt = false;
 
-    @OneToOne
+    @ManyToOne
     private Gruppe gruppe = null;
 
     @OneToMany(fetch = FetchType.EAGER)
