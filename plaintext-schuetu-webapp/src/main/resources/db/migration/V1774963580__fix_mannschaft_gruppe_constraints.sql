@@ -1,0 +1,2 @@
+ALTER TABLE mannschaft DROP CONSTRAINT IF EXISTS uk4aou1u0r77y5djd8i76uierww;
+ALTER TABLE mannschaft DROP CONSTRAINT IF EXISTS uk1gtvmby69uohbnw831frob04k;

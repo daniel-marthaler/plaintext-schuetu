@@ -87,10 +87,10 @@ public class Mannschaft extends SuperModel implements CreationDateProvider {
 
     private Boolean disqualifiziert = false;
 
-    @OneToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER)
     private Gruppe gruppeA = null;
 
-    @OneToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER)
     private Gruppe gruppeB = null;
 
     public String getBegleitpersonVorname() {
