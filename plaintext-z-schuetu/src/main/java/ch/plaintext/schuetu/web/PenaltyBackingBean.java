@@ -37,7 +37,9 @@ public class PenaltyBackingBean {
 
         loader.save(selected);
         // neuberechnen
-        gameHolder.getGame().getResultate().neuberechnenDerKategorie(selected.getFinalList().get(0).getKategorie(), gameHolder.getGameName());
+        if (gameHolder.hasGame()) {
+            gameHolder.getGame().getResultate().neuberechnenDerKategorie(selected.getFinalList().get(0).getKategorie(), gameHolder.getGameName());
+        }
         selected = null;
         return "penaltykorrekturen-liste.htm";
 

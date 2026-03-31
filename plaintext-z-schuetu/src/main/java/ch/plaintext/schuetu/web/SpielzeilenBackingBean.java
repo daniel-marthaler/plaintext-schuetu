@@ -79,6 +79,7 @@ public class SpielzeilenBackingBean {
 
     @PostConstruct
     public void init() {
+        if (!gameHolder.hasGame()) return;
 
         samstag = spielZeilenRepository.findSpieleSamstag(gameHolder.getGame().getModel().getGameName());
         sonntag = spielZeilenRepository.findSpieleSonntag(gameHolder.getGame().getModel().getGameName());
@@ -91,6 +92,7 @@ public class SpielzeilenBackingBean {
     }
 
     public void plusOneHour() {
+        if (!gameHolder.hasGame()) return;
         List<SpielZeile> alle = new ArrayList<>();
         samstag = spielZeilenRepository.findSpieleSamstag(gameHolder.getGame().getModel().getGameName());
         sonntag = spielZeilenRepository.findSpieleSonntag(gameHolder.getGame().getModel().getGameName());
@@ -105,6 +107,7 @@ public class SpielzeilenBackingBean {
     }
 
     public Boolean isDefinemode() {
+        if (!gameHolder.hasGame()) return Boolean.TRUE;
         if (spielZeilenRepository.findSpieleSamstag(gameHolder.getGame().getModel().getGameName()).size() == 0) {
             return Boolean.TRUE;
         }
@@ -112,6 +115,7 @@ public class SpielzeilenBackingBean {
     }
 
     public void exitDefinemode() {
+        if (!gameHolder.hasGame()) return;
 
         for (SpielZeile zeile : samstag) {
             zeile.setGame(gameHolder.getGame().getModel().getGameName());
@@ -255,6 +259,7 @@ public class SpielzeilenBackingBean {
 
     public List<Mannschaft> getAllRelevant4Check(Spiel spiel) {
         List<Mannschaft> res = new ArrayList<>();
+        if (!gameHolder.hasGame()) return res;
         int p = gameHolder.getGame().getModel().getZweiPausenBisKlasse();
         int k = spiel.getMannschaftA().getKlasse();
 
@@ -417,10 +422,12 @@ public class SpielzeilenBackingBean {
     }
 
     public int getAnzahlSpiele() {
+        if (!gameHolder.hasGame()) return 0;
         return spielRepository.findGruppenSpiel(this.gameHolder.getGame().getModel().getGameName()).size();
     }
 
     public int getAnzahlFinale() {
+        if (!gameHolder.hasGame()) return 0;
         return spielRepository.findFinalSpiel(this.gameHolder.getGame().getModel().getGameName()).size();
     }
 

@@ -103,7 +103,9 @@ public class FinaleBackingBean {
         repo.save(selected);
 
         // neuberechnen
-        gameHolder.getGame().getResultate().neuberechnenDerKategorie(selected, gameHolder.getGameName());
+        if (gameHolder.hasGame()) {
+            gameHolder.getGame().getResultate().neuberechnenDerKategorie(selected, gameHolder.getGameName());
+        }
         selected = null;
 
         try {
