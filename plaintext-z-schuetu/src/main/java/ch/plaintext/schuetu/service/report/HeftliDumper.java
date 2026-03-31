@@ -43,6 +43,7 @@ public class HeftliDumper {
 
     public List<List<String>> getTeams() {
         List<List<String>> ret = new ArrayList<>();
+        if (!game.hasGame()) return ret;
         List<Mannschaft> ma = mannschaftRepository.findByGame(this.game.getGame().getModel().getGameName());
         GenericSorter.sortAsc(ma, "getShortKatName");
         for (Mannschaft zeile : ma) { ret.add(printTeam(zeile)); }
