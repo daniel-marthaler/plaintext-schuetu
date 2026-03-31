@@ -72,7 +72,9 @@ public class LazySpielkorrekturenRowModel extends LazyDataModel<SpielKorrektur> 
         selected.getSpiel().setEintrager("TODO");
         repo.save(selected.getSpiel());
 
-        holder.getGame().getResultate().neuberechnenDerKategorie(selected.getSpiel().getMannschaftA().getKategorie(), holder.getGameName());
+        if (holder.hasGame()) {
+            holder.getGame().getResultate().neuberechnenDerKategorie(selected.getSpiel().getMannschaftA().getKategorie(), holder.getGameName());
+        }
 
         wrapper.initOrReload();
 

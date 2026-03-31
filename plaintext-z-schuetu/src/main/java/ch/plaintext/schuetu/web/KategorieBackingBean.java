@@ -33,7 +33,9 @@ public class KategorieBackingBean {
     private GameSelectionHolder holder;
 
     public List<Kategorie> getKategorien() {
+        if (!holder.hasGame()) return List.of();
         List<Kategorie> ret = repo.findByGame(holder.getGame().getModel().getGameName());
+        if (ret.isEmpty()) return ret;
         ret.get(0).setFirst(Boolean.TRUE);
         ret.get(ret.size() - 1).setLast(Boolean.TRUE);
         return ret;
@@ -72,6 +74,7 @@ public class KategorieBackingBean {
 
         List<Kategorie> katListe;
 
+        if (!holder.hasGame()) return;
         if (mannschaftName.toLowerCase().contains("m")) {
             katListe = repo.getKategorienMList(holder.getGame().getModel().getGameName());
         } else {

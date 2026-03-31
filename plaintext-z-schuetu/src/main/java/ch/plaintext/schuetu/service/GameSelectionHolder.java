@@ -86,11 +86,10 @@ public class GameSelectionHolder {
     }
 
     public boolean isAnmeldung() {
-
         if (game == null) {
             log.info("game not selected");
+            return false;
         }
-
         return game.getModel().getSpielPhase().equals("anmeldung");
     }
 
@@ -136,6 +135,7 @@ public class GameSelectionHolder {
     }
 
     public String getGameName() {
+        if (game == null) return "";
         return game.getModel().getGameName();
     }
 

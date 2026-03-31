@@ -42,6 +42,7 @@ public class EintragenBackingBean {
     private String pen;
 
     public void penaltyEintragen() {
+        if (!holder.hasGame()) return;
         Penalty temp = penaltyLoader.penaltyEingetragen("" + penalty.getId(), penalty.getReihenfolge());
         holder.getGame().getResultate().signalPenalty(temp);
         penalty = null;
@@ -71,10 +72,14 @@ public class EintragenBackingBean {
     }
 
     public List<Spiel> getEinzutragende() {
+        if (!holder.hasGame()) {
+            return new ArrayList<>();
+        }
         return holder.getGame().getEintragen().findAllEinzutragende();
     }
 
     public void eintragen() {
+        if (!holder.hasGame() || selected == null) return;
         List<Spiel> spiele = new ArrayList<>();
         spiele.add(selected);
         holder.getGame().getEintragen().eintragen(spiele, "" + selected.getId(), selectedSchiri);

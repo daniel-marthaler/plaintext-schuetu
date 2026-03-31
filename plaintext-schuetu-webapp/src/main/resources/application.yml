@@ -49,6 +49,9 @@ joinfaces:
   primefaces:
     theme: freya-yellow-dark
 
+mad:
+  autologin: true
+
 plaintext:
   stage: ${PLAINTEXT_ENV:dev}
   menu:

@@ -73,10 +73,12 @@ public class MannschaftBackingBean {
     }
 
     public void copy() {
+        if (!holder.hasGame()) return;
         service.copyFromOldJahr(copyJahr, holder.getGame().getModel().getGameName());
     }
 
     public void copyGame() {
+        if (!holder.hasGame()) return;
         service.copyFromOldGame(copyJahr, holder.getGame().getModel().getGameName());
     }
 
@@ -87,6 +89,7 @@ public class MannschaftBackingBean {
     }
 
     public String save() {
+        if (!holder.hasGame()) return "dashboard.htm";
         selected.setGame(holder.getGame().getModel().getGameName());
         selected = service.save(selected);
         return "mannschaft-liste.htm";

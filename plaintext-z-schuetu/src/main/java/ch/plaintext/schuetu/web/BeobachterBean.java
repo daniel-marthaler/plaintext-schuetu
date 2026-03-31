@@ -39,6 +39,7 @@ public class BeobachterBean {
     private HTMLSchiriConverter schiri;
 
     public List<String> getKategorien() {
+        if (!holder.hasGame()) return new ArrayList<>();
 
         Set<String> result = new HashSet<>();
         for (Kategorie kat : repo.findByGame(holder.getGameName())) {
@@ -59,10 +60,12 @@ public class BeobachterBean {
     }
 
     public String getMatrix() {
+        if (!holder.hasGame()) return "";
         return this.holder.getGame().getResultate().generateSpieleMatrix();
     }
 
     public String getHistorie() {
+        if (!holder.hasGame()) return "";
         return this.holder.getGame().getResultate().generateRanglistenHistorieForKategorieName(this.auswahl);
     }
 
@@ -99,6 +102,7 @@ public class BeobachterBean {
     }
 
     public void neuBerechnen() {
+        if (!holder.hasGame()) return;
         holder.getGame().recalculateResultate();
     }
 }
