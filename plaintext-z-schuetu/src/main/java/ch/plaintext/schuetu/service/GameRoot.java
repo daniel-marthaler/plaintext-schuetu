@@ -36,20 +36,15 @@ public class GameRoot {
 
     @PostConstruct
     private void init() {
-        List<GameModel> alle = repo.findAll();
-        boolean hasRrr = false;
-        for (GameModel model : alle) {
-            if (model.getGameName().equals("rrr")) {
-                hasRrr = true;
+        try {
+            List<GameModel> alle = repo.findAll();
+            for (GameModel model : alle) {
+                model.setInitialisiert(Boolean.FALSE);
             }
-            model.setInitialisiert(Boolean.FALSE);
+            repo.saveAll(alle);
+        } catch (Exception e) {
+            log.warn("GameRoot init: could not reset initialisiert flags: {}", e.getMessage());
         }
-        repo.saveAll(alle);
-
-        if (hasRrr && activeProfile != null && activeProfile.contains("devl")) {
-            this.selectGame("rrr");
-        }
-
     }
 
     public List<GameModel> displayGames() {
