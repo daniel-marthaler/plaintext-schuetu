@@ -243,7 +243,7 @@ public class MobileController {
         }
 
         // finale noch nicht gesetzt !!
-        if (gfinale.getMannschaftA() == null && gfinale.getMannschaftB() == null) {
+        if (gfinale != null && gfinale.getMannschaftA() == null && gfinale.getMannschaftB() == null) {
             this.finale = new MobileSpiel();
             finale.setZeile("Paarung bekannt ab: " + this.matchinfo.evaluateFinalSpielPaarungBekannt(s.getMannschaftA(), this.getGameCookie()));
         } else {

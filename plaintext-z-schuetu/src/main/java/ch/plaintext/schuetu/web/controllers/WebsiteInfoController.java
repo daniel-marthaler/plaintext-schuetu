@@ -85,6 +85,9 @@ public class WebsiteInfoController {
     public String getWebsiteinfo(@PathVariable("jahr") String jahr, @RequestParam("kategorie") String kategorie, Model model) {
 
         Game game = root.selectGame(jahr);
+        if (game == null) {
+            return "tabelle.htm";
+        }
         RanglisteneintragHistorie historie = game.getResultate().getHistorie(kategorie);
 
         model.addAttribute("historie", historie);
