@@ -89,13 +89,13 @@ public class Spiel extends SuperModel implements CreationDateProvider {
     @Transient
     private int mannschaftBId;
 
-    @ManyToOne(optional = true)
+    @ManyToOne(optional = true, fetch = FetchType.LAZY)
     private Mannschaft mannschaftA;
 
-    @ManyToOne(optional = true)
+    @ManyToOne(optional = true, fetch = FetchType.LAZY)
     private Mannschaft mannschaftB;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Schiri schiri;
 
     private String schiriName;

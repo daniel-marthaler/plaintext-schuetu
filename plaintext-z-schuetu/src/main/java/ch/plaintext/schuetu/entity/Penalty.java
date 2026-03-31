@@ -39,10 +39,10 @@ public class Penalty extends SuperModel implements CreationDateProvider {
     private boolean gespielt = false;
     private boolean bestaetigt = false;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Gruppe gruppe = null;
 
-    @OneToMany(fetch = FetchType.EAGER)
+    @OneToMany(fetch = FetchType.LAZY)
     private List<Mannschaft> finalList = new ArrayList<>();
 
     public void addMannschaftInitial(final Mannschaft m) {
