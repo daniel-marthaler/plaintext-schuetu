@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -144,6 +145,7 @@ public class ResultateVerarbeiter implements GameConnectable {
     }
 
     @Scheduled(fixedRate = WAITTIME)
+    @Transactional
     public void verarbeiten() {
         boolean done = false;
         try {

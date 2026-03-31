@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -29,6 +30,7 @@ public class SimulationThread implements Serializable {
     private Game game;
 
     @Scheduled(fixedRate = 1000)
+    @Transactional
     public void run() {
         if (!backing.isOn()) { return; }
         if (game == null) { game = gameRoot.selectGame(backing.getGameName()); }

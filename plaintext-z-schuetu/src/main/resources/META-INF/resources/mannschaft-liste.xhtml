@@ -114,6 +114,13 @@
                     </p:dialog>
                 </p:column>
 
+                <p:column headerText="Aktion" style="width:80px;text-align:center">
+                    <p:commandButton icon="pi pi-pencil" title="Bearbeiten"
+                                     action="mannschaft-details.htm" ajax="false">
+                        <f:setPropertyActionListener target="#{mannschaftBackingBean.selected}" value="#{mannschaft}"/>
+                    </p:commandButton>
+                </p:column>
+
             </p:dataTable>
 
         </h:form>

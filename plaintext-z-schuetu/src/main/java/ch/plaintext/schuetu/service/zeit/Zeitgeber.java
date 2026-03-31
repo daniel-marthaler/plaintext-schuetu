@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Scope;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -46,6 +47,7 @@ public class Zeitgeber implements GameConnectable {
     final SimpleDateFormat jscriptf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     @Scheduled(fixedRate = 1000)
+    @Transactional
     public void run() {
 
         if (durchfuehrung != null) {

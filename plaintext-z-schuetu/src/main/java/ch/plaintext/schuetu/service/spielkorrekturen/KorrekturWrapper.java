@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,6 +58,7 @@ public class KorrekturWrapper extends LazyDataModel<SpielKorrektur> {
     }
 
     @Scheduled(fixedDelay = 15000)
+    @Transactional
     public void go() {
         initOrReload();
     }
