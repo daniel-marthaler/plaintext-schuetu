@@ -11,6 +11,6 @@ DELETE FROM gruppe_spiele;
 INSERT INTO gruppe_spiele (gruppe_id, spiele_id)
 SELECT DISTINCT m.gruppea_id, s.id
 FROM spiel s
-JOIN mannschaft m ON m.id = s.mannschaft_a_id
+JOIN mannschaft m ON m.id = s.mannschafta_id
 WHERE m.gruppea_id IS NOT NULL AND s.typ = 0
 ON CONFLICT DO NOTHING;
