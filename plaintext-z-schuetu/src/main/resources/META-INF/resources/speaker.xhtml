@@ -31,7 +31,7 @@
             <p:poll interval="5" update="fm:stabelle,fm:vtabelle,fm:wtabelle,fm:btabelle"/>
 
             <h:panelGrid columns="4"
-                         rendered="#{!gameSelectionHolder.game.model.startJetzt and emadSecWrapper.hasRole('admin')}">
+                         rendered="#{!gameSelectionHolder.game.model.startJetzt and plaintextSecurity.ifGranted('admin')}">
 
                 <p:commandButton value="Add #{gameSelectionHolder.game.zeit.add} Sekunden" ajax="false"
                                  action="#{gameSelectionHolder.game.zeit.add()}"

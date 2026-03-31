@@ -12,10 +12,6 @@
         <h:form id="fm">
             <input type="hidden" name="_csrf" value="#{_csrf.token}"/>
 
-            <h:outputScript>
-                history.pushState(null, null, '/dashboard.htm');
-            </h:outputScript>
-
             <p:messages/>
             <p:fieldset>
 
@@ -23,12 +19,12 @@
 
                     <h:panelGrid columns="1" cellpadding="5">
                         <p:commandButton value="Neu" onclick="PF('dlg2').show();"
-                                         rendered="#{emadSecWrapper.hasRole('root')}">
+                                         rendered="#{plaintextSecurity.ifGranted('root')}">
                             <f:ajax execute="@form" render="@none"/>
                         </p:commandButton>
                     </h:panelGrid>
 
-                    <h:panelGrid columns="5" cellpadding="5">
+                    <h:panelGrid columns="5" cellpadding="5" rendered="#{gameSelectionHolder.hasGame()}">
 
                         <h:outputText value="Phasen wechseln:"/>
 
@@ -74,17 +70,19 @@
                     </p:column>
 
                     <p:column headerText="" style="width:30%;">
-                        <p:commandButton icon="fa fa-wrench" value="auswählen"  update="fm" onstart="PF('blockIt').show()" oncomplete="PF('blockIt').hide(),location.reload();"
+                        <p:commandButton icon="fa fa-wrench" value="auswählen" update=":fm"
+                                         oncomplete="location.reload();"
                                          action="#{gameSelectionHolder.selectGame(gm.gameName)}"
-                                         rendered="#{gm.initialisiert and !gm.gameName.equals(gameSelectionHolder.game.model.gameName)}"/>
+                                         rendered="#{gm.initialisiert and (not gameSelectionHolder.hasGame() or not gm.gameName.equals(gameSelectionHolder.game.model.gameName))}"/>
 
-                        <p:commandButton icon="fa fa-wrench" value="initialisieren"  update="fm" onstart="PF('blockIt').show()" oncomplete="PF('blockIt').hide()"
+                        <p:commandButton icon="fa fa-wrench" value="initialisieren" update=":fm"
+                                         oncomplete="location.reload();"
                                          action="#{gameRoot.selectGame(gm.gameName)}"
-                                         rendered="#{!gm.initialisiert and emadSecWrapper.hasRole('root')}" />
+                                         rendered="#{not gm.initialisiert and plaintextSecurity.ifGranted('root')}" />
                     </p:column>
 
-                    <p:column headerText="Phase" style="width:30%;" rendered="#{emadSecWrapper.hasRole('root')}">
-                        <p:commandButton icon="fa fa-wrench" value="löschen" update="fm" onstart="PF('blockIt').show()" oncomplete="PF('blockIt').hide()" action="#{gameService.deleteGame(gm.gameName)}">
+                    <p:column headerText="" style="width:15%;" rendered="#{plaintextSecurity.ifGranted('root')}">
+                        <p:commandButton icon="fa fa-wrench" value="löschen" update=":fm" action="#{gameService.deleteGame(gm.gameName)}">
                             <p:confirm header="Achtung !!!" message="Turnier wirklich löschen" icon="ui-icon-alert"/>
                             <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
                                 <p:commandButton value="Ja" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check"/>
