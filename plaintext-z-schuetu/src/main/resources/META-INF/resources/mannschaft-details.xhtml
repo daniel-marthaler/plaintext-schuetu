@@ -50,7 +50,7 @@
                         </p:inputText>
 
                         <h:outputLabel for="captain" value="Captain "/>
-                        <p:inputText id="captain" label="Capitain"
+                        <p:inputText id="captain" label="Capitain" placeholder="Vorname und Name"
                                      value="#{mannschaftBackingBean.selected.captainName}" size="40"  disabled="true"></p:inputText>
 
                         <h:outputLabel for="captainv" value="Captain Vorname"/>
@@ -70,7 +70,7 @@
                         </p:inputMask>
 
                         <h:outputLabel for="captainEmail" value="Captain Email"/>
-                        <p:inputText id="captainEmail" label="captainEmail"
+                        <p:inputText id="captainEmail" label="captainEmail" placeholder="Emailadresse"
                                      value="#{mannschaftBackingBean.selected.captainEmail}" size="40">
                         </p:inputText>
 
@@ -82,7 +82,7 @@
                         </p:selectOneMenu>
 
                         <h:outputLabel for="begleitperson" value="Begleitperson"/>
-                        <p:inputText id="begleitperson" label="Begleitperson"
+                        <p:inputText id="begleitperson" label="Begleitperson" placeholder="Vorname und Name"
                                      value="#{mannschaftBackingBean.selected.begleitpersonName}" size="40" disabled="true">
 
                         </p:inputText>
@@ -104,7 +104,7 @@
                                      value="#{mannschaftBackingBean.selected.begleitpersonStrasse}" size="40"/>
 
                         <h:outputLabel for="b_ort" value="Begleitperson Ort"/>
-                        <p:inputText id="b_ort"
+                        <p:inputText id="b_ort" placeholder="PLZ und Ort"
                                      value="#{mannschaftBackingBean.selected.begleitpersonPLZOrt}" size="40"/>
 
                         <h:outputLabel for="begleitpersonTelefon" value="Begleitperson Telefon"/>
@@ -114,7 +114,7 @@
                         </p:inputMask>
 
                         <h:outputLabel for="begleitpersonEmail" value="Begleitperson Email"/>
-                        <p:inputText id="begleitpersonEmail" label="begleitpersonEmail"
+                        <p:inputText id="begleitpersonEmail" label="begleitpersonEmail" placeholder="Emailadresse"
 
                                      value="#{mannschaftBackingBean.selected.begleitpersonEmail}" size="40">
 
@@ -228,14 +228,7 @@
 
                         <p:tooltip for="submit" value="Mannschaft speichern" showEffect="fade" hideEffect="fade"/>
 
-                        <p:watermark for="captain" value="Vorname und Name"/>
-                        <p:watermark for="captainEmail" value="Emailadresse"/>
-                        <p:watermark for="captainTelefon" value="Telefonnummer (optional)"/>
-                        <p:watermark for="b_ort" value="PLZ und Ort"/>
-                        <p:watermark for="begleitperson" value="Vorname und Name"/>
-                        <p:watermark for="begleitperson" value="Vorname und Name"/>
-                        <p:watermark for="begleitpersonTelefon" value="Telefonnummer"/>
-                        <p:watermark for="begleitpersonEmail" value="Emailadresse"/>
+                        <!-- p:watermark removed (PrimeFaces 15 incompatible), using placeholder attributes instead -->
 
                     </h:panelGrid>
 

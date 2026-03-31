@@ -172,8 +172,10 @@ public class WebsiteInfoService {
     }
 
     public List<KlassenrangZeile> getRanglisteReal(String gameS) {
+        if (gameS == null || gameS.isEmpty()) return new ArrayList<>();
 
         Game game = games.selectGame(gameS);
+        if (game == null) return new ArrayList<>();
 
         ResultateVerarbeiter verarbeiter = game.getResultate();
 

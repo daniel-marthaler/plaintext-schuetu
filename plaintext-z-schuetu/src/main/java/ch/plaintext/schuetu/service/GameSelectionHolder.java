@@ -73,10 +73,12 @@ public class GameSelectionHolder {
     }
 
     public String selectGame(String name) {
-        game = root.getGameCache().get(name);
-        // TODO: menu.setOn(true) - PlanungRootMenu removed
+        game = root.selectGame(name);
+        if (game == null) {
+            return "dashboard.htm";
+        }
         velocity.dump(game.getModel().getGameName());
-        return "dashobard.htm";
+        return "dashboard.htm";
     }
 
     public void save() {
