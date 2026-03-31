@@ -9,11 +9,11 @@ import ch.plaintext.boot.menu.MenuAnnotation;
  * @since 0.0.1
  */
 @MenuAnnotation(
-        title = "Alles",
+        title = "Teams-Adressen",
         link = "export-allemannschaften.htm",
-        parent = "Teams-Adressen",
-        order = 10,
-        icon = "pi pi-list"
+        parent = "Export",
+        order = 20,
+        icon = "pi pi-users"
 )
 public class ExportAlleMannschaftenMenu {
 }
