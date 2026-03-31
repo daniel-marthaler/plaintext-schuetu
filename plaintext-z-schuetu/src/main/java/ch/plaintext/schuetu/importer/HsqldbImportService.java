@@ -180,7 +180,7 @@ public class HsqldbImportService {
         spielZeilenRepository.deleteAll();
         entityManager.flush();
         // Nullify kategorie FKs before deleting spiel/penalty
-        entityManager.createNativeQuery("UPDATE kategorie SET grosserfinal_id = NULL, kleinefinal_id = NULL, grosserfinal2_id = NULL, penaltya_id = NULL, penaltyb_id = NULL").executeUpdate();
+        entityManager.createNativeQuery("UPDATE kategorie SET grosser_final_id = NULL, kleine_final_id = NULL, grosserfinal2_id = NULL, penaltya_id = NULL, penaltyb_id = NULL").executeUpdate();
         entityManager.flush();
         penaltyRepository.deleteAll();
         entityManager.flush();
