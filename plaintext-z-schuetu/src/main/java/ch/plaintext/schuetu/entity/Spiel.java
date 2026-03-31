@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Transient;
 import java.text.SimpleDateFormat;
