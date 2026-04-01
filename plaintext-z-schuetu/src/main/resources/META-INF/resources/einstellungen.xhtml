@@ -311,30 +311,6 @@
 
                     </p:tab>
 
-                    <p:tab title="Simulation" disabled="false">
-                        <h:panelGrid columns="2" cellpadding="10">
-
-                            <h:outputLabel for="ee" value="Resultatemethode"/>
-                            <p:selectOneMenu id="ee" value="#{simulationModel.methode}">
-                                <f:selectItem itemLabel="" itemValue="absteigend"/>
-                                <f:selectItem itemLabel="aufsteigend" itemValue="aufsteigend"/>
-                                <f:selectItem itemLabel="random9" itemValue="random9"/>
-                                <f:selectItem itemLabel="random3" itemValue="random3"/>
-                                <f:selectItem itemLabel="random2" itemValue="random2"/>
-                                <f:selectItem itemLabel="echt" itemValue="echt"/>
-                            </p:selectOneMenu>
-
-                            <h:outputText value="Simulation an (true/false)"/>
-                            <p:commandButton value="#{simulationModel.on}" id="sim" action="#{simulationModel.on(gameSelectionHolder.getGameName())}" update="fm:tabview:sim"/>
-
-                            <p:separator/>
-                            <p:separator/>
-
-                            <p:commandButton  value="Speichern" action="#{gameSelectionHolder.save()}" onstart="PF('blockIt').show()" oncomplete="PF('blockIt').hide()"/>
-
-                        </h:panelGrid>
-                    </p:tab>
-
                     <p:tab title="Spieltage / Plätze" disabled="false">
                         <h:panelGrid columns="2" cellpadding="10">
 
