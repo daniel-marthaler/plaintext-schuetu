@@ -1,5 +1,6 @@
 package ch.plaintext.schuetu.web;
 
+import ch.plaintext.PlaintextSecurity;
 import ch.plaintext.schuetu.service.GameSelectionHolder;
 import ch.plaintext.schuetu.entity.Kategorie;
 import ch.plaintext.schuetu.repository.KategorieRepository;
@@ -9,8 +10,6 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import jakarta.faces.context.FacesContext;
@@ -29,9 +28,8 @@ import java.util.List;
 @Data
 public class FinaleBackingBean {
 
-    // TODO: Replace EmadSecWrapper with Spring Security based approach
-    // @Autowired
-    // private EmadSecWrapper sec;
+    @Autowired
+    private PlaintextSecurity plaintextSecurity;
 
     @Autowired
     private KategorieRepository repo;
@@ -97,9 +95,7 @@ public class FinaleBackingBean {
         }
 
         selected = repo.findById(selected.getId()).get();
-        // TODO: Replace EmadSecWrapper usage - need to get current user name from Spring Security
-        // selected.setEintrager(sec.getUser().getVorname() + " " + sec.getUser().getNachname());
-        selected.setEintrager("TODO: current user");
+        selected.setEintrager(plaintextSecurity.getUser());
         repo.save(selected);
 
         // neuberechnen

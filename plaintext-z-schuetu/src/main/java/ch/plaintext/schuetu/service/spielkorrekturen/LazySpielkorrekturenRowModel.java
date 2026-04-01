@@ -1,5 +1,6 @@
 package ch.plaintext.schuetu.service.spielkorrekturen;
 
+import ch.plaintext.PlaintextSecurity;
 import ch.plaintext.schuetu.service.GameSelectionHolder;
 import ch.plaintext.schuetu.repository.SpielRepository;
 import lombok.Getter;
@@ -28,9 +29,8 @@ import java.util.Map;
 @Slf4j
 public class LazySpielkorrekturenRowModel extends LazyDataModel<SpielKorrektur> {
 
-    // TODO: Replace with plaintext-root security wrapper if available
-    // @Autowired
-    // private EmadSecWrapper sec;
+    @Autowired
+    private PlaintextSecurity plaintextSecurity;
 
     @Autowired
     private SpielRepository repo;
@@ -52,8 +52,7 @@ public class LazySpielkorrekturenRowModel extends LazyDataModel<SpielKorrektur> 
     }
 
     public void kontr() {
-        // TODO: sec.getUser() replaced - wire up plaintext-root security
-        selected.getSpiel().setKontrolle("TODO");
+        selected.getSpiel().setKontrolle(plaintextSecurity.getUser());
         repo.save(selected.getSpiel());
 
         wrapper.initOrReload();
@@ -68,8 +67,7 @@ public class LazySpielkorrekturenRowModel extends LazyDataModel<SpielKorrektur> 
     }
 
     public void save() {
-        // TODO: sec.getUser() replaced - wire up plaintext-root security
-        selected.getSpiel().setEintrager("TODO");
+        selected.getSpiel().setEintrager(plaintextSecurity.getUser());
         repo.save(selected.getSpiel());
 
         if (holder.hasGame()) {
