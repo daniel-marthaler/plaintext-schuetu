@@ -186,17 +186,26 @@ public class ResultateVerarbeiter implements GameConnectable {
     private void verarbeiteSpiel(Long id) {
 
         log.info("verarbeite fertiges spiel: " + id);
-        Spiel spiel = spielRepo.findById(id).get();
+        Spiel spiel = spielRepo.findById(id).orElse(null);
+        if (spiel == null) {
+            log.warn("Spiel {} not found", id);
+            return;
+        }
 
         Kategorie kat;
         String katName = "";
 
         try {
+            if (spiel.getMannschaftA() == null || spiel.getMannschaftA().getKategorie() == null) {
+                log.warn("Spiel {} has no mannschaftA or kategorie", id);
+                return;
+            }
             kat = spiel.getMannschaftA().getKategorie();
-            katName = spiel.getMannschaftA().getKategorie().getName();
+            katName = kat.getName();
         } catch (Exception e) {
             log.error(spiel.getTyp() + ":" + spiel.getIdString());
             log.error(e.getMessage(), e);
+            return;
         }
 
         RanglisteneintragHistorie rangListe = null;
@@ -503,33 +512,43 @@ public class ResultateVerarbeiter implements GameConnectable {
     }
 
     public void neuberechnenDerKategorie(Kategorie kat, String game) {
+        if (kat == null) return;
 
-        String katName = kat.getName();
+        try {
+            String katName = kat.getName();
 
-        map.remove(katName);
-        map.remove(katName + "_A");
-        map.remove(katName + "_B");
+            map.remove(katName);
+            map.remove(katName + "_A");
+            map.remove(katName + "_B");
 
-        List<Spiel> spiele = this.spielRepo.findGruppenSpielAsc(game);
+            List<Spiel> spiele = this.spielRepo.findGruppenSpielAsc(game);
 
-        for (Spiel spiel : spiele) {
-            if (spiel.isFertigBestaetigt() && spiel.getMannschaftA().getKategorie().getName().equals(kat.getName())) {
-                this.signalFertigesSpiel(spiel.getId());
+            for (Spiel spiel : spiele) {
+                try {
+                    if (spiel.isFertigBestaetigt() && spiel.getMannschaftA() != null
+                            && spiel.getMannschaftA().getKategorie() != null
+                            && spiel.getMannschaftA().getKategorie().getName().equals(katName)) {
+                        this.signalFertigesSpiel(spiel.getId());
+                    }
+                } catch (Exception e) {
+                    log.debug("Skipping spiel {} in neuberechnen: {}", spiel.getId(), e.getMessage());
+                }
             }
-        }
 
-        if (kat.getGrosserFinal().isFertigBestaetigt()) {
-            this.signalFertigesSpiel(kat.getGrosserFinal().getId());
-        }
+            if (kat.getKleineFinal() != null && kat.getKleineFinal().isFertigBestaetigt()) {
+                this.signalFertigesSpiel(kat.getKleineFinal().getId());
+            }
 
-        if (kat.getGrosserFinal().isFertigBestaetigt()) {
-            this.signalFertigesSpiel(kat.getGrosserFinal().getId());
-        }
+            if (kat.getGrosserFinal() != null && kat.getGrosserFinal().isFertigBestaetigt()) {
+                this.signalFertigesSpiel(kat.getGrosserFinal().getId());
+            }
 
-        if (kat.getGrosserfinal2() != null && kat.getGrosserfinal2().isFertigBestaetigt()) {
-            this.signalFertigesSpiel(kat.getGrosserfinal2().getId());
+            if (kat.getGrosserfinal2() != null && kat.getGrosserfinal2().isFertigBestaetigt()) {
+                this.signalFertigesSpiel(kat.getGrosserfinal2().getId());
+            }
+        } catch (Exception e) {
+            log.warn("neuberechnenDerKategorie failed for {}: {}", kat, e.getMessage());
         }
-
     }
 
     public String generateSpieleMatrix() {
