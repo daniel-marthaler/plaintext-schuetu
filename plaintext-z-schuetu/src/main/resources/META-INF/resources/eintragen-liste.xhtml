@@ -8,7 +8,7 @@
                 xmlns:a="jakarta.faces.passthrough"
                 xmlns="http://www.w3.org/1999/xhtml" template="/includes/template.xhtml">
 
-    <ui:define name="title">Spiele Eintragen</ui:define>
+    <ui:define name="title">#{i18n.t('Spiele Eintragen')}</ui:define>
 
     <ui:define name="page">
 
@@ -19,7 +19,7 @@
 
             <p:growl severity="error" style="'font-size' : '12pt','width' : '100px'"/>
 
-            <p:commandButton action="#{eintragenBackingBean.eintragen()}" icon="" value="eintragen"
+            <p:commandButton action="#{eintragenBackingBean.eintragen()}" icon="" value="#{i18n.t('eintragen')}"
                              execute="@form" update="@form" disabled="#{!eintragenBackingBean.eintragOK()}"/>
 
 
@@ -43,7 +43,7 @@
             <br/>
             <br/>
             <p:dataTable selection="#{eintragenBackingBean.selected}" selectionMode="single" rowKey="#{spiel.id}"
-                         emptyMessage="leer" id="tbl" var="spiel"
+                         emptyMessage="#{i18n.t('leer')}" id="tbl" var="spiel"
                          value="#{eintragenBackingBean.getEinzutragende()}"
                          paginator="false" rowIndexVar="ri">
 
@@ -51,21 +51,21 @@
 
                 <p:column id="id" style="width: 10%">
                     <f:facet name="header">
-                        <h:outputText value="ID"/>
+                        <h:outputText value="#{i18n.t('ID')}"/>
                     </f:facet>
                     <h:outputText value="#{spiel.idString}"/>
                 </p:column>
 
                 <p:column id="platz" style="width: 10%">
                     <f:facet name="header">
-                        <h:outputText value="Platz"/>
+                        <h:outputText value="#{i18n.t('Platz')}"/>
                     </f:facet>
                     <h:outputText value="#{spiel.platz}"/>
                 </p:column>
 
                 <p:column id="start">
                     <f:facet name="header">
-                        <h:outputText value="Start"/>
+                        <h:outputText value="#{i18n.t('Start')}"/>
                     </f:facet>
 
                     <h:outputText value="#{spiel.start}">
@@ -78,7 +78,7 @@
 
                 <p:column id="mannschaft">
                     <f:facet name="header">
-                        <h:outputText value="Mannschaften"/>
+                        <h:outputText value="#{i18n.t('Mannschaften')}"/>
                     </f:facet>
                     <h:outputText value="#{spiel}"/>
                 </p:column>
@@ -96,9 +96,9 @@
                        cellspacing="0" height="300" width="700">
                     <tbody>
                     <tr>
-                        <td colspan="2"><b> Platz
+                        <td colspan="2"><b> <h:outputText value="#{i18n.t('Platz')}"/>
                             <h:outputText value="#{eintragenBackingBean.selected.getPlatz()}"/>
-                            um
+                            <h:outputText value="#{i18n.t('um')}"/>
                             <h:outputText value="#{eintragenBackingBean.selected.start}">
                                 <f:convertDateTime type="date"
                                                    pattern="HH:mm"
@@ -109,7 +109,7 @@
 
                             <p:selectOneMenu filter="true" filterMatchMode="contains"  id="hallo" value="#{eintragenBackingBean.selectedSchiri}" size="60"
                                              ajax="true">
-                                <f:selectItem itemLabel="Schiri auswählen..." itemValue=""/>
+                                <f:selectItem itemLabel="#{i18n.t('Schiri auswählen...')}" itemValue=""/>
                                 <f:selectItems value="#{schirisBackingBean.getAktiveSchiris()}" var="sch"
                                                itemLabel="#{sch.vorname} #{sch.nachname}"
                                                itemValue="#{sch.shName}"/>
@@ -122,11 +122,11 @@
                     <tr>
                         <td colspan="1" align="left"><b>
                             <h:outputText value="#{eintragenBackingBean.selected.getMannschaftA().getName()}"/>
-                        </b> Farbe:
+                        </b> <h:outputText value="#{i18n.t('Farbe:')}"/>
                             <h:outputText value="#{eintragenBackingBean.selected.getMannschaftA().getFarbe()}">
 
                             </h:outputText>
-                            Tore:
+                            <h:outputText value="#{i18n.t('Tore:')}"/>
                             <p:inputText a:autofocus="true" id="toreA"
                                          value="#{eintragenBackingBean.selected.toreA}"
                                          size="2" onclick="this.setSelectionRange(0, this.value.length)">
@@ -163,10 +163,10 @@
                     <tr>
                         <td colspan="1" align="left"><b>
                             <h:outputText value="#{eintragenBackingBean.selected.getMannschaftB().getName()}"/>
-                        </b> Farbe:
+                        </b> <h:outputText value="#{i18n.t('Farbe:')}"/>
                             <h:outputText value="#{eintragenBackingBean.selected.getMannschaftB().getFarbe()}"/>
 
-                            Tore:
+                            <h:outputText value="#{i18n.t('Tore:')}"/>
                             <p:inputText id="toreB"
                                          value="#{eintragenBackingBean.selected.toreB}"
                                          size="2" onclick="this.setSelectionRange(0, this.value.length)">

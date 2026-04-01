@@ -6,7 +6,7 @@
                 xmlns="http://www.w3.org/1999/xhtml" xmlns:pe="http://primefaces.org/ui/extensions"
                 template="/includes/template.xhtml">
 
-    <ui:define name="title">Speaker</ui:define>
+    <ui:define name="title">#{i18n.t('Speaker')}</ui:define>
 
     <ui:define name="page">
 
@@ -33,7 +33,7 @@
             <h:panelGrid columns="4"
                          rendered="#{!gameSelectionHolder.game.model.startJetzt and plaintextSecurity.ifGranted('admin')}">
 
-                <p:commandButton value="Add #{gameSelectionHolder.game.zeit.add} Sekunden" ajax="false"
+                <p:commandButton value="#{i18n.t('Add')} #{gameSelectionHolder.game.zeit.add} #{i18n.t('Sekunden')}" ajax="false"
                                  action="#{gameSelectionHolder.game.zeit.add()}"
                                  update="fm:stabelle,fm:vtabelle,fm:wtabelle,fm:btabelle"/>
 
@@ -43,7 +43,7 @@
                     <p:ajax event="dateSelect" update="fm" listener="#{gameSelectionHolder.neueZeit()}"/>
                 </p:calendar>
 
-                <p:commandButton actionListener="#{gameSelectionHolder.game.zeit.spielzeitEinholen60()}" value="60 Sekunden aufholen" update="fm"/>
+                <p:commandButton actionListener="#{gameSelectionHolder.game.zeit.spielzeitEinholen60()}" value="#{i18n.t('60 Sekunden aufholen')}" update="fm"/>
 
                 <br/>
 
@@ -51,7 +51,7 @@
 
             <b>
                 <h:outputText style="font-size: 18pt" id="zeit"
-                              value="Echte Zeit #{gameSelectionHolder.game.zeit.richtigeZeit} - Spiel Zeit: #{gameSelectionHolder.game.zeit.spielZeit} - Verspätung: #{gameSelectionHolder.game.zeit.spielzeitVerspaetung()}"/>
+                              value="#{i18n.t('Echte Zeit')} #{gameSelectionHolder.game.zeit.richtigeZeit} - #{i18n.t('Spiel Zeit:')} #{gameSelectionHolder.game.zeit.spielZeit} - #{i18n.t('Verspätung:')} #{gameSelectionHolder.game.zeit.spielzeitVerspaetung()}"/>
             </b>
 
             <br/>
@@ -59,11 +59,11 @@
 
                 <br/>
 
-                <p:dataTable style="width:80%;" emptyMessage="leer" id="dataTablePen" var="penalty"
+                <p:dataTable style="width:80%;" emptyMessage="#{i18n.t('leer')}" id="dataTablePen" var="penalty"
                              value="#{gameSelectionHolder.game.durchfuehrung.getPenaltyAnstehend()}"
                              rendered="#{!gameSelectionHolder.game.durchfuehrung.getPenaltyAnstehend().isEmpty()}">
 
-                    <p:column headerText="Penalty">
+                    <p:column headerText="#{i18n.t('Penalty')}">
                         <p:commandButton id="pen" value="#{penalty.toString()}"
                                          actionListener="#{gameSelectionHolder.game.durchfuehrung.setPenaltyGespielt(penalty.id)}"
                                          update="@form"/>
@@ -71,35 +71,35 @@
 
                 </p:dataTable>
 
-                <h:outputText value="Wartende Spiele" style="font-size: 18pt"/>
+                <h:outputText value="#{i18n.t('Wartende Spiele')}" style="font-size: 18pt"/>
 
-                <p:dataTable emptyMessage="leer" id="wtabelle" var="zeile"
+                <p:dataTable emptyMessage="#{i18n.t('leer')}" id="wtabelle" var="zeile"
                              value="#{gameSelectionHolder.game.durchfuehrung.list1Wartend}">
 
-                    <p:column headerText="Start">
+                    <p:column headerText="#{i18n.t('Start')}">
                         <h:outputText value="#{zeile.start}">
                             <f:convertDateTime type="date" pattern="HH:mm (dd.MM.yy)" timeZone="Europe/Zurich"/>
                         </h:outputText>
                     </p:column>
 
                     <p:column>
-                        <f:facet name="header">Platz A
+                        <f:facet name="header">#{i18n.t('Platz A')}
                         </f:facet>
                         <h:outputText value="#{zeile.a}" styleClass="#{zeile.a.getFarbe()}"/>
                     </p:column>
                     <p:column>
-                        <f:facet name="header">Platz B
+                        <f:facet name="header">#{i18n.t('Platz B')}
                         </f:facet>
                         <h:outputText value="#{zeile.b}" styleClass="#{zeile.b.getFarbe()}"/>
                     </p:column>
                     <p:column>
-                        <f:facet name="header">Platz C
+                        <f:facet name="header">#{i18n.t('Platz C')}
                         </f:facet>
                         <h:outputText value="#{zeile.c}" styleClass="#{zeile.c.getFarbe()}"/>
                     </p:column>
 
                     <p:column>
-                        <f:facet name="header">Platz D
+                        <f:facet name="header">#{i18n.t('Platz D')}
                         </f:facet>
                         <h:outputText value="#{zeile.d}" styleClass="#{zeile.d.getFarbe()}"/>
                     </p:column>
@@ -112,35 +112,35 @@
 
                 </p:dataTable>
 
-                <h:outputText value="Zum Vorbereiten" style="font-size: 18pt"/>
+                <h:outputText value="#{i18n.t('Zum Vorbereiten')}" style="font-size: 18pt"/>
 
-                <p:dataTable emptyMessage="leer" id="vtabelle" var="zeile"
+                <p:dataTable emptyMessage="#{i18n.t('leer')}" id="vtabelle" var="zeile"
                              value="#{gameSelectionHolder.game.durchfuehrung.list2ZumVorbereiten}">
 
-                    <p:column headerText="Start">
+                    <p:column headerText="#{i18n.t('Start')}">
                         <h:outputText value="#{zeile.start}">
                             <f:convertDateTime type="date" pattern="HH:mm (dd.MM.yy)" timeZone="Europe/Zurich"/>
                         </h:outputText>
                     </p:column>
 
                     <p:column>
-                        <f:facet name="header">Platz A
+                        <f:facet name="header">#{i18n.t('Platz A')}
                         </f:facet>
                         <h:outputText value="#{zeile.a}" styleClass="#{zeile.a.getFarbe()}"/>
                     </p:column>
                     <p:column>
-                        <f:facet name="header">Platz B
+                        <f:facet name="header">#{i18n.t('Platz B')}
                         </f:facet>
                         <h:outputText value="#{zeile.b}" styleClass="#{zeile.b.getFarbe()}"/>
                     </p:column>
                     <p:column>
-                        <f:facet name="header">Platz C
+                        <f:facet name="header">#{i18n.t('Platz C')}
                         </f:facet>
                         <h:outputText value="#{zeile.c}" styleClass="#{zeile.c.getFarbe()}"/>
                     </p:column>
 
                     <p:column>
-                        <f:facet name="header">Platz D
+                        <f:facet name="header">#{i18n.t('Platz D')}
                         </f:facet>
                         <h:outputText value="#{zeile.d}" styleClass="#{zeile.d.getFarbe()}"/>
                     </p:column>
@@ -155,17 +155,17 @@
 
                 </p:dataTable>
 
-                <h:outputText value="Wartet auf Start" style="font-size: 18pt"/>
+                <h:outputText value="#{i18n.t('Wartet auf Start')}" style="font-size: 18pt"/>
 
                 <pe:timer id="wtimer" timeout="#{gameSelectionHolder.game.durchfuehrung.countdownToStart.sekundenToGo}"
                           format="mm:ss" update="fm"
                           rendered="#{gameSelectionHolder.game.durchfuehrung.list3Vorbereitet.size() > 0}"/>
 
-                <p:dataTable emptyMessage="leer" id="btabelle" var="zeile"
+                <p:dataTable emptyMessage="#{i18n.t('leer')}" id="btabelle" var="zeile"
                              value="#{gameSelectionHolder.game.durchfuehrung.list3Vorbereitet}">
 
 
-                    <p:column headerText="Start / Countdown">
+                    <p:column headerText="#{i18n.t('Start / Countdown')}">
                         <h:outputText value="#{zeile.start}">
                             <f:convertDateTime type="date" pattern="HH:mm (dd.MM.yy)" timeZone="Europe/Zurich"/>
                         </h:outputText>
@@ -174,23 +174,23 @@
                     </p:column>
 
                     <p:column>
-                        <f:facet name="header">Platz A
+                        <f:facet name="header">#{i18n.t('Platz A')}
                         </f:facet>
                         <h:outputText value="#{zeile.a}" styleClass="#{zeile.a.getFarbe()}"/>
                     </p:column>
                     <p:column>
-                        <f:facet name="header">Platz B
+                        <f:facet name="header">#{i18n.t('Platz B')}
                         </f:facet>
                         <h:outputText value="#{zeile.b}" styleClass="#{zeile.b.getFarbe()}"/>
                     </p:column>
                     <p:column>
-                        <f:facet name="header">Platz C
+                        <f:facet name="header">#{i18n.t('Platz C')}
                         </f:facet>
                         <h:outputText value="#{zeile.c}" styleClass="#{zeile.c.getFarbe()}"/>
                     </p:column>
 
                     <p:column>
-                        <f:facet name="header">Platz D
+                        <f:facet name="header">#{i18n.t('Platz D')}
                         </f:facet>
                         <h:outputText value="#{zeile.d}" styleClass="#{zeile.d.getFarbe()}"/>
                     </p:column>
@@ -210,17 +210,17 @@
 
 
                 <div align="left">
-                    <h:outputText value="Am Spielen" style="font-size: 18pt"/>
+                    <h:outputText value="#{i18n.t('Am Spielen')}" style="font-size: 18pt"/>
                 </div>
 
                 <pe:timer id="stimer" timeout="#{gameSelectionHolder.game.durchfuehrung.countdown.sekundenToGo}"
                           format="mm:ss" update="fm"
                           rendered="#{gameSelectionHolder.game.durchfuehrung.list4Spielend.size() > 0}"/>
 
-                <p:dataTable emptyMessage="leer" id="stabelle" var="zeile"
+                <p:dataTable emptyMessage="#{i18n.t('leer')}" id="stabelle" var="zeile"
                              value="#{gameSelectionHolder.game.durchfuehrung.list4Spielend}">
 
-                    <p:column headerText="Start / Timer" style="width: 15%">
+                    <p:column headerText="#{i18n.t('Start / Timer')}" style="width: 15%">
                         <h:outputText value="#{zeile.start}">
                             <f:convertDateTime type="date" pattern="HH:mm (dd.MM.yy)" timeZone="Europe/Zurich"/>
                         </h:outputText>
@@ -228,23 +228,23 @@
                     </p:column>
 
                     <p:column>
-                        <f:facet name="header">Platz A
+                        <f:facet name="header">#{i18n.t('Platz A')}
                         </f:facet>
                         <h:outputText value="#{zeile.a}" styleClass="#{zeile.a.getFarbe()}"/>
                     </p:column>
                     <p:column>
-                        <f:facet name="header">Platz B
+                        <f:facet name="header">#{i18n.t('Platz B')}
                         </f:facet>
                         <h:outputText value="#{zeile.b}" styleClass="#{zeile.b.getFarbe()}"/>
                     </p:column>
                     <p:column>
-                        <f:facet name="header">Platz C
+                        <f:facet name="header">#{i18n.t('Platz C')}
                         </f:facet>
                         <h:outputText value="#{zeile.c}" styleClass="#{zeile.c.getFarbe()}"/>
                     </p:column>
 
                     <p:column>
-                        <f:facet name="header">Platz D
+                        <f:facet name="header">#{i18n.t('Platz D')}
                         </f:facet>
                         <h:outputText value="#{zeile.d}" styleClass="#{zeile.d.getFarbe()}"/>
                     </p:column>

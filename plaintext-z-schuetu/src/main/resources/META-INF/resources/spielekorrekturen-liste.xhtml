@@ -5,7 +5,7 @@
                 xmlns:p="http://primefaces.org/ui" xmlns:f="jakarta.faces.core"
                 xmlns="http://www.w3.org/1999/xhtml" template="/includes/template.xhtml">
 
-    <ui:define name="title">Spielekorrekturen</ui:define>
+    <ui:define name="title">#{i18n.t('Spielekorrekturen')}</ui:define>
 
     <ui:define name="page">
 
@@ -30,47 +30,47 @@
 
                     <p:ajax event="rowSelect" listener="#{emadUI.r('spielekorrekturen-details.htm')}" global="false"/>
 
-                    <p:column headerText="Nr." style="width:10%;" value="#{row.spiel.idString}" filterBy="#{row.idP}"
+                    <p:column headerText="#{i18n.t('Nr.')}" style="width:10%;" value="#{row.spiel.idString}" filterBy="#{row.idP}"
                               sortBy="#{row.idP}">
                         <h:outputText value="#{row.spiel.idString}"/>
                     </p:column>
 
-                    <p:column headerText="Start" style="width:10%;" value="#{row.spiel.start}" filterBy="#{row.startP}"
+                    <p:column headerText="#{i18n.t('Start')}" style="width:10%;" value="#{row.spiel.start}" filterBy="#{row.startP}"
                               sortBy="#{row.startP}">
                         <h:outputText value="#{row.spiel.start}">
                             <f:convertDateTime type="date" pattern="HH:mm (dd.MM)" timeZone="Europe/Zurich"/>
                         </h:outputText>
                     </p:column>
 
-                    <p:column headerText="Teams" style="width:30%;" value="#{row.names}" filterBy="#{row.namesP}"
+                    <p:column headerText="#{i18n.t('Teams')}" style="width:30%;" value="#{row.names}" filterBy="#{row.namesP}"
                               sortBy="#{row.namesP}">
                         <h:outputText value="#{row.names}"/>
                     </p:column>
 
-                    <p:column headerText="Resultat" style="width:10%;" value="#{row.spiel.start}">
+                    <p:column headerText="#{i18n.t('Resultat')}" style="width:10%;" value="#{row.spiel.start}">
                         <h:outputText value="#{row.spiel.toreABestaetigt} : #{row.spiel.toreBBestaetigt}"/>
                     </p:column>
 
-                    <p:column headerText="Eingetr." style="width:5%;" sortBy="#{row.eingetragenP}">
+                    <p:column headerText="#{i18n.t('Eingetr.')}" style="width:5%;" sortBy="#{row.eingetragenP}">
                         <h:selectBooleanCheckbox value="#{row.eingetragenP}" disabled="true"/>
                     </p:column>
 
-                    <p:column headerText="Eintrager" style="width:20%;" value="#{row.spiel.start}"
+                    <p:column headerText="#{i18n.t('Eintrager')}" style="width:20%;" value="#{row.spiel.start}"
                               filterBy="#{row.eintragerP}" sortBy="#{row.eintragerP}">
                         <h:outputText value="#{row.eintragerP}"/>
                     </p:column>
 
-                    <p:column headerText="Bem" style="width:20%;" value="#{row.bemerkungP}" sortBy="#{row.bemerkungP}">
+                    <p:column headerText="#{i18n.t('Bem')}" style="width:20%;" value="#{row.bemerkungP}" sortBy="#{row.bemerkungP}">
                         <h:selectBooleanCheckbox value="#{row.bemerkungP}" disabled="true"/>
                     </p:column>
 
-                    <p:column headerText="Kontrolle" style="width:20%;" filterBy="#{row.kontrolleP}"
+                    <p:column headerText="#{i18n.t('Kontrolle')}" style="width:20%;" filterBy="#{row.kontrolleP}"
                               sortBy="#{row.kontrolleP}">
                         <h:outputText value="#{row.kontrolleP}"/>
                     </p:column>
 
-                    <p:column headerText="Aktion" style="width:80px;text-align:center">
-                        <p:commandButton icon="pi pi-pencil" title="Bearbeiten"
+                    <p:column headerText="#{i18n.t('Aktion')}" style="width:80px;text-align:center">
+                        <p:commandButton icon="pi pi-pencil" title="#{i18n.t('Bearbeiten')}"
                                          action="spielekorrekturen-details.htm" ajax="false">
                             <f:setPropertyActionListener target="#{lazySpielkorrekturenRowModel.selected}" value="#{row}"/>
                         </p:commandButton>

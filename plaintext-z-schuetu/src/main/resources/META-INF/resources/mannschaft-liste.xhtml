@@ -7,7 +7,7 @@
                 xmlns:f="jakarta.faces.core"
                 xmlns="http://www.w3.org/1999/xhtml" template="/includes/template.xhtml">
 
-    <ui:define name="title">Mannschaften für Turnier: #{gameSelectionHolder.game.model.gameName}</ui:define>
+    <ui:define name="title">#{i18n.t('Mannschaften für Turnier:')} #{gameSelectionHolder.game.model.gameName}</ui:define>
 
     <ui:define name="page">
 
@@ -17,11 +17,11 @@
             <input type="hidden" name="_csrf" value="#{_csrf.token}"/>
 
             <h:panelGrid columns="3">
-                <p:commandButton value="Neue Mannschaft" action="#{mannschaftBackingBean.neu()}"/>
+                <p:commandButton value="#{i18n.t('Neue Mannschaft')}" action="#{mannschaftBackingBean.neu()}"/>
 
                 <p:selectOneMenu value="#{mannschaftBackingBean.copyJahr}" style="left" ajax="true"
                                  rendered="#{gameSelectionHolder.game.findMannschaften().isEmpty()}">
-                    <f:selectItem itemLabel="Mannschaften kopieren " itemValue=""/>
+                    <f:selectItem itemLabel="#{i18n.t('Mannschaften kopieren')}" itemValue=""/>
                     <f:selectItems value="#{mannschaftBackingBean.getOldJahre()}" var="dt" itemLabel="#{dt}"
                                    itemValue="#{dt}"/>
                     <p:ajax listener="#{mannschaftBackingBean.copy()}" update="fm"/>
@@ -29,7 +29,7 @@
 
                 <p:selectOneMenu value="#{mannschaftBackingBean.copyJahr}" style="left" ajax="true"
                                  rendered="#{gameSelectionHolder.game.findMannschaften().isEmpty()}">
-                    <f:selectItem itemLabel="Mannschaften von Turnier kopieren " itemValue=""/>
+                    <f:selectItem itemLabel="#{i18n.t('Mannschaften von Turnier kopieren')}" itemValue=""/>
                     <f:selectItems value="#{mannschaftBackingBean.getOldJahreGames()}" var="dt" itemLabel="#{dt}"
                                    itemValue="#{dt}"/>
                     <p:ajax listener="#{mannschaftBackingBean.copyGame()}" update="fm"/>
@@ -39,7 +39,7 @@
 
             <br/><br/>
 
-            <p:dataTable emptyMessage="leer" selection="#{mannschaftBackingBean.selected}" selectionMode="single"
+            <p:dataTable emptyMessage="#{i18n.t('leer')}" selection="#{mannschaftBackingBean.selected}" selectionMode="single"
                          rowKey="#{mannschaft.id}" widgetVar="msch" id="tbl" var="mannschaft"
                          value="#{gameSelectionHolder.game.findMannschaften()}" rowIndexVar="ri">
 
@@ -47,26 +47,26 @@
 
                 <p:column>
                     <f:facet name="nr">
-                        <h:outputText value="Nr."/>
+                        <h:outputText value="#{i18n.t('Nr.')}"/>
                     </f:facet>
                     <h:outputText value="#{ri +1}"/>
                 </p:column>
 
-                <p:column id="name" filterBy="name" headerText="Name" filterMatchMode="contains">
+                <p:column id="name" filterBy="name" headerText="#{i18n.t('Name')}" filterMatchMode="contains">
                     <h:outputText value="#{mannschaft.name}"/>
                 </p:column>
 
-                <p:column id="captainName" filterBy="captainName" headerText="Captain"
+                <p:column id="captainName" filterBy="captainName" headerText="#{i18n.t('Captain')}"
                           filterMatchMode="contains">
                     <h:outputText value="#{mannschaft.captain2Vorname} #{mannschaft.captain2Name}"/>
                 </p:column>
 
-                <p:column id="begleitpersonName" filterBy="begleitpersonName" headerText="Begleitperson"
+                <p:column id="begleitpersonName" filterBy="begleitpersonName" headerText="#{i18n.t('Begleitperson')}"
                           filterMatchMode="contains">
                     <h:outputText value="#{mannschaft.begleitperson2Vorname} #{mannschaft.begleitperson2Name}"/>
                 </p:column>
 
-                <p:column id="schulhaus" filterBy="schulhaus" headerText="Schulhaus"
+                <p:column id="schulhaus" filterBy="schulhaus" headerText="#{i18n.t('Schulhaus')}"
                           filterMatchMode="contains">
 
                     <h:outputText value="#{mannschaft.schulhaus}"/>
@@ -74,48 +74,48 @@
 
                 <p:column>
                     <f:facet name="header">
-                        <h:outputText value="M / K"/>
+                        <h:outputText value="#{i18n.t('M / K')}"/>
                     </f:facet>
                     <h:outputText value="#{mannschaft.geschlecht}"/>
                 </p:column>
 
                 <p:column>
                     <f:facet name="header">
-                        <h:outputText value="GR (A/B)"/>
+                        <h:outputText value="#{i18n.t('GR (A/B)')}"/>
                     </f:facet>
                     <h:outputText value="#{mannschaft.gr}"/>
                 </p:column>
 
                 <p:column>
                     <f:facet name="header">
-                        <h:outputText value="Klasse"/>
+                        <h:outputText value="#{i18n.t('Klasse')}"/>
                     </f:facet>
                     <h:outputText value="#{mannschaft.klasse} - #{mannschaft.klassenBezeichnung}"/>
                 </p:column>
 
                 <p:column>
                     <f:facet name="header">
-                        <h:outputText value="Spieler"/>
+                        <h:outputText value="#{i18n.t('Spieler')}"/>
                     </f:facet>
                     <h:outputText value="#{mannschaft.anzahlSpieler}"/>
                 </p:column>
 
                 <p:column>
                     <f:facet name="header">
-                        <h:outputText value="Notizen"/>
+                        <h:outputText value="#{i18n.t('Notizen')}"/>
                     </f:facet>
                     <p:commandButton id="notizenButton" icon="ui-icon-note"
                                      onclick="PF('dlge#{ri}').show();" type="button"
                                      rendered="#{mannschaft.notizen.length() > 0}"/>
-                    <p:dialog id="notizen_dialog" header="Notizen zu dieser Mannschaft"
+                    <p:dialog id="notizen_dialog" header="#{i18n.t('Notizen zu dieser Mannschaft')}"
                               widgetVar="dlge#{ri}" showEffect="drop" hideEffect="drop" height="200"
                               width="400">
                         <h:outputText value="#{mannschaft.notizen}"/>
                     </p:dialog>
                 </p:column>
 
-                <p:column headerText="Aktion" style="width:80px;text-align:center">
-                    <p:commandButton icon="pi pi-pencil" title="Bearbeiten"
+                <p:column headerText="#{i18n.t('Aktion')}" style="width:80px;text-align:center">
+                    <p:commandButton icon="pi pi-pencil" title="#{i18n.t('Bearbeiten')}"
                                      action="mannschaft-details.htm" ajax="false">
                         <f:setPropertyActionListener target="#{mannschaftBackingBean.selected}" value="#{mannschaft}"/>
                     </p:commandButton>

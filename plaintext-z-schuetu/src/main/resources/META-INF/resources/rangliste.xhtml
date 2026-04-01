@@ -8,7 +8,7 @@
                 template="/includes/template.xhtml">
 
 
-    <ui:define name="title">Schlussrangliste</ui:define>
+    <ui:define name="title">#{i18n.t('Schlussrangliste')}</ui:define>
 
     <ui:define name="page">
 
@@ -17,21 +17,21 @@
         <h:form id="fm">
             <input type="hidden" name="_csrf" value="#{_csrf.token}"/>
 
-            <p:commandButton value="Print" type="button" icon="ui-icon-print" style="display:block;margin-bottom: 20px">
+            <p:commandButton value="#{i18n.t('Drucken')}" type="button" icon="ui-icon-print" style="display:block;margin-bottom: 20px">
                 <p:printer target="Zeile"/>
             </p:commandButton>
 
             <p:dataTable id="Zeile" var="zeile"
                          value="#{websiteInfoService.getRanglisteReal(gameSelectionHolder.getGameName())}">
                 <f:facet name="header">
-                    Schlussrangliste
+                    #{i18n.t('Schlussrangliste')}
                 </f:facet>
                 <p:columnGroup type="header">
                     <p:row>
                         <p:column headerText=" "/>
-                        <p:column headerText="3.Rang"/>
-                        <p:column headerText="2.Rang"/>
-                        <p:column headerText="1.Rang"/>
+                        <p:column headerText="#{i18n.t('3.Rang')}"/>
+                        <p:column headerText="#{i18n.t('2.Rang')}"/>
+                        <p:column headerText="#{i18n.t('1.Rang')}"/>
                     </p:row>
                 </p:columnGroup>
                 <p:subTable var="z" value="#{zeile.getAsZeilen()}">

@@ -7,7 +7,7 @@
                 xmlns:f="jakarta.faces.core"
                 xmlns="http://www.w3.org/1999/xhtml" template="/includes/template.xhtml">
 
-    <ui:define name="title">Alle Kategorien</ui:define>
+    <ui:define name="title">#{i18n.t('Alle Kategorien')}</ui:define>
 
     <ui:define name="page">
 
@@ -29,35 +29,35 @@
 
                         <p:column>
                             <f:facet name="header">
-                                <h:outputText value="Name"/>
+                                <h:outputText value="#{i18n.t('Name')}"/>
                             </f:facet>
                             <h:outputText value="#{mannschaft.name}"/>
                         </p:column>
 
                         <p:column>
                             <f:facet name="header">
-                                <h:outputText value="Captain"/>
+                                <h:outputText value="#{i18n.t('Captain')}"/>
                             </f:facet>
                             <h:outputText value="#{mannschaft.captain2Vorname} #{mannschaft.captain2Name}"/>
                         </p:column>
 
                         <p:column>
                             <f:facet name="header">
-                                <h:outputText value="Begleitperson"/>
+                                <h:outputText value="#{i18n.t('Begleitperson')}"/>
                             </f:facet>
                             <h:outputText value="#{mannschaft.begleitperson2Vorname} #{mannschaft.begleitperson2Name}"/>
                         </p:column>
 
                         <p:column>
                             <f:facet name="header">
-                                <h:outputText value="Schulhaus"/>
+                                <h:outputText value="#{i18n.t('Schulhaus')}"/>
                             </f:facet>
                             <h:outputText value="#{mannschaft.schulhaus}"/>
                         </p:column>
 
                         <p:column>
                             <f:facet name="header">
-                                <h:outputText value="Klasse"/>
+                                <h:outputText value="#{i18n.t('Klasse')}"/>
                             </f:facet>
                             <h:outputText
                                     value="#{mannschaft.klasse} - #{mannschaft.klassenBezeichnung}"/>
@@ -65,14 +65,14 @@
 
                         <p:column>
                             <f:facet name="header">
-                                <h:outputText value="Spieler"/>
+                                <h:outputText value="#{i18n.t('Spieler')}"/>
                             </f:facet>
                             <h:outputText value="#{mannschaft.anzahlSpieler}"/>
                         </p:column>
 
                         <p:column>
                             <f:facet name="header">
-                                <h:outputText value="GR (A/B)"/>
+                                <h:outputText value="#{i18n.t('GR (A/B)')}"/>
                             </f:facet>
                             <h:outputText value="#{mannschaft.gr}"/>
                         </p:column>

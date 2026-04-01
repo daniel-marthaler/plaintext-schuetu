@@ -6,7 +6,7 @@
                 xmlns="http://www.w3.org/1999/xhtml" template="/includes/template.xhtml">
 
 
-    <ui:define name="title">Matrix</ui:define>
+    <ui:define name="title">#{i18n.t('Matrix')}</ui:define>
 
     <ui:define name="page">
 
@@ -14,7 +14,7 @@
             <input type="hidden" name="_csrf" value="#{_csrf.token}"/>
 
             <h:panelGroup rendered="#{!gameSelectionHolder.hasGame()}" layout="block" style="padding:20px;">
-                <p>Bitte zuerst ein Turnier auf dem Dashboard auswählen.</p>
+                <p><h:outputText value="#{i18n.t('Bitte zuerst ein Turnier auf dem Dashboard auswählen.')}"/></p>
             </h:panelGroup>
 
             <h:panelGroup id="matrix" layout="block" rendered="#{gameSelectionHolder.hasGame()}">

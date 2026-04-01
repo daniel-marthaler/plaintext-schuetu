@@ -5,7 +5,7 @@
                 xmlns:p="http://primefaces.org/ui" xmlns:f="jakarta.faces.core"
                 xmlns="http://www.w3.org/1999/xhtml" template="/includes/template.xhtml">
 
-    <ui:define name="title">Turnier anlegen / auswählen </ui:define>
+    <ui:define name="title">#{i18n.t('Turnier anlegen / auswählen')}</ui:define>
 
     <ui:define name="page">
         <br/>
@@ -18,7 +18,7 @@
                 <h:panelGrid id="grid" columns="1">
 
                     <h:panelGrid columns="1" cellpadding="5">
-                        <p:commandButton value="Neu" onclick="PF('dlg2').show();"
+                        <p:commandButton value="#{i18n.t('Neu')}" onclick="PF('dlg2').show();"
                                          rendered="#{plaintextSecurity.ifGranted('root')}">
                             <f:ajax execute="@form" render="@none"/>
                         </p:commandButton>
@@ -26,24 +26,24 @@
 
                     <h:panelGrid columns="5" cellpadding="5" rendered="#{gameSelectionHolder.hasGame()}">
 
-                        <h:outputText value="Phasen wechseln:"/>
+                        <h:outputText value="#{i18n.t('Phasen wechseln:')}"/>
 
-                        <p:commandButton id="anmeldung" value="Anmeldephase"
+                        <p:commandButton id="anmeldung" value="#{i18n.t('Anmeldephase')}"
                                          disabled="#{!gameSelectionHolder.game.model.spielPhase.equals('anmeldung')}"
                                          actionListener="#{gameSelectionHolder.phaseAnmeldung()}"
                                          update=":fm" onstart="PF('blockIt').show()" oncomplete="PF('blockIt').hide()"/>
 
-                        <p:commandButton id="katzuordnung" value="Kategoriezuordnung"
+                        <p:commandButton id="katzuordnung" value="#{i18n.t('Kategoriezuordnung')}"
                                          disabled="#{!gameSelectionHolder.game.model.spielPhase.equals('kategorie')}"
                                          actionListener="#{gameSelectionHolder.phaseKategoriezuordnung()}"
                                          update=":fm" onstart="PF('blockIt').show()" oncomplete="PF('blockIt').hide()"/>
 
-                        <p:commandButton id="spieltagezuordnung" value="Spieltagezuordnung"
+                        <p:commandButton id="spieltagezuordnung" value="#{i18n.t('Spieltagezuordnung')}"
                                          disabled="#{!gameSelectionHolder.game.model.spielPhase.equals('spieltage')}"
                                          actionListener="#{gameSelectionHolder.phaseSpielen()}"
                                          update=":fm" onstart="PF('blockIt').show()" oncomplete="PF('blockIt').hide()"/>
 
-                        <p:commandButton id="spielzuordnung" value="Spielen"
+                        <p:commandButton id="spielzuordnung" value="#{i18n.t('Spielen')}"
                                          disabled="#{!gameSelectionHolder.game.model.spielPhase.equals('spielen')}"
                                          actionListener="#{gameSelectionHolder.phaseSpielen()}"
                                          update=":fm" onstart="PF('blockIt').show()" oncomplete="PF('blockIt').hide()"/>
@@ -60,46 +60,46 @@
                         <h:outputText value="#{gm.gameName}"/>
                     </p:column>
 
-                    <p:column headerText="läuft" style="width:30%;">
-                        <p:toggleSwitch value="#{gm.initialisiert}" disabled="true" onLabel="läuft"
-                                       offLabel="läuft nicht"/>
+                    <p:column headerText="#{i18n.t('läuft')}" style="width:30%;">
+                        <p:toggleSwitch value="#{gm.initialisiert}" disabled="true" onLabel="#{i18n.t('läuft')}"
+                                       offLabel="#{i18n.t('läuft nicht')}"/>
                     </p:column>
 
-                    <p:column headerText="Phase" style="width:30%;">
+                    <p:column headerText="#{i18n.t('Phase')}" style="width:30%;">
                         <h:outputText value="#{gm.spielPhase}"/>
                     </p:column>
 
                     <p:column headerText="" style="width:30%;">
-                        <p:commandButton icon="fa fa-wrench" value="auswählen" update=":fm"
+                        <p:commandButton icon="fa fa-wrench" value="#{i18n.t('auswählen')}" update=":fm"
                                          oncomplete="location.reload();"
                                          action="#{gameSelectionHolder.selectGame(gm.gameName)}"
                                          rendered="#{gm.initialisiert and (not gameSelectionHolder.hasGame() or not gm.gameName.equals(gameSelectionHolder.game.model.gameName))}"/>
 
-                        <p:commandButton icon="fa fa-wrench" value="initialisieren" update=":fm"
+                        <p:commandButton icon="fa fa-wrench" value="#{i18n.t('initialisieren')}" update=":fm"
                                          oncomplete="location.reload();"
                                          action="#{gameRoot.selectGame(gm.gameName)}"
                                          rendered="#{not gm.initialisiert and plaintextSecurity.ifGranted('root')}" />
                     </p:column>
 
                     <p:column headerText="" style="width:15%;" rendered="#{plaintextSecurity.ifGranted('root')}">
-                        <p:commandButton icon="fa fa-wrench" value="löschen" update=":fm" action="#{gameService.deleteGame(gm.gameName)}">
-                            <p:confirm header="Achtung !!!" message="Turnier wirklich löschen" icon="ui-icon-alert"/>
+                        <p:commandButton icon="fa fa-wrench" value="#{i18n.t('löschen')}" update=":fm" action="#{gameService.deleteGame(gm.gameName)}">
+                            <p:confirm header="#{i18n.t('Achtung !!!')}" message="#{i18n.t('Turnier wirklich löschen')}" icon="ui-icon-alert"/>
                             <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
-                                <p:commandButton value="Ja" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check"/>
-                                <p:commandButton value="Nein" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close"/>
+                                <p:commandButton value="#{i18n.t('Ja')}" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check"/>
+                                <p:commandButton value="#{i18n.t('Nein')}" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close"/>
                             </p:confirmDialog>
                         </p:commandButton>
                     </p:column>
 
                 </p:dataTable>
 
-                <p:dialog header="Turnier erstellen" widgetVar="dlg2" id="dlg2id" resizable="true">
+                <p:dialog header="#{i18n.t('Turnier erstellen')}" widgetVar="dlg2" id="dlg2id" resizable="true">
                     <h:panelGrid columns="2" cellpadding="5">
-                        <h:outputLabel value="Name:"/>
+                        <h:outputLabel value="#{i18n.t('Name:')}"/>
                         <p:inputText value="#{gameBackingBean.selected.gameName}"/>
                         <f:facet name="footer">
                             <br/>
-                            <p:commandButton value="Speichern" actionListener="#{gameBackingBean.save()}" update=":fm" oncomplete="PF('dlg2').hide()"/>
+                            <p:commandButton value="#{i18n.t('Speichern')}" actionListener="#{gameBackingBean.save()}" update=":fm" oncomplete="PF('dlg2').hide()"/>
                         </f:facet>
                     </h:panelGrid>
                 </p:dialog>

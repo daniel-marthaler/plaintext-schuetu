@@ -7,7 +7,7 @@
                 xmlns:p="http://primefaces.org/ui"
                 xmlns="http://www.w3.org/1999/xhtml" template="/includes/template.xhtml">
 
-    <ui:define name="title">Teams für Turnier: #{gameSelectionHolder.game.model.gameName}</ui:define>
+    <ui:define name="title">#{i18n.t('Teams für Turnier:')} #{gameSelectionHolder.game.model.gameName}</ui:define>
 
     <ui:define name="page">
 
@@ -20,33 +20,33 @@
                 <p:dataExporter type="xls" target="tbl" fileName="teams" pageOnly="true"/>
             </h:commandLink>
 
-            <p:dataTable emptyMessage="leer" id="tbl" var="obj" value="#{heftliDumper.teams}" rowIndexVar="ri">
+            <p:dataTable emptyMessage="#{i18n.t('leer')}" id="tbl" var="obj" value="#{heftliDumper.teams}" rowIndexVar="ri">
 
-                <p:column headerText="Nr." exportable="false">
+                <p:column headerText="#{i18n.t('Nr.')}" exportable="false">
                     <h:outputText value="#{ri +1}"/>
                 </p:column>
 
-                <p:column headerText="Gruppe">
+                <p:column headerText="#{i18n.t('Gruppe')}">
                     <h:outputText value="#{obj.get(0)}"/>
                 </p:column>
 
-                <p:column headerText="Team">
+                <p:column headerText="#{i18n.t('Team')}">
                     <h:outputText value="#{obj.get(1)}"/>
                 </p:column>
 
-                <p:column headerText="Schulhaus">
+                <p:column headerText="#{i18n.t('Schulhaus')}">
                     <h:outputText value="#{obj.get(2)}"/>
                 </p:column>
 
-                <p:column headerText="Klasse">
+                <p:column headerText="#{i18n.t('Klasse')}">
                     <h:outputText value="#{obj.get(3)}"/>
                 </p:column>
 
-                <p:column headerText="Captain">
+                <p:column headerText="#{i18n.t('Captain')}">
                     <h:outputText value="#{obj.get(4)}"/>
                 </p:column>
 
-                <p:column headerText="Begleitperson">
+                <p:column headerText="#{i18n.t('Begleitperson')}">
                     <h:outputText value="#{obj.get(5)}"/>
                 </p:column>
 
