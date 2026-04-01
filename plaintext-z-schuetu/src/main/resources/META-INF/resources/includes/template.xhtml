@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      lang="#{languageBean.languageCode}"
+      data-theme="#{userPreferencesBackingBean.darkMode}">
+
+<f:view locale="#{languageBean.locale}">
+
+<h:head>
+    <f:facet name="first">
+        <meta http-equiv="x-ua-compatible" content="IE=edge"/>
+        <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+        <meta name="mobile-web-app-capable" content="yes"/>
+        <link rel="icon" href="#{request.contextPath}/resources/plaintext-layout/images/favicon.ico" type="image/x-icon"></link>
+        <!-- Single dynamic theme - uses CSS variables set below -->
+        <h:outputStylesheet library="primefaces-plaintext" name="theme.css"/>
+        <style>
+            /* Prevent menu flickering on page load */
+            body:not(.plaintext-menu-ready) .layout-menu li > ul {
+                visibility: hidden !important;
+            }
+            body.plaintext-menu-ready .layout-menu li > ul {
+                visibility: visible;
+            }
+
+            /* theme=#{userPreferencesBackingBean.componentTheme} dark=#{userPreferencesBackingBean.darkMode} */
+            :root {
+                --pt-primary-color: #{themeColorProvider.getPrimaryColor(userPreferencesBackingBean.componentTheme, userPreferencesBackingBean.darkMode, userPreferencesBackingBean.customColor)} !important;
+                --pt-primary-color-text: #{themeColorProvider.getPrimaryColorText(userPreferencesBackingBean.componentTheme, userPreferencesBackingBean.customColor)} !important;
+                --pt-primary-lighter: #{themeColorProvider.getPrimaryLighter(userPreferencesBackingBean.componentTheme, userPreferencesBackingBean.darkMode, userPreferencesBackingBean.customColor)} !important;
+                --pt-primary-bg-16: #{themeColorProvider.getPrimaryBg16(userPreferencesBackingBean.componentTheme, userPreferencesBackingBean.darkMode, userPreferencesBackingBean.customColor)} !important;
+                --pt-primary-bg-04: #{themeColorProvider.getPrimaryBg04(userPreferencesBackingBean.componentTheme, userPreferencesBackingBean.darkMode, userPreferencesBackingBean.customColor)} !important;
+                --pt-focus-ring-color: #{themeColorProvider.getFocusRing(userPreferencesBackingBean.componentTheme, userPreferencesBackingBean.darkMode, userPreferencesBackingBean.customColor)} !important;
+            }
+
+            /* Light mode surface colors */
+            html[data-theme="light"] {
+                color-scheme: light;
+                --pt-surface-0: #ffffff;
+                --pt-surface-50: #FAFAFA;
+                --pt-surface-hover: #e9ecef;
+                --pt-surface-300: #ced4da;
+                --pt-surface-400: #adb5bd;
+                --pt-surface-border: #dee2e6;
+                --pt-text-color: #495057;
+                --pt-text-color-secondary: #6c757d;
+                --pt-text-dark: #212529;
+                --pt-mask-bg: rgba(0, 0, 0, 0.4);
+            }
+
+            /* Dark mode surface colors */
+            html[data-theme="dark"] {
+                color-scheme: dark;
+                --pt-surface-0: #1e1e2f;
+                --pt-surface-50: #2a2b3d;
+                --pt-surface-hover: #3c3d4f;
+                --pt-surface-300: #606174;
+                --pt-surface-400: #8b8ca0;
+                --pt-surface-border: #3c3d4f;
+                --pt-text-color: #d4d4dc;
+                --pt-text-color-secondary: #a9aabe;
+                --pt-text-dark: #d4d4dc;
+                --pt-mask-bg: rgba(0, 0, 0, 0.6);
+            }
+
+            /* Language Switcher Styles */
+            .language-switcher {
+                display: flex;
+                align-items: center;
+                gap: 2px;
+                margin-right: 8px;
+            }
+            .language-switcher .lang-link {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                padding: 2px 5px;
+                font-size: 0.75rem;
+                font-weight: 600;
+                text-decoration: none;
+                color: var(--pt-text-color-secondary, #6c757d);
+                border-radius: 3px;
+                transition: all 0.2s;
+                cursor: pointer;
+                border: none;
+                background: none;
+            }
+            .language-switcher .lang-link:hover {
+                color: var(--pt-primary-color, #2196F3);
+                background-color: var(--pt-primary-bg-04, rgba(33,150,243,0.04));
+            }
+            .language-switcher .lang-link.active {
+                color: var(--pt-primary-color-text, #ffffff);
+                background-color: var(--pt-primary-color, #2196F3);
+                border-radius: 3px;
+            }
+        </style>
+    </f:facet>
+    <title>
+        <ui:insert name="title">Plaintext App</ui:insert>
+    </title>
+    <h:outputScript name="js/layout.js" library="plaintext-layout"/>
+    <script>
+        //<![CDATA[
+        // Fix PrimeFaces dialog accessibility issue: remove focus before hiding
+        $(document).ready(function() {
+            var observer = new MutationObserver(function(mutations) {
+                mutations.forEach(function(mutation) {
+                    if (mutation.type === 'attributes' && mutation.attributeName === 'aria-hidden') {
+                        var dialog = $(mutation.target);
+                        if (dialog.attr('aria-hidden') === 'true') {
+                            var focusedElement = dialog.find(':focus');
+                            if (focusedElement.length > 0) {
+                                focusedElement.blur();
+                            }
+                        }
+                    }
+                });
+            });
+
+            function observeDialogs() {
+                $('div[role="dialog"]').each(function() {
+                    observer.observe(this, {
+                        attributes: true,
+                        attributeFilter: ['aria-hidden']
+                    });
+                });
+            }
+
+            observeDialogs();
+
+            $(document).on('pfAjaxComplete', function() {
+                observeDialogs();
+            });
+        });
+        //]]>
+    </script>
+    <ui:insert name="head"/>
+</h:head>
+
+<h:body styleClass="#{userPreferencesBackingBean.inputStyleClass}">
+    <div class="layout-wrapper layout-topbar-#{userPreferencesBackingBean.topbarTheme} layout-menu-#{userPreferencesBackingBean.menuTheme} #{userPreferencesBackingBean.menuMode} #{userPreferencesBackingBean.menuStaticClass}">
+        <ui:include src="/includes/topbar.xhtml"/>
+        <ui:include src="/includes/config.xhtml"/>
+
+        <!-- Language Switcher Bar -->
+        <div style="display:flex; justify-content:flex-end; padding: 4px 16px 0 0; background: var(--pt-surface-0, #ffffff);">
+            <h:form id="langForm" style="margin:0; padding:0; display:inline;">
+                <input type="hidden" name="_csrf" value="#{_csrf.token}"/>
+                <div class="language-switcher">
+                    <p:commandLink styleClass="lang-link #{languageBean.languageCode == 'de' ? 'active' : ''}"
+                                   actionListener="#{languageBean.changeLanguage('de')}"
+                                   update="@none" process="@this"
+                                   oncomplete="window.location.reload();">
+                        <h:outputText value="DE"/>
+                    </p:commandLink>
+                    <p:commandLink styleClass="lang-link #{languageBean.languageCode == 'en' ? 'active' : ''}"
+                                   actionListener="#{languageBean.changeLanguage('en')}"
+                                   update="@none" process="@this"
+                                   oncomplete="window.location.reload();">
+                        <h:outputText value="EN"/>
+                    </p:commandLink>
+                    <p:commandLink styleClass="lang-link #{languageBean.languageCode == 'fr' ? 'active' : ''}"
+                                   actionListener="#{languageBean.changeLanguage('fr')}"
+                                   update="@none" process="@this"
+                                   oncomplete="window.location.reload();">
+                        <h:outputText value="FR"/>
+                    </p:commandLink>
+                    <p:commandLink styleClass="lang-link #{languageBean.languageCode == 'it' ? 'active' : ''}"
+                                   actionListener="#{languageBean.changeLanguage('it')}"
+                                   update="@none" process="@this"
+                                   oncomplete="window.location.reload();">
+                        <h:outputText value="IT"/>
+                    </p:commandLink>
+                    <p:commandLink styleClass="lang-link #{languageBean.languageCode == 'zh' ? 'active' : ''}"
+                                   actionListener="#{languageBean.changeLanguage('zh')}"
+                                   update="@none" process="@this"
+                                   oncomplete="window.location.reload();">
+                        <h:outputText value="\u4e2d"/>
+                    </p:commandLink>
+                    <p:commandLink styleClass="lang-link #{languageBean.languageCode == 'ja' ? 'active' : ''}"
+                                   actionListener="#{languageBean.changeLanguage('ja')}"
+                                   update="@none" process="@this"
+                                   oncomplete="window.location.reload();">
+                        <h:outputText value="\u65e5"/>
+                    </p:commandLink>
+                </div>
+            </h:form>
+        </div>
+
+        <div class="layout-main">
+            <div class="layout-content">
+                    <f:metadata>
+                        <f:event type="preRenderView" listener="#{pageAccessGuardBackingBean.checkPageAccess()}"/>
+                    </f:metadata>
+                    <ui:insert name="content"/>
+                    <ui:insert name="page"/>
+            </div>
+            <ui:include src="/includes/footer.xhtml"/>
+        </div>
+
+        <p:ajaxStatus style="width:32px;height:32px;position:fixed;right:7px;bottom:7px">
+            <f:facet name="start">
+                <i class="pi pi-spin pi-spinner ajax-loader" aria-hidden="true"/>
+            </f:facet>
+
+            <f:facet name="complete">
+                <h:outputText value=""/>
+            </f:facet>
+        </p:ajaxStatus>
+        <div class="layout-mask modal-in"></div>
+    </div>
+    <h:outputStylesheet name="css/primeicons.css" library="plaintext-layout"/>
+    <h:outputStylesheet name="css/primeflex.min.css" library="plaintext-layout"/>
+    <h:outputStylesheet name="css/#{userPreferencesBackingBean.layout}.css" library="plaintext-layout"/>
+
+</h:body>
+
+</f:view>
+
+</html>

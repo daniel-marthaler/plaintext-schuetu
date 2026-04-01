@@ -1,0 +1,216 @@
+<!--suppress ALL -->
+<ui:composition xmlns:ui="jakarta.faces.facelets"
+                xmlns:h="jakarta.faces.html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="jakarta.faces.core"
+                xmlns:c="jakarta.tags.core"
+                xmlns="http://www.w3.org/1999/xhtml"
+                template="/includes/template.xhtml">
+
+    <ui:define name="title">Matrix Modern</ui:define>
+
+    <ui:define name="page">
+
+        <style>
+            .matrix-win { background-color: #4CAF50 !important; color: white; font-weight: bold; }
+            .matrix-loss { background-color: #f44336 !important; color: white; font-weight: bold; }
+            .matrix-draw { background-color: #FFC107 !important; color: #333; font-weight: bold; }
+            .matrix-pending { background-color: #e0e0e0 !important; color: #666; }
+            .matrix-live { background-color: #FF9800 !important; color: white; font-weight: bold; animation: pulse 1.5s infinite; }
+            .matrix-diagonal { background-color: #424242 !important; }
+
+            @keyframes pulse {
+                0% { opacity: 1; }
+                50% { opacity: 0.6; }
+                100% { opacity: 1; }
+            }
+
+            .matrix-table {
+                border-collapse: collapse;
+                width: 100%;
+                font-size: 0.9em;
+            }
+
+            .matrix-table th, .matrix-table td {
+                border: 1px solid #ddd;
+                padding: 6px 8px;
+                text-align: center;
+                vertical-align: middle;
+            }
+
+            .matrix-table th {
+                background-color: #f5f5f5;
+                font-weight: bold;
+                font-size: 0.85em;
+            }
+
+            .matrix-table td.team-col {
+                text-align: left;
+                font-weight: bold;
+                min-width: 120px;
+                background-color: #fafafa;
+            }
+
+            .matrix-cell-detail {
+                font-size: 0.7em;
+                color: #bbb;
+                display: block;
+            }
+
+            .matrix-resultat {
+                font-size: 1.05em;
+                display: block;
+            }
+
+            .matrix-legend {
+                display: flex;
+                gap: 16px;
+                flex-wrap: wrap;
+                margin-bottom: 12px;
+                align-items: center;
+            }
+
+            .matrix-legend-item {
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                font-size: 0.85em;
+            }
+
+            .matrix-legend-box {
+                width: 18px;
+                height: 18px;
+                border-radius: 3px;
+                display: inline-block;
+            }
+
+            .matrix-stats {
+                font-size: 0.8em;
+                color: #888;
+                display: block;
+                font-weight: normal;
+            }
+
+            .matrix-gruppe-info {
+                margin-bottom: 8px;
+                font-size: 0.9em;
+                color: #888;
+            }
+
+            @media (max-width: 768px) {
+                .matrix-table th, .matrix-table td {
+                    padding: 3px 4px;
+                    font-size: 0.75em;
+                }
+                .matrix-table td.team-col {
+                    min-width: 80px;
+                }
+            }
+        </style>
+
+        <h:form id="fm">
+            <input type="hidden" name="_csrf" value="#{_csrf.token}"/>
+
+            <p:messages id="msgs" showDetail="true" closable="true"/>
+
+            <p:panel header="Spielmatrix - #{matrixModernBean.gameName}" rendered="#{matrixModernBean.gameSelected}"
+                     styleClass="ui-fluid" toggleable="true">
+
+                <f:facet name="actions">
+                    <p:commandButton icon="pi pi-refresh" title="Aktualisieren"
+                                     action="#{matrixModernBean.refresh()}"
+                                     update="fm" styleClass="ui-button-text ui-button-plain"/>
+                </f:facet>
+
+                <!-- Legend -->
+                <div class="matrix-legend">
+                    <span class="matrix-legend-item">
+                        <span class="matrix-legend-box" style="background-color:#4CAF50;">&#160;</span>
+                        Sieg
+                    </span>
+                    <span class="matrix-legend-item">
+                        <span class="matrix-legend-box" style="background-color:#f44336;">&#160;</span>
+                        Niederlage
+                    </span>
+                    <span class="matrix-legend-item">
+                        <span class="matrix-legend-box" style="background-color:#FFC107;">&#160;</span>
+                        Unentschieden
+                    </span>
+                    <span class="matrix-legend-item">
+                        <span class="matrix-legend-box" style="background-color:#e0e0e0;">&#160;</span>
+                        Ausstehend
+                    </span>
+                    <span class="matrix-legend-item">
+                        <span class="matrix-legend-box" style="background-color:#FF9800;">&#160;</span>
+                        Live
+                    </span>
+                </div>
+
+                <p:tabView id="katTabs" activeIndex="#{matrixModernBean.activeTabIndex}"
+                           dynamic="true" cache="true">
+
+                    <c:forEach items="#{matrixModernBean.kategorieModels}" var="katModel" varStatus="status">
+
+                        <p:tab title="#{katModel.kategorieName}" id="tab_#{status.index}">
+
+                            <div class="matrix-gruppe-info">
+                                <i class="pi pi-users">&#160;</i> #{katModel.anzahlMannschaften} Mannschaften
+                                <h:outputText value=" | Letztes Gruppenspiel: #{katModel.latestSpielZeit}"
+                                              rendered="#{katModel.latestSpielZeit ne null}"/>
+                                <h:outputText value=" | Vor- und Rueckrunde"
+                                              rendered="#{katModel.vorUndRueckrunde}"/>
+                            </div>
+
+                            <div style="overflow-x:auto;">
+                                <table class="matrix-table">
+                                    <!-- Header row with team names -->
+                                    <thead>
+                                        <tr>
+                                            <th>Team</th>
+                                            <c:forEach items="#{katModel.mannschaften}" var="headerM">
+                                                <th>#{headerM.name}</th>
+                                            </c:forEach>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <c:forEach items="#{katModel.zeilen}" var="zeile">
+                                            <tr>
+                                                <td class="team-col">
+                                                    #{zeile.mannschaftName}
+                                                    <span class="matrix-stats">
+                                                        P:#{zeile.punkte} | T:#{zeile.tore}:#{zeile.gegentore} (#{zeile.torDifferenz})
+                                                    </span>
+                                                </td>
+                                                <c:forEach items="#{zeile.zellen}" var="zelle">
+                                                    <td class="#{zelle.styleClass}">
+                                                        <h:panelGroup rendered="#{!zelle.diagonal}">
+                                                            <span class="matrix-resultat">#{zelle.resultat}</span>
+                                                            <span class="matrix-cell-detail">
+                                                                <h:outputText value="#{zelle.detail}" rendered="#{zelle.detail ne ''}"/>
+                                                            </span>
+                                                        </h:panelGroup>
+                                                    </td>
+                                                </c:forEach>
+                                            </tr>
+                                        </c:forEach>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                        </p:tab>
+
+                    </c:forEach>
+
+                </p:tabView>
+
+            </p:panel>
+
+            <p:panel rendered="#{!matrixModernBean.gameSelected}" styleClass="ui-fluid">
+                <h:outputText value="Bitte zuerst ein Spiel auswaehlen." style="color:#888;font-size:1.1em;"/>
+            </p:panel>
+
+        </h:form>
+
+    </ui:define>
+
+</ui:composition>
