@@ -23,7 +23,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <!-- Plaintext Root Framework -->
-        <plaintext-root.version>1.64.0</plaintext-root.version>
+        <plaintext-root.version>1.66.0</plaintext-root.version>
 
         <!-- JSF & Primefaces -->
         <primefaces.version>15.0.13</primefaces.version>

@@ -29,6 +29,13 @@
             <artifactId>plaintext-z-schuetu</artifactId>
         </dependency>
 
+        <!-- i18n Translation Module -->
+        <dependency>
+            <groupId>ch.plaintext</groupId>
+            <artifactId>plaintext-admin-i18n</artifactId>
+            <version>${plaintext-root.version}</version>
+        </dependency>
+
         <!-- Spring Boot Data JPA (für @EntityScan) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
