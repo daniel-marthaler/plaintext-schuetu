@@ -10,12 +10,17 @@
 
     <ui:define name="page">
 
-        <br/>
-        <br/>
+        <h:form id="fm">
+            <input type="hidden" name="_csrf" value="#{_csrf.token}"/>
 
-        <h:panelGroup id="matrix" layout="block">
-            <h:outputText value="#{beobachterBean.getMatrix()}" escape="false"/>
-        </h:panelGroup>
+            <h:panelGroup rendered="#{!gameSelectionHolder.hasGame()}" layout="block" style="padding:20px;">
+                <p>Bitte zuerst ein Turnier auf dem Dashboard auswählen.</p>
+            </h:panelGroup>
+
+            <h:panelGroup id="matrix" layout="block" rendered="#{gameSelectionHolder.hasGame()}">
+                <h:outputText value="#{beobachterBean.getMatrix()}" escape="false"/>
+            </h:panelGroup>
+        </h:form>
 
     </ui:define>
 
