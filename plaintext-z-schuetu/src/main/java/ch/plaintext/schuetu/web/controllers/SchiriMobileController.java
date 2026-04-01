@@ -32,7 +32,10 @@ public class SchiriMobileController {
 
     /**
      * Zeigt die mobile Schiri-Seite an.
-     * Je nach Status: Registrierungsformular, Wartestatus oder Spieldetails.
+     * Je nach Status: Registrierungsformular, Wartestatus, Spieldetails oder Kontrollierer-Ansicht.
+     *
+     * Wenn das Spiel bereits eingetragen ist (fertigEingetragen=true), wird die
+     * Kontrollierer-Ansicht angezeigt, damit ein zweiter Scan das Ergebnis bestaetigen kann.
      */
     @GetMapping("/{token}")
     public String showMobilePage(@PathVariable String token, HttpServletRequest request, Model model) {
@@ -41,6 +44,23 @@ public class SchiriMobileController {
         if (reg == null) {
             model.addAttribute("error", "Ungueltiger QR-Code / Token");
             model.addAttribute("status", "error");
+            return "forward:/nosec/schiri-mobile.xhtml";
+        }
+
+        // Kontrollierer-Workflow: Wenn das Spiel bereits eingetragen ist,
+        // zeige die Kontrollierer-Ansicht statt der Schiri-Ansicht
+        if (schiriMobileService.isSpielEingetragen(token)) {
+            Spiel spiel = schiriMobileService.getSpielForToken(token);
+            if (spiel != null) {
+                if (spiel.isFertigBestaetigt()) {
+                    model.addAttribute("status", "kontrolle_done");
+                } else {
+                    model.addAttribute("status", "kontrolle");
+                }
+                addSpielDetailsForKontrolle(model, spiel);
+            }
+            model.addAttribute("token", token);
+            model.addAttribute("spielInfo", reg.getSpielInfo());
             return "forward:/nosec/schiri-mobile.xhtml";
         }
 
@@ -120,6 +140,66 @@ public class SchiriMobileController {
             return "{\"status\":\"waiting\"}";
         }
         return "{\"status\":\"register\"}";
+    }
+
+    /**
+     * POST Kontrolle: Bestaetigt oder weist das Ergebnis zurueck.
+     * Parameter 'aktion' = "bestaetigen" oder "zurueckweisen"
+     */
+    @PostMapping("/{token}/kontrolle")
+    public String kontrolle(@PathVariable String token,
+                             @RequestParam String aktion,
+                             Model model) {
+
+        if ("bestaetigen".equals(aktion)) {
+            boolean success = schiriMobileService.bestaetigeSpiel(token);
+            if (success) {
+                model.addAttribute("status", "kontrolle_done");
+                model.addAttribute("kontrolleMessage", "Ergebnis bestaetigt!");
+            } else {
+                model.addAttribute("status", "error");
+                model.addAttribute("error", "Bestaetigung fehlgeschlagen.");
+            }
+        } else if ("zurueckweisen".equals(aktion)) {
+            boolean success = schiriMobileService.weiseSpielZurueck(token);
+            if (success) {
+                model.addAttribute("status", "kontrolle_rejected");
+                model.addAttribute("kontrolleMessage", "Ergebnis zurueckgewiesen. Das Spiel muss neu eingetragen werden.");
+            } else {
+                model.addAttribute("status", "error");
+                model.addAttribute("error", "Zurueckweisung fehlgeschlagen.");
+            }
+        } else {
+            model.addAttribute("status", "error");
+            model.addAttribute("error", "Unbekannte Aktion.");
+        }
+
+        // Reload Spiel details for display
+        Spiel spiel = schiriMobileService.getSpielForToken(token);
+        if (spiel != null) {
+            addSpielDetailsForKontrolle(model, spiel);
+        }
+
+        model.addAttribute("token", token);
+        SchiriRegistration reg = schiriMobileService.getRegistration(token);
+        if (reg != null) {
+            model.addAttribute("spielInfo", reg.getSpielInfo());
+        }
+
+        return "forward:/nosec/schiri-mobile.xhtml";
+    }
+
+    private void addSpielDetailsForKontrolle(Model model, Spiel spiel) {
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+        model.addAttribute("spielId", spiel.getIdString());
+        model.addAttribute("spielZeit", sdf.format(spiel.getStart()));
+        model.addAttribute("spielPlatz", spiel.getPlatz() != null ? spiel.getPlatz().toString() : "?");
+        model.addAttribute("spielTeamA", spiel.getMannschaftAName());
+        model.addAttribute("spielTeamB", spiel.getMannschaftBName());
+        model.addAttribute("spielToreA", spiel.getToreA());
+        model.addAttribute("spielToreB", spiel.getToreB());
+        model.addAttribute("spielSchiri", spiel.getSchiriName() != null ? spiel.getSchiriName() : "-");
+        model.addAttribute("spielFertigBestaetigt", spiel.isFertigBestaetigt());
     }
 
     private void addSpielDetails(Model model, SchiriRegistration reg) {

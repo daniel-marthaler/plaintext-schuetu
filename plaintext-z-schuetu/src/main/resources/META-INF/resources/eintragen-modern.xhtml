@@ -1,0 +1,294 @@
+<!--suppress ALL -->
+<ui:composition xmlns:ui="jakarta.faces.facelets"
+                xmlns:h="jakarta.faces.html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="jakarta.faces.core"
+                xmlns:c="jakarta.tags.core"
+                xmlns="http://www.w3.org/1999/xhtml"
+                template="/includes/template.xhtml">
+
+    <ui:define name="title">Eintragen Modern</ui:define>
+
+    <ui:define name="page">
+
+        <style>
+            .eintragen-cards {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+                gap: 16px;
+                padding: 8px 0;
+            }
+
+            .spiel-card {
+                background: var(--pt-surface-0, #fff);
+                border: 1px solid var(--pt-surface-border, #dee2e6);
+                border-radius: 12px;
+                padding: 0;
+                overflow: hidden;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+                transition: box-shadow 0.2s;
+            }
+
+            .spiel-card:hover {
+                box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+            }
+
+            .spiel-card-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 10px 16px;
+                background: var(--pt-surface-50, #fafafa);
+                border-bottom: 1px solid var(--pt-surface-border, #dee2e6);
+                font-size: 0.85em;
+                color: var(--pt-text-color-secondary, #6c757d);
+            }
+
+            .spiel-card-header .spiel-id {
+                font-weight: bold;
+                color: var(--pt-primary-color, #2196F3);
+                font-size: 1.1em;
+            }
+
+            .spiel-card-body {
+                padding: 16px;
+            }
+
+            .teams-row {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 12px;
+                margin-bottom: 16px;
+            }
+
+            .team-block {
+                flex: 1;
+                text-align: center;
+            }
+
+            .team-name {
+                font-weight: bold;
+                font-size: 1.05em;
+                color: var(--pt-text-dark, #212529);
+                margin-bottom: 4px;
+            }
+
+            .team-farbe {
+                font-size: 0.8em;
+                color: var(--pt-text-color-secondary, #6c757d);
+            }
+
+            .vs-separator {
+                font-size: 1.2em;
+                font-weight: bold;
+                color: var(--pt-text-color-secondary, #6c757d);
+            }
+
+            .score-inputs {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 16px;
+                margin-bottom: 16px;
+            }
+
+            .score-input-wrapper {
+                text-align: center;
+            }
+
+            .score-input-wrapper label {
+                display: block;
+                font-size: 0.75em;
+                color: var(--pt-text-color-secondary, #6c757d);
+                margin-bottom: 4px;
+            }
+
+            .score-input-wrapper .ui-inputfield {
+                width: 70px !important;
+                height: 60px !important;
+                font-size: 2em !important;
+                text-align: center !important;
+                font-weight: bold !important;
+                border-radius: 10px !important;
+            }
+
+            .score-colon {
+                font-size: 2em;
+                font-weight: bold;
+                color: var(--pt-text-color-secondary, #6c757d);
+                padding-top: 18px;
+            }
+
+            .schiri-row {
+                margin-bottom: 12px;
+            }
+
+            .schiri-row label {
+                display: block;
+                font-size: 0.85em;
+                color: var(--pt-text-color-secondary, #6c757d);
+                margin-bottom: 4px;
+            }
+
+            .spiel-card .submit-row {
+                padding: 0 16px 16px 16px;
+            }
+
+            .spiel-card .submit-row .ui-button {
+                width: 100%;
+                padding: 12px !important;
+                font-size: 1.05em !important;
+                border-radius: 8px !important;
+            }
+
+            .card-status-bar {
+                height: 4px;
+                width: 100%;
+            }
+
+            .card-status-bar.anstehend {
+                background: var(--pt-primary-color, #2196F3);
+            }
+
+            .card-status-bar.eingetragen {
+                background: #27ae60;
+            }
+
+            .no-spiele-msg {
+                text-align: center;
+                padding: 40px 20px;
+                color: var(--pt-text-color-secondary, #6c757d);
+                font-size: 1.1em;
+            }
+
+            .no-spiele-msg i {
+                font-size: 3em;
+                display: block;
+                margin-bottom: 12px;
+                opacity: 0.4;
+            }
+
+            @media (max-width: 600px) {
+                .eintragen-cards {
+                    grid-template-columns: 1fr;
+                }
+                .score-input-wrapper .ui-inputfield {
+                    width: 60px !important;
+                    height: 50px !important;
+                    font-size: 1.6em !important;
+                }
+            }
+        </style>
+
+        <h:form id="fm">
+            <input type="hidden" name="_csrf" value="#{_csrf.token}"/>
+
+            <p:messages id="msgs" showDetail="true" closable="true"/>
+
+            <p:panel header="Spiele Eintragen (Modern)" rendered="#{eintragenBackingBean != null}"
+                     styleClass="ui-fluid" toggleable="true">
+
+                <f:facet name="actions">
+                    <p:commandButton icon="pi pi-refresh" title="Aktualisieren"
+                                     update="fm" styleClass="ui-button-text ui-button-plain"/>
+                </f:facet>
+
+                <p:poll interval="30" update="fm:cardsPanel"/>
+
+                <h:panelGroup id="cardsPanel">
+
+                    <h:panelGroup rendered="#{empty eintragenBackingBean.einzutragende}">
+                        <div class="no-spiele-msg">
+                            <i class="pi pi-check-circle">&#160;</i>
+                            Keine Spiele zum Eintragen vorhanden.
+                        </div>
+                    </h:panelGroup>
+
+                    <div class="eintragen-cards">
+                        <c:forEach items="#{eintragenBackingBean.einzutragende}" var="spiel" varStatus="loop">
+
+                            <div class="spiel-card">
+                                <div class="card-status-bar anstehend">&#160;</div>
+                                <div class="spiel-card-header">
+                                    <span class="spiel-id">#{spiel.idString}</span>
+                                    <span>
+                                        <i class="pi pi-map-marker">&#160;</i> Platz #{spiel.platz}
+                                        &#160;|&#160;
+                                        <i class="pi pi-clock">&#160;</i>
+                                        <h:outputText value="#{spiel.start}">
+                                            <f:convertDateTime type="date" pattern="HH:mm" timeZone="Europe/Zurich"/>
+                                        </h:outputText>
+                                    </span>
+                                </div>
+
+                                <div class="spiel-card-body">
+                                    <div class="teams-row">
+                                        <div class="team-block">
+                                            <div class="team-name">#{spiel.mannschaftA.name}</div>
+                                            <div class="team-farbe">#{spiel.mannschaftA.farbe}</div>
+                                        </div>
+                                        <div class="vs-separator">vs</div>
+                                        <div class="team-block">
+                                            <div class="team-name">#{spiel.mannschaftB.name}</div>
+                                            <div class="team-farbe">#{spiel.mannschaftB.farbe}</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="score-inputs">
+                                        <div class="score-input-wrapper">
+                                            <label>Tore A</label>
+                                            <p:inputText id="toreA_#{loop.index}"
+                                                         value="#{spiel.toreA}"
+                                                         size="2"
+                                                         onclick="this.setSelectionRange(0, this.value.length)">
+                                                <f:validateDoubleRange minimum="0" maximum="30"/>
+                                            </p:inputText>
+                                        </div>
+                                        <div class="score-colon">:</div>
+                                        <div class="score-input-wrapper">
+                                            <label>Tore B</label>
+                                            <p:inputText id="toreB_#{loop.index}"
+                                                         value="#{spiel.toreB}"
+                                                         size="2"
+                                                         onclick="this.setSelectionRange(0, this.value.length)">
+                                                <f:validateDoubleRange minimum="0" maximum="30"/>
+                                            </p:inputText>
+                                        </div>
+                                    </div>
+
+                                    <div class="schiri-row">
+                                        <label><i class="pi pi-user">&#160;</i> Schiri</label>
+                                        <p:selectOneMenu id="schiri_#{loop.index}"
+                                                         value="#{eintragenModernBean.schiriSelections[spiel.id]}"
+                                                         filter="true" filterMatchMode="contains"
+                                                         style="width:100%;">
+                                            <f:selectItem itemLabel="Schiri auswaehlen..." itemValue=""/>
+                                            <f:selectItems value="#{schirisBackingBean.aktiveSchiris}" var="sch"
+                                                           itemLabel="#{sch.vorname} #{sch.nachname}"
+                                                           itemValue="#{sch.shName}"/>
+                                        </p:selectOneMenu>
+                                    </div>
+                                </div>
+
+                                <div class="submit-row">
+                                    <p:commandButton value="Eintragen"
+                                                     icon="pi pi-check"
+                                                     action="#{eintragenModernBean.eintragen(spiel)}"
+                                                     update="fm"
+                                                     styleClass="ui-button-success"/>
+                                </div>
+                            </div>
+
+                        </c:forEach>
+                    </div>
+
+                </h:panelGroup>
+
+            </p:panel>
+
+        </h:form>
+
+    </ui:define>
+
+</ui:composition>

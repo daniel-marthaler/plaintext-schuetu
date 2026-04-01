@@ -1,7 +1,10 @@
 package ch.plaintext.schuetu.service.qrcode;
 
+import ch.plaintext.schuetu.entity.Spiel;
+import ch.plaintext.schuetu.repository.SpielRepository;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -15,6 +18,9 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service
 @Slf4j
 public class SchiriMobileService {
+
+    @Autowired
+    private SpielRepository spielRepository;
 
     private final Map<String, SchiriRegistration> registrations = new ConcurrentHashMap<>();
 
@@ -100,6 +106,59 @@ public class SchiriMobileService {
         return registrations.values().stream()
                 .filter(SchiriRegistration::isRegistered)
                 .toList();
+    }
+
+    /**
+     * Gibt das Spiel fuer einen Token zurueck
+     */
+    public Spiel getSpielForToken(String token) {
+        SchiriRegistration reg = registrations.get(token);
+        if (reg == null || reg.getSpielId() == null) {
+            return null;
+        }
+        return spielRepository.findById(reg.getSpielId()).orElse(null);
+    }
+
+    /**
+     * Prueft ob das Spiel fuer diesen Token bereits eingetragen wurde
+     */
+    public boolean isSpielEingetragen(String token) {
+        Spiel spiel = getSpielForToken(token);
+        return spiel != null && spiel.isFertigEingetragen();
+    }
+
+    /**
+     * Bestaetigt das Ergebnis eines Spiels (Kontrollierer-Aktion).
+     * Setzt fertigBestaetigt=true und uebernimmt die Tore als bestaetigte Tore.
+     */
+    public boolean bestaetigeSpiel(String token) {
+        Spiel spiel = getSpielForToken(token);
+        if (spiel == null || !spiel.isFertigEingetragen()) {
+            return false;
+        }
+        spiel.setFertigBestaetigt(true);
+        spiel.setToreABestaetigt(spiel.getToreA());
+        spiel.setToreBBestaetigt(spiel.getToreB());
+        spiel.setZurueckgewiesen(false);
+        spielRepository.save(spiel);
+        log.info("Spiel {} via Kontrollierer bestaetigt (Token {})", spiel.getIdString(), token);
+        return true;
+    }
+
+    /**
+     * Weist das Ergebnis eines Spiels zurueck (Kontrollierer-Aktion).
+     * Setzt fertigEingetragen=false und zurueckgewiesen=true.
+     */
+    public boolean weiseSpielZurueck(String token) {
+        Spiel spiel = getSpielForToken(token);
+        if (spiel == null || !spiel.isFertigEingetragen()) {
+            return false;
+        }
+        spiel.setZurueckgewiesen(true);
+        spiel.setFertigEingetragen(false);
+        spielRepository.save(spiel);
+        log.info("Spiel {} via Kontrollierer zurueckgewiesen (Token {})", spiel.getIdString(), token);
+        return true;
     }
 
     /**

@@ -123,6 +123,62 @@
             font-size: 0.9em;
             margin-bottom: 12px;
         }
+        .score-display {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            padding: 20px 0;
+        }
+        .score-team {
+            text-align: center;
+            flex: 1;
+        }
+        .score-team .team-name {
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #e2b714;
+            margin-bottom: 8px;
+        }
+        .score-team .team-score {
+            font-size: 3em;
+            font-weight: bold;
+            color: #fff;
+        }
+        .score-separator {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #888;
+        }
+        .btn-confirm {
+            background: #27ae60;
+            color: #fff;
+        }
+        .btn-confirm:active {
+            background: #1e8449;
+        }
+        .btn-reject {
+            background: #e67e22;
+            color: #fff;
+        }
+        .btn-reject:active {
+            background: #d35400;
+        }
+        .btn-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 16px;
+        }
+        .btn-group .btn {
+            flex: 1;
+        }
+        .kontrolle-label {
+            text-align: center;
+            font-size: 0.9em;
+            color: #aaa;
+            margin-bottom: 4px;
+        }
+        .status-rejected { background: #e67e22; color: #fff; }
     </style>
 </h:head>
 
@@ -227,6 +283,114 @@
                     </div>
                 </div>
             </c:if>
+        </c:if>
+
+        <!-- KONTROLLIERER: Ergebnis pruefen und bestaetigen/zurueckweisen -->
+        <c:if test="${status == 'kontrolle'}">
+            <h2>Kontrolle / Ergebnis pruefen</h2>
+            <div class="icon">&#128270;</div>
+            <div class="kontrolle-label">Spiel-ID: ${spielId}</div>
+
+            <div class="game-info">
+                <div class="row">
+                    <span class="label">Zeit</span>
+                    <span class="value">${spielZeit}</span>
+                </div>
+                <div class="row">
+                    <span class="label">Platz</span>
+                    <span class="value">${spielPlatz}</span>
+                </div>
+                <div class="row">
+                    <span class="label">Schiri</span>
+                    <span class="value">${spielSchiri}</span>
+                </div>
+            </div>
+
+            <div class="score-display">
+                <div class="score-team">
+                    <div class="team-name">${spielTeamA}</div>
+                    <div class="team-score">${spielToreA}</div>
+                </div>
+                <div class="score-separator">:</div>
+                <div class="score-team">
+                    <div class="team-name">${spielTeamB}</div>
+                    <div class="team-score">${spielToreB}</div>
+                </div>
+            </div>
+
+            <div class="btn-group">
+                <form method="post" action="/nosec/schiri-mobile/${token}/kontrolle" style="flex:1;display:flex;">
+                    <input type="hidden" name="aktion" value="bestaetigen"/>
+                    <button type="submit" class="btn btn-confirm" style="flex:1;">Bestaetigen</button>
+                </form>
+                <form method="post" action="/nosec/schiri-mobile/${token}/kontrolle" style="flex:1;display:flex;">
+                    <input type="hidden" name="aktion" value="zurueckweisen"/>
+                    <button type="submit" class="btn btn-reject" style="flex:1;">Zurueckweisen</button>
+                </form>
+            </div>
+        </c:if>
+
+        <!-- KONTROLLIERER: Ergebnis wurde bestaetigt -->
+        <c:if test="${status == 'kontrolle_done'}">
+            <div class="icon">&#9989;</div>
+            <div class="status-badge status-approved">
+                <c:choose>
+                    <c:when test="${not empty kontrolleMessage}">${kontrolleMessage}</c:when>
+                    <c:otherwise>Ergebnis bestaetigt</c:otherwise>
+                </c:choose>
+            </div>
+
+            <div class="game-info">
+                <div class="row">
+                    <span class="label">Spiel-ID</span>
+                    <span class="value">${spielId}</span>
+                </div>
+                <div class="row">
+                    <span class="label">Zeit</span>
+                    <span class="value">${spielZeit}</span>
+                </div>
+                <div class="row">
+                    <span class="label">Platz</span>
+                    <span class="value">${spielPlatz}</span>
+                </div>
+            </div>
+
+            <div class="score-display">
+                <div class="score-team">
+                    <div class="team-name">${spielTeamA}</div>
+                    <div class="team-score">${spielToreA}</div>
+                </div>
+                <div class="score-separator">:</div>
+                <div class="score-team">
+                    <div class="team-name">${spielTeamB}</div>
+                    <div class="team-score">${spielToreB}</div>
+                </div>
+            </div>
+        </c:if>
+
+        <!-- KONTROLLIERER: Ergebnis wurde zurueckgewiesen -->
+        <c:if test="${status == 'kontrolle_rejected'}">
+            <div class="icon">&#10060;</div>
+            <div class="status-badge status-rejected">${kontrolleMessage}</div>
+
+            <div class="game-info">
+                <div class="row">
+                    <span class="label">Spiel-ID</span>
+                    <span class="value">${spielId}</span>
+                </div>
+                <div class="row">
+                    <span class="label">${spielTeamA}</span>
+                    <span class="value">${spielToreA}</span>
+                </div>
+                <div class="row">
+                    <span class="label">${spielTeamB}</span>
+                    <span class="value">${spielToreB}</span>
+                </div>
+            </div>
+
+            <div style="text-align:center;color:#aaa;font-size:0.85em;margin-top:16px;">
+                Das Ergebnis muss am Eintrage-Posten neu eingegeben werden.
+            </div>
         </c:if>
 
     </div>
