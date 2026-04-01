@@ -2,6 +2,7 @@ package ch.plaintext.schuetu.service;
 
 import ch.plaintext.schuetu.entity.GameModel;
 import ch.plaintext.schuetu.repository.GameRepository;
+import ch.plaintext.schuetu.service.mqtt.MqttEventPublisher;
 import ch.plaintext.schuetu.service.websiteinfo.VelocityReplacer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,6 +28,9 @@ class GameSelectionHolderTest {
 
     @Mock
     private VelocityReplacer velocity;
+
+    @Mock
+    private MqttEventPublisher mqttEventPublisher;
 
     @Mock
     private VelocityReplacer website;

@@ -1,5 +1,6 @@
 package ch.plaintext.schuetu.service;
 
+import ch.plaintext.schuetu.service.mqtt.MqttEventPublisher;
 import ch.plaintext.schuetu.service.vorbereitung.B1KategorienZuordner;
 import ch.plaintext.schuetu.service.vorbereitung.C3MannschaftenAufteiler;
 import ch.plaintext.schuetu.service.vorbereitung.D4GeneratePaarungenAndSpiele;
@@ -70,6 +71,9 @@ public class GameSelectionHolder {
     @Autowired
     private SpielRepository spielRepository;
 
+    @Autowired
+    private MqttEventPublisher mqttEventPublisher;
+
     public Boolean hasGame() {
         return game != null;
     }
@@ -80,6 +84,7 @@ public class GameSelectionHolder {
             return "dashboard.htm";
         }
         velocity.dump(game.getModel().getGameName());
+        mqttEventPublisher.gameSelected(name);
         return "dashboard.htm";
     }
 
@@ -102,6 +107,7 @@ public class GameSelectionHolder {
             toKategorie();
             game.getModel().setSpielPhase("kategorie");
             game.setModel(repo.save(game.getModel()));
+            mqttEventPublisher.phaseChanged(getGameName(), "kategorie");
         } catch (Exception e) {
             log.error("Fehler beim Wechsel zur Anmeldephase: {}", e.getMessage(), e);
             FacesContext.getCurrentInstance().addMessage(null,
@@ -119,6 +125,7 @@ public class GameSelectionHolder {
         toSpieltage();
         game.getModel().setSpielPhase("spieltage");
         game.setModel(repo.save(game.getModel()));
+        mqttEventPublisher.phaseChanged(getGameName(), "spieltage");
     }
 
     public void neuRechnen() {
@@ -144,6 +151,7 @@ public class GameSelectionHolder {
         game.getModel().setSpielPhase("spielen");
         spielZeitenAnpassen.spielZeitenAnpassen();
         game.setModel(repo.save(game.getModel()));
+        mqttEventPublisher.phaseChanged(getGameName(), "spielen");
     }
 
     public String getGameName() {

@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+
+<!--suppress ALL -->
+<ui:composition xmlns:ui="jakarta.faces.facelets"
+                xmlns:h="jakarta.faces.html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns="http://www.w3.org/1999/xhtml" template="/includes/template.xhtml">
+
+    <ui:define name="title">Zugriffsstatistik</ui:define>
+
+    <ui:define name="page">
+
+        <p:messages/>
+        <br/>
+        <h:form id="fm">
+            <input type="hidden" name="_csrf" value="#{_csrf.token}"/>
+
+            <p:fieldset legend="Zugriffsstatistik">
+
+                <h:panelGrid columns="4" cellpadding="10" style="margin-bottom:20px;">
+                    <h:outputText value="Total Zugriffe:" style="font-weight:bold;"/>
+                    <h:outputText value="#{statistikBackingBean.totalAccesses}"/>
+                    <h:outputText value="Unique Clients:" style="font-weight:bold;"/>
+                    <h:outputText value="#{statistikBackingBean.uniqueClients}"/>
+                </h:panelGrid>
+
+                <p:commandButton value="Aktualisieren" update="fm" icon="pi pi-refresh"
+                                 style="margin-bottom:15px;"/>
+
+            </p:fieldset>
+
+            <br/>
+
+            <p:fieldset legend="Zugriffe pro Seite">
+                <p:dataTable id="pageStatsTable" var="ps" value="#{statistikBackingBean.pageStats}"
+                             emptyMessage="Keine Daten vorhanden" paginator="true" rows="20"
+                             paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}">
+
+                    <p:column headerText="Seite" sortBy="#{ps.page}" filterBy="#{ps.page}"
+                              filterMatchMode="contains" style="width:70%;">
+                        <h:outputText value="#{ps.page}"/>
+                    </p:column>
+
+                    <p:column headerText="Zugriffe" sortBy="#{ps.count}" style="width:30%;">
+                        <h:outputText value="#{ps.count}"/>
+                    </p:column>
+
+                </p:dataTable>
+            </p:fieldset>
+
+            <br/>
+
+            <p:fieldset legend="Zugriffe pro Benutzer">
+                <p:dataTable id="userStatsTable" var="us" value="#{statistikBackingBean.userStats}"
+                             emptyMessage="Keine Daten vorhanden" paginator="true" rows="20"
+                             paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}">
+
+                    <p:column headerText="Benutzer" sortBy="#{us.username}" style="width:50%;">
+                        <h:outputText value="#{us.username}"/>
+                    </p:column>
+
+                    <p:column headerText="Zugriffe" sortBy="#{us.count}" style="width:50%;">
+                        <h:outputText value="#{us.count}"/>
+                    </p:column>
+
+                </p:dataTable>
+            </p:fieldset>
+
+            <br/>
+
+            <p:fieldset legend="Letzte 50 Zugriffe">
+                <p:dataTable id="recentTable" var="ra" value="#{statistikBackingBean.recentAccesses}"
+                             emptyMessage="Keine Daten vorhanden" paginator="true" rows="25"
+                             paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}">
+
+                    <p:column headerText="Zeitpunkt" sortBy="#{ra.timestamp}" style="width:20%;">
+                        <h:outputText value="#{ra.timestamp}"/>
+                    </p:column>
+
+                    <p:column headerText="Seite" sortBy="#{ra.page}" filterBy="#{ra.page}"
+                              filterMatchMode="contains" style="width:35%;">
+                        <h:outputText value="#{ra.page}"/>
+                    </p:column>
+
+                    <p:column headerText="Benutzer" sortBy="#{ra.username}" style="width:15%;">
+                        <h:outputText value="#{ra.username}"/>
+                    </p:column>
+
+                    <p:column headerText="Client IP" style="width:15%;">
+                        <h:outputText value="#{ra.clientIp}"/>
+                    </p:column>
+
+                    <p:column headerText="User Agent" style="width:15%;">
+                        <h:outputText value="#{ra.userAgent}" title="#{ra.userAgent}"/>
+                    </p:column>
+
+                </p:dataTable>
+            </p:fieldset>
+
+        </h:form>
+
+    </ui:define>
+</ui:composition>

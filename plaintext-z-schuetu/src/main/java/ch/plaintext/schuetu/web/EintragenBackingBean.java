@@ -2,6 +2,7 @@ package ch.plaintext.schuetu.web;
 
 import ch.plaintext.schuetu.service.GameSelectionHolder;
 import ch.plaintext.schuetu.service.PenaltyLoaderFactory;
+import ch.plaintext.schuetu.service.mqtt.MqttEventPublisher;
 import ch.plaintext.schuetu.entity.Mannschaft;
 import ch.plaintext.schuetu.entity.Penalty;
 import ch.plaintext.schuetu.entity.Spiel;
@@ -32,6 +33,9 @@ public class EintragenBackingBean {
 
     @Autowired
     private PenaltyLoaderFactory penaltyLoader;
+
+    @Autowired
+    private MqttEventPublisher mqttEventPublisher;
 
     private Spiel selected;
 
@@ -84,6 +88,7 @@ public class EintragenBackingBean {
         spiele.add(selected);
         holder.getGame().getEintragen().eintragen(spiele, "" + selected.getId(), selectedSchiri);
         holder.getGame().getEintragen().bestaetigen(spiele, "" + selected.getId(), "ok");
+        mqttEventPublisher.spielEingetragen(selected);
         selected = null;
         selectedSchiri = "";
     }

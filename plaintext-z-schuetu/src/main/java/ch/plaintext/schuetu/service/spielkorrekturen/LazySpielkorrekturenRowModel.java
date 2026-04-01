@@ -2,6 +2,7 @@ package ch.plaintext.schuetu.service.spielkorrekturen;
 
 import ch.plaintext.PlaintextSecurity;
 import ch.plaintext.schuetu.service.GameSelectionHolder;
+import ch.plaintext.schuetu.service.mqtt.MqttEventPublisher;
 import ch.plaintext.schuetu.repository.SpielRepository;
 import lombok.Getter;
 import lombok.Setter;
@@ -45,6 +46,9 @@ public class LazySpielkorrekturenRowModel extends LazyDataModel<SpielKorrektur> 
     @Autowired
     private KorrekturWrapper wrapper;
 
+    @Autowired
+    private MqttEventPublisher mqttEventPublisher;
+
     @PostConstruct
     private void init() {
         wrapper.setGame(holder.getGameName());
@@ -54,6 +58,7 @@ public class LazySpielkorrekturenRowModel extends LazyDataModel<SpielKorrektur> 
     public void kontr() {
         selected.getSpiel().setKontrolle(plaintextSecurity.getUser());
         repo.save(selected.getSpiel());
+        mqttEventPublisher.spielKontrolle(selected.getSpiel());
 
         wrapper.initOrReload();
 
@@ -69,6 +74,7 @@ public class LazySpielkorrekturenRowModel extends LazyDataModel<SpielKorrektur> 
     public void save() {
         selected.getSpiel().setEintrager(plaintextSecurity.getUser());
         repo.save(selected.getSpiel());
+        mqttEventPublisher.spielKorrektur(selected.getSpiel());
 
         if (holder.hasGame()) {
             holder.getGame().getResultate().neuberechnenDerKategorie(selected.getSpiel().getMannschaftA().getKategorie(), holder.getGameName());
