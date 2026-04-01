@@ -3,6 +3,7 @@ package ch.plaintext.schuetu.service;
 import ch.plaintext.MenuVisibilityProvider;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;
@@ -11,9 +12,10 @@ import java.util.Set;
 @Slf4j
 public class GameMenuVisibilityProvider implements MenuVisibilityProvider {
 
-    private static final Set<String> ALWAYS_VISIBLE = Set.of("Start", "Root", "Admin", "Home");
+    private static final Set<String> ALWAYS_VISIBLE = Set.of("Start", "Root", "Admin", "Home", "Experimental");
 
     @Autowired
+    @Lazy
     private GameSelectionHolder gameSelectionHolder;
 
     @Override
