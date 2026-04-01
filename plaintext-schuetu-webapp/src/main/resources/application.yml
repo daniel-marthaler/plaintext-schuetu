@@ -47,7 +47,7 @@ joinfaces:
       - "*.html"
       - "/faces/*"
   primefaces:
-    theme: freya-yellow-dark
+    theme: plaintext
 
 mad:
   autologin: true
@@ -61,6 +61,9 @@ plaintext:
     broker-url: tcp://192.168.1.224:1883
     client-id: schuetu-prod
     topic-prefix: schuetu/events
+  schiri:
+    mobile:
+      base-url: ${SCHIRI_MOBILE_BASE_URL:http://192.168.1.224:1132}
 
 logging:
   level:

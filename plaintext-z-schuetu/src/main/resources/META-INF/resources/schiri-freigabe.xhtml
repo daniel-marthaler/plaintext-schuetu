@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+
+<!--suppress ALL -->
+<ui:composition xmlns:ui="jakarta.faces.facelets"
+                xmlns:h="jakarta.faces.html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="jakarta.faces.core"
+                xmlns="http://www.w3.org/1999/xhtml" template="/includes/template.xhtml">
+
+
+    <ui:define name="title">Schiri-Freigabe</ui:define>
+
+    <ui:define name="page">
+
+        <br/>
+        <br/>
+
+        <h:form id="fm">
+            <input type="hidden" name="_csrf" value="#{_csrf.token}"/>
+
+            <p:fieldset legend="Schiri-Freigabe (QR-Code Registrierungen)">
+
+                <p:panel header="Wartende Registrierungen: #{schiriFreigabeBackingBean.wartendeAnzahl}">
+
+                    <p:dataTable emptyMessage="Keine Registrierungen vorhanden"
+                                 id="tbl"
+                                 var="reg"
+                                 value="#{schiriFreigabeBackingBean.registrierungen}"
+                                 paginator="false"
+                                 rowIndexVar="ri">
+
+                        <p:column headerText="Name" style="width:25%">
+                            <h:outputText value="#{reg.schiriName}"
+                                          style="font-weight:bold;"/>
+                        </p:column>
+
+                        <p:column headerText="Spiel-Info" style="width:35%">
+                            <h:outputText value="#{reg.spielInfo}"/>
+                        </p:column>
+
+                        <p:column headerText="Token" style="width:10%">
+                            <h:outputText value="#{reg.token}"
+                                          style="font-family:monospace;font-size:0.9em;"/>
+                        </p:column>
+
+                        <p:column headerText="Status" style="width:10%">
+                            <h:outputText value="Freigegeben"
+                                          rendered="#{reg.approved}"
+                                          style="color:green;font-weight:bold;"/>
+                            <h:outputText value="Wartend"
+                                          rendered="#{!reg.approved}"
+                                          style="color:orange;font-weight:bold;"/>
+                        </p:column>
+
+                        <p:column headerText="Aktionen" style="width:20%">
+                            <p:commandButton value="Freigeben"
+                                             icon="pi pi-check"
+                                             styleClass="ui-button-success"
+                                             rendered="#{!reg.approved}"
+                                             actionListener="#{schiriFreigabeBackingBean.approve(reg.token)}"
+                                             update="fm"
+                                             style="margin-right:4px;"/>
+
+                            <p:commandButton value="Ablehnen"
+                                             icon="pi pi-times"
+                                             styleClass="ui-button-danger"
+                                             actionListener="#{schiriFreigabeBackingBean.reject(reg.token)}"
+                                             update="fm"/>
+                        </p:column>
+
+                    </p:dataTable>
+
+                </p:panel>
+
+                <br/>
+
+                <p:commandButton value="Aktualisieren" icon="pi pi-refresh" update="fm"
+                                 style="margin-top:8px;"/>
+
+            </p:fieldset>
+
+        </h:form>
+
+    </ui:define>
+
+</ui:composition>

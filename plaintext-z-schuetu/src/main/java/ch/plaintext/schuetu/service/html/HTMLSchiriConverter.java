@@ -2,8 +2,11 @@ package ch.plaintext.schuetu.service.html;
 
 import ch.plaintext.schuetu.entity.Spiel;
 import ch.plaintext.schuetu.model.enums.SpielEnum;
+import ch.plaintext.schuetu.service.qrcode.QrCodeService;
+import ch.plaintext.schuetu.service.qrcode.SchiriMobileService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;
@@ -24,6 +27,15 @@ public class HTMLSchiriConverter {
 
     @Autowired
     private XHTMLOutputUtil xhtml;
+
+    @Autowired
+    private QrCodeService qrCodeService;
+
+    @Autowired
+    private SchiriMobileService schiriMobileService;
+
+    @Value("${plaintext.schiri.mobile.base-url:http://192.168.1.224:1132}")
+    private String mobileBaseUrl;
 
     public String getTable(final List<Spiel> list) {
         String responseString;
@@ -49,12 +61,20 @@ public class HTMLSchiriConverter {
             if (spiel.getMannschaftB() != null) {
                 nameB = spiel.getMannschaftB().getName();
             }
+
+            // QR-Code Token generieren
             final SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+            String spielInfo = "Platz " + spiel.getPlatz() + " um " + sdf.format(spiel.getStart()) + " | " + nameA + " vs " + nameB;
+            String token = schiriMobileService.createToken(spiel.getId(), spielInfo);
+            String qrUrl = mobileBaseUrl + "/nosec/schiri-mobile/" + token;
+            String qrBase64 = qrCodeService.generateQrCodeBase64(qrUrl, 100);
+
             String ret = getTemplate2().replace("[zeit]", sdf.format(spiel.getStart()));
             ret = ret.replace("[idstring]", spiel.getIdString().toUpperCase());
             ret = ret.replace("[platz]", spiel.getPlatz().toString());
             ret = ret.replace("[a]", nameA);
             ret = ret.replace("[b]", nameB);
+            ret = ret.replace("[qrcode]", qrBase64);
             if (spiel.getMannschaftA() != null) {
                 ret = ret.replace("[farbea]", spiel.getMannschaftA().getFarbe());
             } else {
@@ -101,7 +121,9 @@ public class HTMLSchiriConverter {
                 TR +
                 "<td colspan=\"1\" align=\"left\"><b>&nbsp;[a]</b>&nbsp; Farbe:" +
                 "[farbea]&nbsp;&nbsp; Tore:</td>" +
-                "<td rowspan=\"4\" colspan=\"1\"><h1>[idstring]</h1>" +
+                "<td rowspan=\"5\" colspan=\"1\" align=\"center\" valign=\"middle\">" +
+                "<h1 style=\"margin:0;\">[idstring]</h1>" +
+                "<img src=\"data:image/png;base64,[qrcode]\" width=\"80\" height=\"80\" alt=\"QR\"/>" +
                 "</td>" +
                 TR_E +
                 "<tr align=\"center\">" +

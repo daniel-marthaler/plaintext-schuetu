@@ -9,6 +9,10 @@
 
 <f:view locale="#{languageBean.locale}">
 
+    <f:metadata>
+        <f:event type="preRenderView" listener="#{pageAccessGuardBackingBean.checkPageAccess()}"/>
+    </f:metadata>
+
 <h:head>
     <f:facet name="first">
         <meta http-equiv="x-ua-compatible" content="IE=edge"/>
@@ -194,9 +198,6 @@
 
         <div class="layout-main">
             <div class="layout-content">
-                    <f:metadata>
-                        <f:event type="preRenderView" listener="#{pageAccessGuardBackingBean.checkPageAccess()}"/>
-                    </f:metadata>
                     <ui:insert name="content"/>
                     <ui:insert name="page"/>
             </div>
