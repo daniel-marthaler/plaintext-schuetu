@@ -64,9 +64,16 @@
                         <h:selectBooleanCheckbox value="#{row.bemerkungP}" disabled="true"/>
                     </p:column>
 
-                    <p:column headerText="Kontrolle" style="width:30%;" filterBy="#{row.kontrolleP}"
+                    <p:column headerText="Kontrolle" style="width:20%;" filterBy="#{row.kontrolleP}"
                               sortBy="#{row.kontrolleP}">
                         <h:outputText value="#{row.kontrolleP}"/>
+                    </p:column>
+
+                    <p:column headerText="Aktion" style="width:80px;text-align:center">
+                        <p:commandButton icon="pi pi-pencil" title="Bearbeiten"
+                                         action="spielekorrekturen-details.htm" ajax="false">
+                            <f:setPropertyActionListener target="#{lazySpielkorrekturenRowModel.selected}" value="#{row}"/>
+                        </p:commandButton>
                     </p:column>
 
                 </p:dataTable>

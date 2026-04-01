@@ -19,6 +19,8 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Component;
 
+import jakarta.faces.application.FacesMessage;
+import jakarta.faces.context.FacesContext;
 import java.util.List;
 
 /**
@@ -96,9 +98,17 @@ public class GameSelectionHolder {
     }
 
     public void phaseAnmeldung() {
-        toKategorie();
-        game.getModel().setSpielPhase("kategorie");
-        game.setModel(repo.save(game.getModel()));
+        try {
+            toKategorie();
+            game.getModel().setSpielPhase("kategorie");
+            game.setModel(repo.save(game.getModel()));
+        } catch (Exception e) {
+            log.error("Fehler beim Wechsel zur Anmeldephase: {}", e.getMessage(), e);
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                            "Fehler beim Phasenwechsel",
+                            "Kategorie-Zuordnung fehlgeschlagen: " + e.getMessage()));
+        }
     }
 
     public void neueZeit() {

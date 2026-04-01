@@ -23,31 +23,48 @@ public class B1KategorienZuordner {
     @Autowired private KategorieRepository kategorieRepo;
 
     public void automatischeZuordnung(String game) {
-        Map<String, Kategorie> map = zuordnungVornehmen(mannschaftRepo.findByGame(game), game);
-        Set<String> keys = map.keySet();
-        List<String> mKeys = new ArrayList<>(); List<String> kKeys = new ArrayList<>();
-        for (String key : keys) { if (key.contains("M")) { mKeys.add(key); } else { kKeys.add(key); } }
-        Collections.sort(kKeys); zuKleineGruppenInAndereKategorieSchieben(map, kKeys);
-        Collections.sort(mKeys); zuKleineGruppenInAndereKategorieSchieben(map, mKeys);
-        for (Kategorie kat : map.values()) {
-            Kategorie kategorie = kategorieRepo.findById(kat.getId()).get();
-            String hintS = null;
-            List<Mannschaft> m = kategorie.getGruppeA().getMannschaften();
-            for (Mannschaft mann : m) {
-                if (mann.getSpielWunschHint() != null && !mann.getSpielWunschHint().isEmpty()) {
-                    String hint = mann.getSpielWunschHint().toLowerCase();
-                    if (hint.contains("onn")) { kategorie.setSpielwunsch(SpielTageszeit.SONNTAGMORGEN); hintS = "sonntag"; }
-                    if (hint.contains("orge")) { kategorie.setSpielwunsch(SpielTageszeit.SAMSTAGMORGEN); hintS = "morgen"; }
-                    if (hint.contains("nach")) { kategorie.setSpielwunsch(SpielTageszeit.SAMSTAGNACHMITTAG); hintS = "nachmittag"; }
-                }
-                mann.setGruppe(kategorie.getGruppeA());
+        try {
+            List<Mannschaft> mannschaften = mannschaftRepo.findByGame(game);
+            if (mannschaften == null || mannschaften.isEmpty()) {
+                log.warn("Keine Mannschaften gefunden fuer Game '{}', ueberspringe automatische Zuordnung", game);
+                return;
             }
-            if (hintS != null) { for (Mannschaft mann : m) { mann.setSpielWunschHint(hintS); } }
-            mannschaftRepo.saveAll(m);
-            this.kategorieRepo.save(kategorie);
-        }
-        for (Kategorie kat : kategorieRepo.findByGame(game)) {
-            if (kat.getMannschaften().isEmpty()) { kategorieRepo.delete(kat); }
+            Map<String, Kategorie> map = zuordnungVornehmen(mannschaften, game);
+            Set<String> keys = map.keySet();
+            List<String> mKeys = new ArrayList<>(); List<String> kKeys = new ArrayList<>();
+            for (String key : keys) { if (key.contains("M")) { mKeys.add(key); } else { kKeys.add(key); } }
+            Collections.sort(kKeys); zuKleineGruppenInAndereKategorieSchieben(map, kKeys);
+            Collections.sort(mKeys); zuKleineGruppenInAndereKategorieSchieben(map, mKeys);
+            for (Kategorie kat : map.values()) {
+                Kategorie kategorie = kategorieRepo.findById(kat.getId()).orElse(null);
+                if (kategorie == null || kategorie.getGruppeA() == null) {
+                    log.warn("Kategorie oder GruppeA ist null fuer Kategorie-ID {}, ueberspringe", kat.getId());
+                    continue;
+                }
+                String hintS = null;
+                List<Mannschaft> m = kategorie.getGruppeA().getMannschaften();
+                if (m == null) {
+                    log.warn("Mannschaften-Liste ist null fuer Kategorie {}", kategorie.getId());
+                    continue;
+                }
+                for (Mannschaft mann : m) {
+                    if (mann.getSpielWunschHint() != null && !mann.getSpielWunschHint().isEmpty()) {
+                        String hint = mann.getSpielWunschHint().toLowerCase();
+                        if (hint.contains("onn")) { kategorie.setSpielwunsch(SpielTageszeit.SONNTAGMORGEN); hintS = "sonntag"; }
+                        if (hint.contains("orge")) { kategorie.setSpielwunsch(SpielTageszeit.SAMSTAGMORGEN); hintS = "morgen"; }
+                        if (hint.contains("nach")) { kategorie.setSpielwunsch(SpielTageszeit.SAMSTAGNACHMITTAG); hintS = "nachmittag"; }
+                    }
+                    mann.setGruppe(kategorie.getGruppeA());
+                }
+                if (hintS != null) { for (Mannschaft mann : m) { mann.setSpielWunschHint(hintS); } }
+                mannschaftRepo.saveAll(m);
+                this.kategorieRepo.save(kategorie);
+            }
+            for (Kategorie kat : kategorieRepo.findByGame(game)) {
+                if (kat.getMannschaften().isEmpty()) { kategorieRepo.delete(kat); }
+            }
+        } catch (Exception e) {
+            log.error("Fehler bei automatischer Kategorie-Zuordnung fuer Game '{}': {}", game, e.getMessage(), e);
         }
     }
 
