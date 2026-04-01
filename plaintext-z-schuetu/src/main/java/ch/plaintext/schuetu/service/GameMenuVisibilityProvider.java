@@ -12,7 +12,7 @@ import java.util.Set;
 @Slf4j
 public class GameMenuVisibilityProvider implements MenuVisibilityProvider {
 
-    private static final Set<String> ALWAYS_VISIBLE = Set.of("Start", "Root", "Admin", "Home", "Experimental");
+    private static final Set<String> ALWAYS_VISIBLE = Set.of("Start", "Root", "Admin", "Home", "Experimental", "Sprache");
 
     @Autowired
     @Lazy

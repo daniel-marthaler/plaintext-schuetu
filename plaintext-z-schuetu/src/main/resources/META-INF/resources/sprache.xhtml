@@ -1,0 +1,63 @@
+<!--suppress ALL -->
+<ui:composition xmlns:ui="jakarta.faces.facelets"
+                xmlns:h="jakarta.faces.html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="jakarta.faces.core"
+                xmlns="http://www.w3.org/1999/xhtml" template="/includes/template.xhtml">
+
+    <ui:define name="title">Sprache / Language</ui:define>
+
+    <ui:define name="page">
+
+        <h:form id="fm">
+            <input type="hidden" name="_csrf" value="#{_csrf.token}"/>
+
+            <p:panel header="Sprache wählen / Select Language" style="max-width:600px;">
+
+                <div style="display:flex; flex-direction:column; gap:10px; padding:10px;">
+
+                    <p:commandButton value="Deutsch (DE)" icon="pi pi-flag"
+                                     styleClass="#{languageBean.languageCode == 'de' ? 'ui-button-success' : ''}"
+                                     style="width:100%; text-align:left; font-size:1.1em;"
+                                     action="#{languageBean.changeLanguage('de')}"
+                                     ajax="false"/>
+
+                    <p:commandButton value="English (EN)" icon="pi pi-flag"
+                                     styleClass="#{languageBean.languageCode == 'en' ? 'ui-button-success' : ''}"
+                                     style="width:100%; text-align:left; font-size:1.1em;"
+                                     action="#{languageBean.changeLanguage('en')}"
+                                     ajax="false"/>
+
+                    <p:commandButton value="Français (FR)" icon="pi pi-flag"
+                                     styleClass="#{languageBean.languageCode == 'fr' ? 'ui-button-success' : ''}"
+                                     style="width:100%; text-align:left; font-size:1.1em;"
+                                     action="#{languageBean.changeLanguage('fr')}"
+                                     ajax="false"/>
+
+                    <p:commandButton value="Italiano (IT)" icon="pi pi-flag"
+                                     styleClass="#{languageBean.languageCode == 'it' ? 'ui-button-success' : ''}"
+                                     style="width:100%; text-align:left; font-size:1.1em;"
+                                     action="#{languageBean.changeLanguage('it')}"
+                                     ajax="false"/>
+
+                    <p:commandButton value="中文 (ZH)" icon="pi pi-flag"
+                                     styleClass="#{languageBean.languageCode == 'zh' ? 'ui-button-success' : ''}"
+                                     style="width:100%; text-align:left; font-size:1.1em;"
+                                     action="#{languageBean.changeLanguage('zh')}"
+                                     ajax="false"/>
+
+                    <p:commandButton value="日本語 (JA)" icon="pi pi-flag"
+                                     styleClass="#{languageBean.languageCode == 'ja' ? 'ui-button-success' : ''}"
+                                     style="width:100%; text-align:left; font-size:1.1em;"
+                                     action="#{languageBean.changeLanguage('ja')}"
+                                     ajax="false"/>
+
+                </div>
+
+            </p:panel>
+
+        </h:form>
+
+    </ui:define>
+
+</ui:composition>

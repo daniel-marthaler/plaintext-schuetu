@@ -44,7 +44,7 @@ public class LanguageBean implements Serializable {
      *
      * @param language the language code (de, en, fr, it, zh, ja)
      */
-    public void changeLanguage(String language) {
+    public String changeLanguage(String language) {
         Locale newLocale = AVAILABLE_LANGUAGES.get(language);
         if (newLocale != null) {
             this.locale = newLocale;
@@ -56,6 +56,7 @@ public class LanguageBean implements Serializable {
         } else {
             log.warn("Unknown language code: {}", language);
         }
+        return "sprache.htm";
     }
 
     /**
