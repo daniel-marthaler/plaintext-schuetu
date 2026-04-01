@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
+import jakarta.annotation.PostConstruct;
 import java.util.Map;
 import java.util.Set;
 
@@ -20,6 +21,11 @@ import java.util.Set;
 @Primary
 @Slf4j
 public class GameMenuVisibilityProvider implements MenuVisibilityProvider {
+
+    @PostConstruct
+    public void init() {
+        log.info(">>> GameMenuVisibilityProvider initialized (@Primary) <<<");
+    }
 
     private static final Set<String> ALWAYS_VISIBLE = Set.of(
             "Start", "Root", "Admin", "Home", "Experimental", "Sprache"
@@ -79,11 +85,11 @@ public class GameMenuVisibilityProvider implements MenuVisibilityProvider {
         try {
             boolean hasGame = Boolean.TRUE.equals(gameSelectionHolder.hasGame());
             if (!hasGame) {
-                log.debug("Menu '{}' hidden - no game selected", menuTitle);
+                log.info("Menu '{}' hidden - no game selected", menuTitle);
             }
             return hasGame;
         } catch (Exception e) {
-            log.debug("Game check failed for '{}', showing: {}", menuTitle, e.getMessage());
+            log.warn("Game check failed for '{}', showing: {}", menuTitle, e.getMessage());
             return true;
         }
     }
