@@ -37,10 +37,10 @@ public class MatrixZelleModel implements Serializable {
         if (!fertig) {
             return "matrix-pending";
         }
-        if (toreEigene > toreGegner) {
+        if (toreEigene < toreGegner) {
             return "matrix-win";
         }
-        if (toreEigene < toreGegner) {
+        if (toreEigene > toreGegner) {
             return "matrix-loss";
         }
         return "matrix-draw";

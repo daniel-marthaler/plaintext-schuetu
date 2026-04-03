@@ -128,6 +128,30 @@ public class SchiriMobileService {
     }
 
     /**
+     * Traegt das Ergebnis eines Spiels ein (Schiri-Aktion via Mobile).
+     * Setzt toreA, toreB, fertigEingetragen=true und schiriName.
+     */
+    public boolean eintragenSpiel(String token, int toreA, int toreB) {
+        SchiriRegistration reg = registrations.get(token);
+        if (reg == null || reg.getSpielId() == null) {
+            return false;
+        }
+        Spiel spiel = spielRepository.findById(reg.getSpielId()).orElse(null);
+        if (spiel == null) {
+            return false;
+        }
+        spiel.setToreA(toreA);
+        spiel.setToreB(toreB);
+        spiel.setFertigEingetragen(true);
+        spiel.setEintrager(reg.getSchiriName());
+        spiel.setSchiriName(reg.getSchiriName());
+        spielRepository.save(spiel);
+        log.info("Spiel {} via Mobile eingetragen: {}:{} von {} (Token {})",
+                spiel.getIdString(), toreA, toreB, reg.getSchiriName(), token);
+        return true;
+    }
+
+    /**
      * Bestaetigt das Ergebnis eines Spiels (Kontrollierer-Aktion).
      * Setzt fertigBestaetigt=true und uebernimmt die Tore als bestaetigte Tore.
      */

@@ -34,7 +34,7 @@ public class HTMLSchiriConverter {
     @Autowired
     private SchiriMobileService schiriMobileService;
 
-    @Value("${plaintext.schiri.mobile.base-url:http://192.168.1.224:1132}")
+    @Value("${plaintext.schiri.mobile.base-url:https://schuelerturnier.plaintext.ch}")
     private String mobileBaseUrl;
 
     public String getTable(final List<Spiel> list) {
@@ -67,7 +67,7 @@ public class HTMLSchiriConverter {
             String spielInfo = "Platz " + spiel.getPlatz() + " um " + sdf.format(spiel.getStart()) + " | " + nameA + " vs " + nameB;
             String token = schiriMobileService.createToken(spiel.getId(), spielInfo);
             String qrUrl = mobileBaseUrl + "/nosec/schiri-mobile/" + token;
-            String qrBase64 = qrCodeService.generateQrCodeBase64(qrUrl, 100);
+            String qrBase64 = qrCodeService.generateQrCodeBase64(qrUrl, 200);
 
             String ret = getTemplate2().replace("[zeit]", sdf.format(spiel.getStart()));
             ret = ret.replace("[idstring]", spiel.getIdString().toUpperCase());
@@ -75,6 +75,7 @@ public class HTMLSchiriConverter {
             ret = ret.replace("[a]", nameA);
             ret = ret.replace("[b]", nameB);
             ret = ret.replace("[qrcode]", qrBase64);
+            ret = ret.replace("[qrurl]", qrUrl);
             if (spiel.getMannschaftA() != null) {
                 ret = ret.replace("[farbea]", spiel.getMannschaftA().getFarbe());
             } else {
@@ -112,8 +113,8 @@ public class HTMLSchiriConverter {
     }
 
     private String getTemplate2() {
-        return "<table style=\"border:2px solid black;\" border='2' cellpadding=\"0\" cellspacing=\"0\" height=\"122\"" +
-                "width=\"350\">" +
+        return "<table style=\"border:2px solid black;\" border='2' cellpadding=\"0\" cellspacing=\"0\" height=\"160\"" +
+                "width=\"370\">" +
                 "<tbody>" +
                 TR +
                 "<td colspan=\"2\"><b>&nbsp;Platz [platz] um [zeit]&nbsp;&nbsp;</b> </td>" +
@@ -123,7 +124,8 @@ public class HTMLSchiriConverter {
                 "[farbea]&nbsp;&nbsp; Tore:</td>" +
                 "<td rowspan=\"5\" colspan=\"1\" align=\"center\" valign=\"middle\">" +
                 "<h1 style=\"margin:0;\">[idstring]</h1>" +
-                "<img src=\"data:image/png;base64,[qrcode]\" width=\"80\" height=\"80\" alt=\"QR\"/>" +
+                "<img src=\"data:image/png;base64,[qrcode]\" width=\"120\" height=\"120\" alt=\"QR\"/>" +
+                "<br/><span style=\"font-size:6px;color:#666;\">[qrurl]</span>" +
                 "</td>" +
                 TR_E +
                 "<tr align=\"center\">" +

@@ -144,13 +144,13 @@ public class MatrixModernBean {
                     zelle.setFertig(spiel.getToreABestaetigt() > -1);
 
                     if (zelle.isFertig()) {
-                        // Determine which side this team is on
+                        // Show goals as: column team (gegner) against row team (eigene)
                         if (spiel.getMannschaftA() != null && spiel.getMannschaftA().getName().equals(mannschaft.getName())) {
-                            zelle.setToreEigene(spiel.getToreABestaetigt());
-                            zelle.setToreGegner(spiel.getToreBBestaetigt());
-                        } else {
                             zelle.setToreEigene(spiel.getToreBBestaetigt());
                             zelle.setToreGegner(spiel.getToreABestaetigt());
+                        } else {
+                            zelle.setToreEigene(spiel.getToreABestaetigt());
+                            zelle.setToreGegner(spiel.getToreBBestaetigt());
                         }
                     }
                 } else {

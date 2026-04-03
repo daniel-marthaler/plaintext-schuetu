@@ -38,7 +38,8 @@ public class SchiriMobileController {
      * Kontrollierer-Ansicht angezeigt, damit ein zweiter Scan das Ergebnis bestaetigen kann.
      */
     @GetMapping("/{token}")
-    public String showMobilePage(@PathVariable String token, HttpServletRequest request, Model model) {
+    public String showMobilePage(@PathVariable String token, HttpServletRequest request,
+                                  HttpServletResponse response, Model model) {
 
         SchiriRegistration reg = schiriMobileService.getRegistration(token);
         if (reg == null) {
@@ -79,7 +80,28 @@ public class SchiriMobileController {
             // Someone else registered with this token already
             model.addAttribute("status", "already_taken");
         } else {
-            model.addAttribute("status", "register");
+            // Not yet registered - check SchiriName cookie for auto-registration
+            String savedName = getSchiriNameFromCookie(request);
+            if (savedName != null && !savedName.isBlank()) {
+                // Auto-register and auto-approve with saved name
+                boolean success = schiriMobileService.registerSchiri(token, savedName);
+                if (success) {
+                    schiriMobileService.approveSchiri(token);
+
+                    Cookie tokenCookie = new Cookie("SchiriToken", token);
+                    tokenCookie.setMaxAge(60 * 60 * 24);
+                    tokenCookie.setPath("/");
+                    response.addCookie(tokenCookie);
+
+                    model.addAttribute("status", "approved");
+                    model.addAttribute("schiriName", savedName);
+                    addSpielDetails(model, schiriMobileService.getRegistration(token));
+                } else {
+                    model.addAttribute("status", "register");
+                }
+            } else {
+                model.addAttribute("status", "register");
+            }
         }
 
         model.addAttribute("token", token);
@@ -99,24 +121,66 @@ public class SchiriMobileController {
         boolean success = schiriMobileService.registerSchiri(token, name);
 
         if (success) {
-            // Set cookie so the user stays "logged in"
+            // Auto-approve - no admin approval needed
+            schiriMobileService.approveSchiri(token);
+
+            // Set token cookie so the user stays "logged in"
             Cookie cookie = new Cookie("SchiriToken", token);
             cookie.setMaxAge(60 * 60 * 24); // 24 Stunden
             cookie.setPath("/");
             response.addCookie(cookie);
 
-            model.addAttribute("status", "waiting");
+            // Set name cookie for auto-registration on future QR scans
+            Cookie nameCookie = new Cookie("SchiriName", java.net.URLEncoder.encode(name, java.nio.charset.StandardCharsets.UTF_8));
+            nameCookie.setMaxAge(60 * 60 * 24 * 365); // 1 Jahr
+            nameCookie.setPath("/");
+            response.addCookie(nameCookie);
+
+            model.addAttribute("status", "approved");
             model.addAttribute("schiriName", name);
             model.addAttribute("token", token);
 
             SchiriRegistration reg = schiriMobileService.getRegistration(token);
             if (reg != null) {
                 model.addAttribute("spielInfo", reg.getSpielInfo());
+                addSpielDetails(model, reg);
             }
         } else {
             model.addAttribute("status", "error");
             model.addAttribute("error", "Registrierung fehlgeschlagen. Token ungueltig.");
             model.addAttribute("token", token);
+        }
+
+        return "forward:/nosec/schiri-mobile.xhtml";
+    }
+
+    /**
+     * Traegt das Spielergebnis ein (Schiri-Aktion via Mobile).
+     */
+    @PostMapping("/{token}/eintragen")
+    public String eintragen(@PathVariable String token,
+                             @RequestParam int toreA,
+                             @RequestParam int toreB,
+                             Model model) {
+
+        boolean success = schiriMobileService.eintragenSpiel(token, toreA, toreB);
+
+        if (success) {
+            model.addAttribute("status", "eingetragen");
+            Spiel spiel = schiriMobileService.getSpielForToken(token);
+            if (spiel != null) {
+                addSpielDetailsForKontrolle(model, spiel);
+            }
+        } else {
+            model.addAttribute("status", "error");
+            model.addAttribute("error", "Eintragen fehlgeschlagen. Token ungueltig.");
+        }
+
+        model.addAttribute("token", token);
+        SchiriRegistration reg = schiriMobileService.getRegistration(token);
+        if (reg != null) {
+            model.addAttribute("spielInfo", reg.getSpielInfo());
+            model.addAttribute("schiriName", reg.getSchiriName());
         }
 
         return "forward:/nosec/schiri-mobile.xhtml";
@@ -225,6 +289,17 @@ public class SchiriMobileController {
             for (Cookie cookie : request.getCookies()) {
                 if ("SchiriToken".equals(cookie.getName())) {
                     return cookie.getValue();
+                }
+            }
+        }
+        return null;
+    }
+
+    private String getSchiriNameFromCookie(HttpServletRequest request) {
+        if (request.getCookies() != null) {
+            for (Cookie cookie : request.getCookies()) {
+                if ("SchiriName".equals(cookie.getName())) {
+                    return java.net.URLDecoder.decode(cookie.getValue(), java.nio.charset.StandardCharsets.UTF_8);
                 }
             }
         }

@@ -63,7 +63,7 @@ plaintext:
     topic-prefix: schuetu/events
   schiri:
     mobile:
-      base-url: ${SCHIRI_MOBILE_BASE_URL:http://192.168.1.224:1132}
+      base-url: ${SCHIRI_MOBILE_BASE_URL:https://schuelerturnier.plaintext.ch}
 
 logging:
   level:
