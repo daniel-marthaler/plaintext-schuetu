@@ -133,22 +133,6 @@
                 </configuration>
             </plugin>
         </plugins>
-        <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-                <filtering>true</filtering>
-                <includes>
-                    <include>**/buildTimestamp.txt</include>
-                </includes>
-            </resource>
-            <resource>
-                <directory>src/main/resources</directory>
-                <filtering>false</filtering>
-                <excludes>
-                    <exclude>**/buildTimestamp.txt</exclude>
-                </excludes>
-            </resource>
-        </resources>
     </build>
 
 </project>
