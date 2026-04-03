@@ -15,9 +15,6 @@ WORKDIR /app
 # Copy pre-built JAR (built locally with Maven)
 COPY plaintext-schuetu-webapp/target/*.jar app.jar
 
-# Copy version files for version display (with graceful fallback)
-COPY --chown=1000:1000 version.txt versionRelease.txt ./
-
 # Create directory for logs
 RUN mkdir -p /app/logs && chown -R appuser:appgroup /app
 
