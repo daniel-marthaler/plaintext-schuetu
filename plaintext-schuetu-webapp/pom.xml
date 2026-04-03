@@ -7,7 +7,7 @@
     <parent>
         <groupId>ch.plaintext</groupId>
         <artifactId>plaintext-schuetu-parent</artifactId>
-        <version>1.78.0-SNAPSHOT</version>
+        <version>1.70.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>plaintext-schuetu-webapp</artifactId>
@@ -27,13 +27,6 @@
         <dependency>
             <groupId>ch.plaintext</groupId>
             <artifactId>plaintext-z-schuetu</artifactId>
-        </dependency>
-
-        <!-- i18n Translation Module -->
-        <dependency>
-            <groupId>ch.plaintext</groupId>
-            <artifactId>plaintext-admin-i18n</artifactId>
-            <version>${plaintext-root.version}</version>
         </dependency>
 
         <!-- Spring Boot Data JPA (für @EntityScan) -->
