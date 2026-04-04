@@ -34,6 +34,8 @@ public class Schiri extends SuperModel implements CreationDateProvider {
 
     private String einteilung;
 
+    private String telefon;
+
     public String getShName() {
         return vorname + " " + nachname;
     }

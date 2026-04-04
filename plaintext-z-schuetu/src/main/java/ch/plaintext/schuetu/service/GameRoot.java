@@ -51,6 +51,10 @@ public class GameRoot {
         return repo.findAll();
     }
 
+    public void clearCache() {
+        gameCache.clear();
+    }
+
     public Game selectGame(String gameName) {
         if (gameCache.containsKey(gameName)) {
             return gameCache.get(gameName);

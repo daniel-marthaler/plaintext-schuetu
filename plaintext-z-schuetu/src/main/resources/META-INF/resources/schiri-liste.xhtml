@@ -72,6 +72,15 @@
 
                 <p:column>
                     <f:facet name="header">
+                        <h:outputText value="Telefon"/>
+                    </f:facet>
+                    <h:outputLink value="tel:#{schiri.telefon}" rendered="#{not empty schiri.telefon}">
+                        <h:outputText value="#{schiri.telefon}"/>
+                    </h:outputLink>
+                </p:column>
+
+                <p:column>
+                    <f:facet name="header">
                         <h:outputText value="Aktiviert"/>
                     </f:facet>
                     <p:selectBooleanCheckbox id="skipdump"
@@ -106,6 +115,9 @@
 
                     <h:outputLabel for="nachname" value="Nachname "/>
                     <p:inputText id="nachname" label="Nachname" value="#{schirisBackingBean.selectedSchiri.nachname}" size="25"/>
+
+                    <h:outputLabel for="telefon" value="Telefon "/>
+                    <p:inputText id="telefon" label="Telefon" value="#{schirisBackingBean.selectedSchiri.telefon}" size="25"/>
 
                     <h:outputLabel for="einteilung" value="Einteilung "/>
                     <p:autoComplete id="einteilung" dropdown="true" value="#{schirisBackingBean.selectedSchiri.einteilung}" completeMethod="#{schirisBackingBean.completeText}" />
