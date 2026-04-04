@@ -22,10 +22,10 @@ jobs:
     with:
       deploy-target: >-
         ${{ github.event_name == 'pull_request' && 'ci-only'
-         || (github.ref == 'refs/heads/master' && 'release-all' || 'snapshot-dev') }}
+         || (github.ref == 'refs/heads/master' && 'release-all' || 'ci-only') }}
       project-name: plaintext-schuetu
       database-name: plaintext_schuetu
-      dev-url: 'http://192.168.1.224:1131'
+      dev-url: 'http://192.168.1.224:1130'
       prod-url: 'http://192.168.1.224:1132'
       integration-tests-enabled: true
     secrets: inherit
