@@ -9,5 +9,15 @@
       "matchPackagePrefixes": ["ch.plaintext"],
       "registryUrls": ["https://maven.pkg.github.com/daniel-marthaler/plaintext-mvn"]
     }
+  ],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "fileMatch": ["pom\\.xml$"],
+      "matchStrings": ["<plaintext-root\\.version>(?<currentValue>[^<]+)</plaintext-root\\.version>"],
+      "depNameTemplate": "ch.plaintext:plaintext-root-common",
+      "datasourceTemplate": "maven",
+      "registryUrlTemplate": "https://maven.pkg.github.com/daniel-marthaler/plaintext-mvn"
+    }
   ]
 }
