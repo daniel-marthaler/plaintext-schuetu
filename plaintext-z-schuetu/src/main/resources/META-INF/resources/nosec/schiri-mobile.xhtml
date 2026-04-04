@@ -179,6 +179,42 @@
             margin-bottom: 4px;
         }
         .status-rejected { background: #e67e22; color: #fff; }
+        .score-input {
+            width: 90px;
+            font-size: 3em;
+            text-align: center;
+            background: #0f3460;
+            color: #fff;
+            border: 2px solid #333;
+            border-radius: 10px;
+            padding: 8px;
+            margin: 8px 0;
+            -moz-appearance: textfield;
+        }
+        .score-input::-webkit-outer-spin-button,
+        .score-input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        .btn-counter {
+            display: block;
+            width: 90px;
+            padding: 12px 0;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.8em;
+            font-weight: bold;
+            cursor: pointer;
+            text-align: center;
+            background: #27ae60;
+            color: #fff;
+            margin: 0 auto;
+        }
+        .btn-counter:active { background: #1e8449; }
+        .btn-counter-minus {
+            background: #e74c3c;
+        }
+        .btn-counter-minus:active { background: #c0392b; }
     </style>
 </h:head>
 
@@ -209,6 +245,11 @@
                     <label for="name">Dein Name</label>
                     <input type="text" id="name" name="name" placeholder="Vor- und Nachname" required="required"
                            autocomplete="name"/>
+                </div>
+                <div class="form-group">
+                    <label for="telefon">Telefonnummer</label>
+                    <input type="tel" id="telefon" name="telefon" placeholder="+41 79 123 45 67"
+                           autocomplete="tel"/>
                 </div>
                 <button type="submit" class="btn btn-primary">Registrieren</button>
             </form>
@@ -244,43 +285,42 @@
 
         <!-- APPROVED - SHOW GAME DETAILS + SCORE ENTRY -->
         <c:if test="${status == 'approved'}">
-            <div class="icon">&#9989;</div>
-            <div style="text-align:center;color:#aaa;margin-bottom:12px;">
+            <div style="text-align:center;color:#aaa;margin-bottom:8px;font-size:0.9em;">
                 Schiri: <strong style="color:#fff;">${schiriName}</strong>
+                <span style="margin-left:12px;">Platz ${spielPlatz} | ${spielZeit}</span>
             </div>
 
             <c:if test="${not empty spielId}">
-                <div class="game-info">
-                    <div class="row">
-                        <span class="label">Spiel-ID</span>
-                        <span class="value">${spielId}</span>
-                    </div>
-                    <div class="row">
-                        <span class="label">Zeit</span>
-                        <span class="value">${spielZeit}</span>
-                    </div>
-                    <div class="row">
-                        <span class="label">Platz</span>
-                        <span class="value">${spielPlatz}</span>
-                    </div>
-                </div>
-
                 <form method="post" action="/nosec/schiri-mobile/${token}/eintragen">
-                    <div class="score-display">
+                    <div class="score-display" style="padding:10px 0;">
                         <div class="score-team">
                             <div class="team-name">${spielTeamA}</div>
-                            <input type="number" name="toreA" min="0" max="30" value="0" required="required"
-                                   style="width:80px;font-size:2.5em;text-align:center;background:#0f3460;color:#fff;border:2px solid #333;border-radius:10px;padding:8px;"/>
+                            <button type="button" class="btn-counter" onclick="changeScore('scoreA', 1)">+</button>
+                            <input type="number" name="toreA" id="scoreA" min="0" max="30" value="0" readonly="readonly"
+                                   class="score-input"/>
+                            <button type="button" class="btn-counter btn-counter-minus" onclick="changeScore('scoreA', -1)">-</button>
                         </div>
                         <div class="score-separator">:</div>
                         <div class="score-team">
                             <div class="team-name">${spielTeamB}</div>
-                            <input type="number" name="toreB" min="0" max="30" value="0" required="required"
-                                   style="width:80px;font-size:2.5em;text-align:center;background:#0f3460;color:#fff;border:2px solid #333;border-radius:10px;padding:8px;"/>
+                            <button type="button" class="btn-counter" onclick="changeScore('scoreB', 1)">+</button>
+                            <input type="number" name="toreB" id="scoreB" min="0" max="30" value="0" readonly="readonly"
+                                   class="score-input"/>
+                            <button type="button" class="btn-counter btn-counter-minus" onclick="changeScore('scoreB', -1)">-</button>
                         </div>
                     </div>
                     <button type="submit" class="btn btn-primary">Ergebnis eintragen</button>
                 </form>
+
+                <script>
+                    function changeScore(id, delta) {
+                        var el = document.getElementById(id);
+                        var val = parseInt(el.value) + delta;
+                        if (val < 0) val = 0;
+                        if (val > 30) val = 30;
+                        el.value = val;
+                    }
+                </script>
             </c:if>
 
             <c:if test="${empty spielId and not empty spielInfo}">

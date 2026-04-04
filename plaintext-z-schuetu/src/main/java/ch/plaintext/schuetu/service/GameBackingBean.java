@@ -24,7 +24,13 @@ public class GameBackingBean {
     @Autowired
     private GameRepository repo;
 
+    @Autowired
+    private GameService gameService;
+
     private GameModel selected = new GameModel();
+
+    private String renameOldName;
+    private String renameNewName;
 
     public List<GameModel> displayGames() {
         return root.displayGames();
@@ -33,6 +39,20 @@ public class GameBackingBean {
     public void save() {
         repo.save(selected);
         selected = new GameModel();
+    }
+
+    public void prepareRename(String gameName) {
+        this.renameOldName = gameName;
+        this.renameNewName = gameName;
+    }
+
+    public void rename() {
+        if (renameOldName != null && renameNewName != null && !renameNewName.isBlank() && !renameOldName.equals(renameNewName)) {
+            gameService.renameGame(renameOldName, renameNewName);
+            root.clearCache();
+        }
+        renameOldName = null;
+        renameNewName = null;
     }
 
 }

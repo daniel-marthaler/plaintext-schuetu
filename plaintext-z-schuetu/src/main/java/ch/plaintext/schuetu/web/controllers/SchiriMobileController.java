@@ -6,6 +6,7 @@ import ch.plaintext.schuetu.service.qrcode.SchiriMobileService;
 import ch.plaintext.schuetu.service.qrcode.SchiriMobileService.SchiriRegistration;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -30,6 +31,9 @@ public class SchiriMobileController {
     @Autowired
     private SpielRepository spielRepository;
 
+    @Autowired
+    private SchiriMobileViewRenderer viewRenderer;
+
     /**
      * Zeigt die mobile Schiri-Seite an.
      * Je nach Status: Registrierungsformular, Wartestatus, Spieldetails oder Kontrollierer-Ansicht.
@@ -37,7 +41,8 @@ public class SchiriMobileController {
      * Wenn das Spiel bereits eingetragen ist (fertigEingetragen=true), wird die
      * Kontrollierer-Ansicht angezeigt, damit ein zweiter Scan das Ergebnis bestaetigen kann.
      */
-    @GetMapping("/{token}")
+    @GetMapping(value = "/{token}", produces = MediaType.TEXT_HTML_VALUE)
+    @ResponseBody
     public String showMobilePage(@PathVariable String token, HttpServletRequest request,
                                   HttpServletResponse response, Model model) {
 
@@ -45,7 +50,7 @@ public class SchiriMobileController {
         if (reg == null) {
             model.addAttribute("error", "Ungueltiger QR-Code / Token");
             model.addAttribute("status", "error");
-            return "forward:/nosec/schiri-mobile.xhtml";
+            return viewRenderer.render(model);
         }
 
         // Kontrollierer-Workflow: Wenn das Spiel bereits eingetragen ist,
@@ -62,7 +67,7 @@ public class SchiriMobileController {
             }
             model.addAttribute("token", token);
             model.addAttribute("spielInfo", reg.getSpielInfo());
-            return "forward:/nosec/schiri-mobile.xhtml";
+            return viewRenderer.render(model);
         }
 
         // Check if already registered via cookie
@@ -82,9 +87,10 @@ public class SchiriMobileController {
         } else {
             // Not yet registered - check SchiriName cookie for auto-registration
             String savedName = getSchiriNameFromCookie(request);
+            String savedTelefon = getCookieValue(request, "SchiriTelefon");
             if (savedName != null && !savedName.isBlank()) {
                 // Auto-register and auto-approve with saved name
-                boolean success = schiriMobileService.registerSchiri(token, savedName);
+                boolean success = schiriMobileService.registerSchiri(token, savedName, savedTelefon);
                 if (success) {
                     schiriMobileService.approveSchiri(token);
 
@@ -106,19 +112,21 @@ public class SchiriMobileController {
 
         model.addAttribute("token", token);
         model.addAttribute("spielInfo", reg.getSpielInfo());
-        return "forward:/nosec/schiri-mobile.xhtml";
+        return viewRenderer.render(model);
     }
 
     /**
      * Registriert einen Schiri-Namen fuer den Token
      */
-    @PostMapping("/{token}/register")
+    @PostMapping(value = "/{token}/register", produces = MediaType.TEXT_HTML_VALUE)
+    @ResponseBody
     public String registerSchiri(@PathVariable String token,
                                  @RequestParam String name,
+                                 @RequestParam(required = false) String telefon,
                                  HttpServletResponse response,
                                  Model model) {
 
-        boolean success = schiriMobileService.registerSchiri(token, name);
+        boolean success = schiriMobileService.registerSchiri(token, name, telefon);
 
         if (success) {
             // Auto-approve - no admin approval needed
@@ -136,6 +144,14 @@ public class SchiriMobileController {
             nameCookie.setPath("/");
             response.addCookie(nameCookie);
 
+            // Set telefon cookie
+            if (telefon != null && !telefon.isBlank()) {
+                Cookie telCookie = new Cookie("SchiriTelefon", java.net.URLEncoder.encode(telefon, java.nio.charset.StandardCharsets.UTF_8));
+                telCookie.setMaxAge(60 * 60 * 24 * 365);
+                telCookie.setPath("/");
+                response.addCookie(telCookie);
+            }
+
             model.addAttribute("status", "approved");
             model.addAttribute("schiriName", name);
             model.addAttribute("token", token);
@@ -151,13 +167,14 @@ public class SchiriMobileController {
             model.addAttribute("token", token);
         }
 
-        return "forward:/nosec/schiri-mobile.xhtml";
+        return viewRenderer.render(model);
     }
 
     /**
      * Traegt das Spielergebnis ein (Schiri-Aktion via Mobile).
      */
-    @PostMapping("/{token}/eintragen")
+    @PostMapping(value = "/{token}/eintragen", produces = MediaType.TEXT_HTML_VALUE)
+    @ResponseBody
     public String eintragen(@PathVariable String token,
                              @RequestParam int toreA,
                              @RequestParam int toreB,
@@ -183,7 +200,7 @@ public class SchiriMobileController {
             model.addAttribute("schiriName", reg.getSchiriName());
         }
 
-        return "forward:/nosec/schiri-mobile.xhtml";
+        return viewRenderer.render(model);
     }
 
     /**
@@ -210,7 +227,8 @@ public class SchiriMobileController {
      * POST Kontrolle: Bestaetigt oder weist das Ergebnis zurueck.
      * Parameter 'aktion' = "bestaetigen" oder "zurueckweisen"
      */
-    @PostMapping("/{token}/kontrolle")
+    @PostMapping(value = "/{token}/kontrolle", produces = MediaType.TEXT_HTML_VALUE)
+    @ResponseBody
     public String kontrolle(@PathVariable String token,
                              @RequestParam String aktion,
                              Model model) {
@@ -250,7 +268,7 @@ public class SchiriMobileController {
             model.addAttribute("spielInfo", reg.getSpielInfo());
         }
 
-        return "forward:/nosec/schiri-mobile.xhtml";
+        return viewRenderer.render(model);
     }
 
     private void addSpielDetailsForKontrolle(Model model, Spiel spiel) {
@@ -296,9 +314,13 @@ public class SchiriMobileController {
     }
 
     private String getSchiriNameFromCookie(HttpServletRequest request) {
+        return getCookieValue(request, "SchiriName");
+    }
+
+    private String getCookieValue(HttpServletRequest request, String name) {
         if (request.getCookies() != null) {
             for (Cookie cookie : request.getCookies()) {
-                if ("SchiriName".equals(cookie.getName())) {
+                if (name.equals(cookie.getName())) {
                     return java.net.URLDecoder.decode(cookie.getValue(), java.nio.charset.StandardCharsets.UTF_8);
                 }
             }

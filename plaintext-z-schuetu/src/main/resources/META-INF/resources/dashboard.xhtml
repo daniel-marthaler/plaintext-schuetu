@@ -56,33 +56,35 @@
 
                 <p:dataTable emptyMessage="-" id="tbl" widgetVar="tbl" var="gm" value="#{gameBackingBean.displayGames()}" rowIndexVar="ri">
 
-                    <p:column sheaderText="Name" style="width:15%;">
+                    <p:column headerText="Name" style="width:20%;">
                         <h:outputText value="#{gm.gameName}"/>
                     </p:column>
 
-                    <p:column headerText="#{i18n.t('läuft')}" style="width:30%;">
-                        <p:toggleSwitch value="#{gm.initialisiert}" disabled="true" onLabel="#{i18n.t('läuft')}"
-                                       offLabel="#{i18n.t('läuft nicht')}"/>
-                    </p:column>
-
-                    <p:column headerText="#{i18n.t('Phase')}" style="width:30%;">
-                        <h:outputText value="#{gm.spielPhase}"/>
-                    </p:column>
-
-                    <p:column headerText="" style="width:30%;">
-                        <p:commandButton icon="fa fa-wrench" value="#{i18n.t('auswählen')}" update=":fm"
+                    <p:column headerText="" style="width:20%;">
+                        <p:commandButton icon="fa fa-play" value="#{i18n.t('auswählen')}" update=":fm"
                                          oncomplete="location.reload();"
                                          action="#{gameSelectionHolder.selectGame(gm.gameName)}"
                                          rendered="#{gm.initialisiert and (not gameSelectionHolder.hasGame() or not gm.gameName.equals(gameSelectionHolder.game.model.gameName))}"/>
 
-                        <p:commandButton icon="fa fa-wrench" value="#{i18n.t('initialisieren')}" update=":fm"
+                        <p:commandButton icon="fa fa-cog" value="#{i18n.t('initialisieren')}" update=":fm"
                                          oncomplete="location.reload();"
                                          action="#{gameRoot.selectGame(gm.gameName)}"
                                          rendered="#{not gm.initialisiert and plaintextSecurity.ifGranted('root')}" />
                     </p:column>
 
-                    <p:column headerText="" style="width:15%;" rendered="#{plaintextSecurity.ifGranted('root')}">
-                        <p:commandButton icon="fa fa-wrench" value="#{i18n.t('löschen')}" update=":fm" action="#{gameService.deleteGame(gm.gameName)}">
+                    <p:column headerText="#{i18n.t('Phase')}" style="width:20%;">
+                        <h:outputText value="#{gm.spielPhase}"/>
+                    </p:column>
+
+                    <p:column headerText="" style="width:20%;" rendered="#{plaintextSecurity.ifGranted('root')}">
+                        <p:commandButton icon="fa fa-pencil" value="#{i18n.t('umbenennen')}"
+                                         actionListener="#{gameBackingBean.prepareRename(gm.gameName)}"
+                                         update=":fm:dlgRenameId"
+                                         oncomplete="PF('dlgRename').show();"/>
+                    </p:column>
+
+                    <p:column headerText="" style="width:20%;" rendered="#{plaintextSecurity.ifGranted('root')}">
+                        <p:commandButton icon="fa fa-trash" value="#{i18n.t('löschen')}" update=":fm" action="#{gameService.deleteGame(gm.gameName)}">
                             <p:confirm header="#{i18n.t('Achtung !!!')}" message="#{i18n.t('Turnier wirklich löschen')}" icon="ui-icon-alert"/>
                             <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
                                 <p:commandButton value="#{i18n.t('Ja')}" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check"/>
@@ -100,6 +102,17 @@
                         <f:facet name="footer">
                             <br/>
                             <p:commandButton value="#{i18n.t('Speichern')}" actionListener="#{gameBackingBean.save()}" update=":fm" oncomplete="PF('dlg2').hide()"/>
+                        </f:facet>
+                    </h:panelGrid>
+                </p:dialog>
+
+                <p:dialog header="#{i18n.t('Turnier umbenennen')}" widgetVar="dlgRename" id="dlgRenameId" resizable="true">
+                    <h:panelGrid columns="2" cellpadding="5">
+                        <h:outputLabel value="#{i18n.t('Neuer Name:')}"/>
+                        <p:inputText value="#{gameBackingBean.renameNewName}"/>
+                        <f:facet name="footer">
+                            <br/>
+                            <p:commandButton value="#{i18n.t('Umbenennen')}" actionListener="#{gameBackingBean.rename()}" update=":fm" oncomplete="PF('dlgRename').hide()"/>
                         </f:facet>
                     </h:panelGrid>
                 </p:dialog>

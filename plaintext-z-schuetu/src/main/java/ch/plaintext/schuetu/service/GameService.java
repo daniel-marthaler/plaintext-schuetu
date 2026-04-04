@@ -5,11 +5,12 @@ import ch.plaintext.schuetu.repository.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 /**
- * Loeschen eines Games aus der DB
+ * Loeschen und Umbenennen eines Games
  */
 @Service
 @Slf4j
@@ -29,6 +30,9 @@ public class GameService {
 
     @Autowired
     private KategorieRepository kategorieRepository;
+
+    @Autowired
+    private SchiriRepository schiriRepo;
 
     public void deleteGame(String gameName) {
 
@@ -97,6 +101,55 @@ public class GameService {
         GameModel game = gameRepository.findByGameName(gameName);
         gameRepository.delete(game);
 
+    }
+
+    @Transactional
+    public void renameGame(String oldName, String newName) {
+        log.info("Renaming game '{}' to '{}'", oldName, newName);
+
+        // Mannschaften
+        List<Mannschaft> mannschaften = mannschaftRepo.findByGame(oldName);
+        for (Mannschaft m : mannschaften) {
+            m.setGame(newName);
+            mannschaftRepo.save(m);
+        }
+
+        // Spiele
+        List<Spiel> spiele = spielRepo.findByGame(oldName);
+        for (Spiel spiel : spiele) {
+            spiel.setGame(newName);
+            spielRepo.save(spiel);
+        }
+
+        // SpielZeilen
+        List<SpielZeile> spielzeilen = spielzeilenRepo.findByGame(oldName);
+        for (SpielZeile z : spielzeilen) {
+            z.setGame(newName);
+            spielzeilenRepo.save(z);
+        }
+
+        // Kategorien
+        List<Kategorie> kategorien = kategorieRepository.findByGame(oldName);
+        for (Kategorie k : kategorien) {
+            k.setGame(newName);
+            kategorieRepository.save(k);
+        }
+
+        // Schiris
+        List<Schiri> schiris = schiriRepo.findByGame(oldName);
+        for (Schiri s : schiris) {
+            s.setGame(newName);
+            schiriRepo.save(s);
+        }
+
+        // GameModel
+        GameModel game = gameRepository.findByGameName(oldName);
+        if (game != null) {
+            game.setGameName(newName);
+            gameRepository.save(game);
+        }
+
+        log.info("Game renamed from '{}' to '{}'", oldName, newName);
     }
 
 }

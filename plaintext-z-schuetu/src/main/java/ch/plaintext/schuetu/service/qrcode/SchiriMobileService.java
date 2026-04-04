@@ -1,6 +1,8 @@
 package ch.plaintext.schuetu.service.qrcode;
 
+import ch.plaintext.schuetu.entity.Schiri;
 import ch.plaintext.schuetu.entity.Spiel;
+import ch.plaintext.schuetu.repository.SchiriRepository;
 import ch.plaintext.schuetu.repository.SpielRepository;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +24,9 @@ public class SchiriMobileService {
     @Autowired
     private SpielRepository spielRepository;
 
+    @Autowired
+    private SchiriRepository schiriRepository;
+
     private final Map<String, SchiriRegistration> registrations = new ConcurrentHashMap<>();
 
     /**
@@ -42,14 +47,40 @@ public class SchiriMobileService {
      * Registriert einen Schiri-Namen fuer einen Token
      */
     public boolean registerSchiri(String token, String name) {
+        return registerSchiri(token, name, null);
+    }
+
+    public boolean registerSchiri(String token, String name, String telefon) {
         SchiriRegistration reg = registrations.get(token);
         if (reg == null) {
             log.warn("Token nicht gefunden: {}", token);
             return false;
         }
         reg.setSchiriName(name);
+        reg.setTelefon(telefon);
         reg.setRegistered(true);
-        log.info("Schiri registriert: {} fuer Token {}", name, token);
+
+        // Schiri in DB speichern und mit dem Spiel verknuepfen
+        if (reg.getSpielId() != null) {
+            Spiel spiel = spielRepository.findById(reg.getSpielId()).orElse(null);
+            if (spiel != null) {
+                Schiri schiri = new Schiri();
+                schiri.setName(name);
+                schiri.setTelefon(telefon);
+                schiri.setGame(spiel.getGame());
+                schiri.setAktiviert(true);
+                schiri.setMatchcount(1);
+                schiri.setSpielIDs(spiel.getIdString());
+                schiriRepository.save(schiri);
+                reg.setSchiriId(schiri.getId());
+
+                spiel.setSchiri(schiri);
+                spiel.setSchiriName(name);
+                spielRepository.save(spiel);
+            }
+        }
+
+        log.info("Schiri registriert: {} (Tel: {}) fuer Token {}", name, telefon, token);
         return true;
     }
 
@@ -192,6 +223,8 @@ public class SchiriMobileService {
     public static class SchiriRegistration {
         private String token;
         private String schiriName;
+        private String telefon;
+        private Long schiriId;
         private boolean registered;
         private boolean approved;
         private Long spielId;
