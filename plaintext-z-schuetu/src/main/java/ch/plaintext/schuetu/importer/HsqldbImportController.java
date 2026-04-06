@@ -3,13 +3,12 @@ package ch.plaintext.schuetu.importer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Map;
 
 /**
@@ -35,6 +34,24 @@ public class HsqldbImportController {
             return ResponseEntity.ok(result);
         } catch (Exception e) {
             log.error("HSQLDB import failed", e);
+            return ResponseEntity.internalServerError().body(Map.of(
+                    "error", e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName(),
+                    "status", "FAILED"
+            ));
+        }
+    }
+
+    @GetMapping("/hsqldb/local")
+    public ResponseEntity<Map<String, Object>> importFromLocalFile(@RequestParam("path") String filePath) {
+        log.info("HSQLDB local import started, path: {}", filePath);
+
+        try {
+            String content = Files.readString(Path.of(filePath), StandardCharsets.UTF_8);
+            Map<String, Object> result = importService.importFromScript(content);
+            log.info("HSQLDB local import completed successfully: {}", result);
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            log.error("HSQLDB local import failed", e);
             return ResponseEntity.internalServerError().body(Map.of(
                     "error", e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName(),
                     "status", "FAILED"
