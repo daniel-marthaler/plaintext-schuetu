@@ -1,13 +1,25 @@
--- Fix columns that were created as VARCHAR but should be INTEGER/SMALLINT
--- The HSQLDB import stored enum ordinals and integers as strings
+-- Fix columns that were created as VARCHAR by old schema but should be INTEGER/SMALLINT.
+-- On fresh DB (JPA-created schema) these are already the correct type, so skip.
+DO $$
+BEGIN
+    -- spiel.typ: only fix if currently varchar
+    IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'spiel' AND column_name = 'typ' AND data_type = 'character varying') THEN
+        ALTER TABLE spiel ALTER COLUMN typ TYPE SMALLINT USING typ::SMALLINT;
+    END IF;
 
--- spiel table: typ and platz are enums stored as ordinals
-ALTER TABLE spiel ALTER COLUMN typ TYPE SMALLINT USING typ::SMALLINT;
-ALTER TABLE spiel ALTER COLUMN platz TYPE SMALLINT USING platz::SMALLINT;
+    IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'spiel' AND column_name = 'platz' AND data_type = 'character varying') THEN
+        ALTER TABLE spiel ALTER COLUMN platz TYPE SMALLINT USING platz::SMALLINT;
+    END IF;
 
--- mannschaft table: geschlecht is enum, klasse is integer
-ALTER TABLE mannschaft ALTER COLUMN geschlecht TYPE SMALLINT USING geschlecht::SMALLINT;
-ALTER TABLE mannschaft ALTER COLUMN klasse TYPE INTEGER USING klasse::INTEGER;
+    IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'mannschaft' AND column_name = 'geschlecht' AND data_type = 'character varying') THEN
+        ALTER TABLE mannschaft ALTER COLUMN geschlecht TYPE SMALLINT USING geschlecht::SMALLINT;
+    END IF;
 
--- spiel_zeile table: phase is enum
-ALTER TABLE spiel_zeile ALTER COLUMN phase TYPE SMALLINT USING phase::SMALLINT;
+    IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'mannschaft' AND column_name = 'klasse' AND data_type = 'character varying') THEN
+        ALTER TABLE mannschaft ALTER COLUMN klasse TYPE INTEGER USING klasse::INTEGER;
+    END IF;
+
+    IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'spiel_zeile' AND column_name = 'phase' AND data_type = 'character varying') THEN
+        ALTER TABLE spiel_zeile ALTER COLUMN phase TYPE SMALLINT USING phase::SMALLINT;
+    END IF;
+END $$;
