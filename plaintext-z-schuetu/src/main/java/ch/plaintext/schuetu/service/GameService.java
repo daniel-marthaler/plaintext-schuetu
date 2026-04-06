@@ -7,10 +7,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import org.apache.commons.beanutils.BeanUtils;
+
+import java.util.Date;
 import java.util.List;
 
 /**
- * Loeschen und Umbenennen eines Games
+ * Loeschen, Umbenennen und Kopieren eines Games
  */
 @Service
 @Slf4j
@@ -150,6 +153,76 @@ public class GameService {
         }
 
         log.info("Game renamed from '{}' to '{}'", oldName, newName);
+    }
+
+    @Transactional
+    public void copyGame(String sourceGameName, String newGameName) {
+        log.info("Copying game '{}' to '{}'", sourceGameName, newGameName);
+
+        GameModel source = gameRepository.findByGameName(sourceGameName);
+        if (source == null) {
+            log.warn("Source game '{}' not found", sourceGameName);
+            return;
+        }
+
+        if (gameRepository.findByGameName(newGameName) != null) {
+            log.warn("Target game '{}' already exists", newGameName);
+            return;
+        }
+
+        // GameModel kopieren
+        GameModel newGame = new GameModel();
+        try {
+            BeanUtils.copyProperties(newGame, source);
+        } catch (Exception e) {
+            log.error("Error copying GameModel", e);
+            return;
+        }
+        newGame.setId(null);
+        newGame.setGameName(newGameName);
+        newGame.setCreationdate(new Date());
+        newGame.setSpielPhase("anmeldung");
+        newGame.setInitialisiert(false);
+        gameRepository.save(newGame);
+
+        // Mannschaften kopieren
+        List<Mannschaft> mannschaften = mannschaftRepo.findByGame(sourceGameName);
+        for (Mannschaft m : mannschaften) {
+            Mannschaft copy = new Mannschaft();
+            try {
+                BeanUtils.copyProperties(copy, m);
+            } catch (Exception e) {
+                log.error("Error copying Mannschaft", e);
+            }
+            copy.setId(null);
+            copy.setGame(newGameName);
+            copy.setGruppe(null);
+            copy.setGruppeB(null);
+            copy.setTeamNummer(0);
+            copy.setCreationdate(new Date());
+            mannschaftRepo.save(copy);
+        }
+
+        // Schiris kopieren
+        List<Schiri> schiris = schiriRepo.findByGame(sourceGameName);
+        for (Schiri s : schiris) {
+            Schiri copy = new Schiri();
+            try {
+                BeanUtils.copyProperties(copy, s);
+            } catch (Exception e) {
+                log.error("Error copying Schiri", e);
+            }
+            copy.setId(null);
+            copy.setGame(newGameName);
+            copy.setMatchcount(0);
+            copy.setSpielIDs("");
+            copy.setAktiviert(false);
+            copy.setCreationdate(new Date());
+            schiriRepo.save(copy);
+        }
+
+        log.info("Game copied from '{}' to '{}' with {} teams and {} referees",
+                sourceGameName, newGameName, mannschaften.size(), schiris.size());
     }
 
 }

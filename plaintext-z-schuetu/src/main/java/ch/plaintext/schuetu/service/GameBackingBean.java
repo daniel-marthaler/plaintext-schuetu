@@ -32,6 +32,9 @@ public class GameBackingBean {
     private String renameOldName;
     private String renameNewName;
 
+    private String copySourceName;
+    private String copyNewName;
+
     public List<GameModel> displayGames() {
         return root.displayGames();
     }
@@ -53,6 +56,20 @@ public class GameBackingBean {
         }
         renameOldName = null;
         renameNewName = null;
+    }
+
+    public void prepareCopy(String gameName) {
+        this.copySourceName = gameName;
+        this.copyNewName = gameName + " (Kopie)";
+    }
+
+    public void copyGame() {
+        if (copySourceName != null && copyNewName != null && !copyNewName.isBlank()) {
+            gameService.copyGame(copySourceName, copyNewName);
+            root.clearCache();
+        }
+        copySourceName = null;
+        copyNewName = null;
     }
 
 }

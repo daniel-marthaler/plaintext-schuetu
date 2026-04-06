@@ -76,14 +76,21 @@
                         <h:outputText value="#{gm.spielPhase}"/>
                     </p:column>
 
-                    <p:column headerText="" style="width:20%;" rendered="#{plaintextSecurity.ifGranted('root')}">
+                    <p:column headerText="" style="width:10%;" rendered="#{plaintextSecurity.ifGranted('root')}">
                         <p:commandButton icon="fa fa-pencil" value="#{i18n.t('umbenennen')}"
                                          actionListener="#{gameBackingBean.prepareRename(gm.gameName)}"
                                          update=":fm:dlgRenameId"
                                          oncomplete="PF('dlgRename').show();"/>
                     </p:column>
 
-                    <p:column headerText="" style="width:20%;" rendered="#{plaintextSecurity.ifGranted('root')}">
+                    <p:column headerText="" style="width:10%;" rendered="#{plaintextSecurity.ifGranted('root')}">
+                        <p:commandButton icon="fa fa-copy" value="#{i18n.t('kopieren')}"
+                                         actionListener="#{gameBackingBean.prepareCopy(gm.gameName)}"
+                                         update=":fm:dlgCopyId"
+                                         oncomplete="PF('dlgCopy').show();"/>
+                    </p:column>
+
+                    <p:column headerText="" style="width:10%;" rendered="#{plaintextSecurity.ifGranted('root')}">
                         <p:commandButton icon="fa fa-trash" value="#{i18n.t('löschen')}" update=":fm" action="#{gameService.deleteGame(gm.gameName)}">
                             <p:confirm header="#{i18n.t('Achtung !!!')}" message="#{i18n.t('Turnier wirklich löschen')}" icon="ui-icon-alert"/>
                             <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
@@ -113,6 +120,19 @@
                         <f:facet name="footer">
                             <br/>
                             <p:commandButton value="#{i18n.t('Umbenennen')}" actionListener="#{gameBackingBean.rename()}" update=":fm" oncomplete="PF('dlgRename').hide()"/>
+                        </f:facet>
+                    </h:panelGrid>
+                </p:dialog>
+
+                <p:dialog header="#{i18n.t('Turnier kopieren')}" widgetVar="dlgCopy" id="dlgCopyId" resizable="true">
+                    <h:panelGrid columns="2" cellpadding="5">
+                        <h:outputLabel value="#{i18n.t('Quelle:')}"/>
+                        <h:outputText value="#{gameBackingBean.copySourceName}"/>
+                        <h:outputLabel value="#{i18n.t('Neuer Name:')}"/>
+                        <p:inputText value="#{gameBackingBean.copyNewName}"/>
+                        <f:facet name="footer">
+                            <br/>
+                            <p:commandButton value="#{i18n.t('Kopieren')}" actionListener="#{gameBackingBean.copyGame()}" update=":fm" oncomplete="PF('dlgCopy').hide()"/>
                         </f:facet>
                     </h:panelGrid>
                 </p:dialog>
