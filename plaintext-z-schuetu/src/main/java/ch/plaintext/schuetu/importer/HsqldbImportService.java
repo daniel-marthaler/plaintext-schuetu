@@ -173,9 +173,9 @@ public class HsqldbImportService {
     private void deleteAllData() {
         log.info("Deleting all existing data...");
         // Delete in reverse FK order
-        entityManager.createNativeQuery("DELETE FROM penalty_mannschaft").executeUpdate();
-        entityManager.createNativeQuery("DELETE FROM gruppe_spiel").executeUpdate();
-        entityManager.createNativeQuery("DELETE FROM gruppe_mannschaft").executeUpdate();
+        entityManager.createNativeQuery("DELETE FROM penalty_final_list").executeUpdate();
+        entityManager.createNativeQuery("DELETE FROM gruppe_spiele").executeUpdate();
+        entityManager.createNativeQuery("DELETE FROM gruppe_mannschaften").executeUpdate();
         korrekturRepository.deleteAll();
         spielZeilenRepository.deleteAll();
         entityManager.flush();
@@ -1054,7 +1054,7 @@ public class HsqldbImportService {
 
                 if (gruppe != null && mannschaft != null) {
                     entityManager.createNativeQuery(
-                                    "INSERT INTO gruppe_mannschaft (gruppe_id, mannschaften_id) VALUES (:gid, :mid)")
+                                    "INSERT INTO gruppe_mannschaften (gruppe_id, mannschaften_id) VALUES (:gid, :mid)")
                             .setParameter("gid", gruppe.getId())
                             .setParameter("mid", mannschaft.getId())
                             .executeUpdate();
@@ -1085,7 +1085,7 @@ public class HsqldbImportService {
 
                 if (gruppe != null && spiel != null) {
                     entityManager.createNativeQuery(
-                                    "INSERT INTO gruppe_spiel (gruppe_id, spiele_id) VALUES (:gid, :sid)")
+                                    "INSERT INTO gruppe_spiele (gruppe_id, spiele_id) VALUES (:gid, :sid)")
                             .setParameter("gid", gruppe.getId())
                             .setParameter("sid", spiel.getId())
                             .executeUpdate();
@@ -1116,7 +1116,7 @@ public class HsqldbImportService {
 
                 if (penalty != null && mannschaft != null) {
                     entityManager.createNativeQuery(
-                                    "INSERT INTO penalty_mannschaft (penalty_id, finallist_id) VALUES (:pid, :mid)")
+                                    "INSERT INTO penalty_final_list (penalty_id, finallist_id) VALUES (:pid, :mid)")
                             .setParameter("pid", penalty.getId())
                             .setParameter("mid", mannschaft.getId())
                             .executeUpdate();
