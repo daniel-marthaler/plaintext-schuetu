@@ -34,8 +34,15 @@ public class C3MannschaftenAufteiler {
             Kategorie kategorie = kategorieRepo.findById(id).get();
             if (kategorie.getGruppeA() == null) { continue; }
             int mannschaftenSize = kategorie.getGruppeA().getMannschaften().size();
-            if (mannschaftenSize < 3) { log.error("!!! weniger als 3 mannschaften"); }
-            else if (mannschaftenSize == 3) { kategorie = genau3Mannschaften(kategorie, model); }
+            if (mannschaftenSize == 0) {
+                log.warn("Kategorie '{}' hat keine Mannschaften, wird uebersprungen", kategorie.getName());
+                continue;
+            }
+            if (mannschaftenSize < 3) {
+                log.warn("Kategorie '{}' hat nur {} Mannschaften (min. 3 erforderlich), wird uebersprungen", kategorie.getName(), mannschaftenSize);
+                continue;
+            }
+            if (mannschaftenSize == 3) { kategorie = genau3Mannschaften(kategorie, model); }
             else if (mannschaftenSize > 7) { kategorie = groesserAls7Mannschaften(kategorie, mannschaftenSize, model); }
             else { dreiBis7Mannschaften(kategorie, model); }
             kategorieRepo.save(kategorie);

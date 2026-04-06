@@ -33,7 +33,11 @@ public class D4GeneratePaarungenAndSpiele {
         for (Kategorie kategorie : list) {
             if (kategorie.getGruppeA() == null) { continue; }
             final List<Mannschaft> a = kategorie.getGruppeA().getMannschaften();
-            final List<Mannschaft> b = kategorie.getGruppeB().getMannschaften();
+            if (a.size() < 3) {
+                log.warn("Kategorie '{}' hat nur {} Mannschaften, ueberspringe Spielgenerierung", kategorie.getName(), a.size());
+                continue;
+            }
+            final List<Mannschaft> b = kategorie.getGruppeB() != null ? kategorie.getGruppeB().getMannschaften() : List.of();
             if (a.size() == 3) { assign(a, true, game); } else if (!b.isEmpty()) { assign(b, false, game); }
             assign(a, false, game);
             kategorie = kategorieRepo.findById(kategorie.getId()).get();

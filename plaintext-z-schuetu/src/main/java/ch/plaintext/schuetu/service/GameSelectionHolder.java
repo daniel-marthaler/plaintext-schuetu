@@ -122,10 +122,27 @@ public class GameSelectionHolder {
     }
 
     public void phaseKategoriezuordnung() {
-        toSpieltage();
-        game.getModel().setSpielPhase("spieltage");
-        game.setModel(repo.save(game.getModel()));
-        mqttEventPublisher.phaseChanged(getGameName(), "spieltage");
+        try {
+            List<Kategorie> kategorien = kategorieRepository.findByGame(getGameName());
+            for (Kategorie k : kategorien) {
+                if (k.getGruppeA() != null && k.getGruppeA().getMannschaften().size() > 0 && k.getGruppeA().getMannschaften().size() < 3) {
+                    FacesContext.getCurrentInstance().addMessage(null,
+                            new FacesMessage(FacesMessage.SEVERITY_WARN,
+                                    "Warnung",
+                                    "Kategorie '" + k.getName() + "' hat nur " + k.getGruppeA().getMannschaften().size() + " Mannschaften (min. 3) und wird uebersprungen."));
+                }
+            }
+            toSpieltage();
+            game.getModel().setSpielPhase("spieltage");
+            game.setModel(repo.save(game.getModel()));
+            mqttEventPublisher.phaseChanged(getGameName(), "spieltage");
+        } catch (Exception e) {
+            log.error("Fehler beim Wechsel zu Spieltage: {}", e.getMessage(), e);
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                            "Fehler beim Phasenwechsel",
+                            "Spieltage-Generierung fehlgeschlagen: " + e.getMessage()));
+        }
     }
 
     public void neuRechnen() {
