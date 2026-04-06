@@ -1116,7 +1116,7 @@ public class HsqldbImportService {
 
                 if (penalty != null && mannschaft != null) {
                     entityManager.createNativeQuery(
-                                    "INSERT INTO penalty_final_list (penalty_id, finallist_id) VALUES (:pid, :mid)")
+                                    "INSERT INTO penalty_final_list (penalty_id, final_list_id) VALUES (:pid, :mid)")
                             .setParameter("pid", penalty.getId())
                             .setParameter("mid", mannschaft.getId())
                             .executeUpdate();
