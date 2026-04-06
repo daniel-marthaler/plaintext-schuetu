@@ -106,14 +106,24 @@ public class E5Spielverteiler {
         List<Spiel> spieleGeaendert = new ArrayList<>();
         boolean first = true; Spiel letztesFinale = null;
         for (Kategorie k : kategorien) {
+            if (k.getGrosserFinal() == null && k.getKleineFinal() == null) {
+                log.warn("Kategorie '{}' hat keine Finalspiele, ueberspringe", k.getName());
+                continue;
+            }
+            if (finalspieleZeilen.isEmpty()) {
+                log.warn("Keine Finalspielzeilen mehr verfuegbar fuer Kategorie '{}'", k.getName());
+                break;
+            }
             SpielZeile zeile = finalspieleZeilen.remove(0);
             if (k.getGrosserfinal2() != null) { mergeGrosserFinal2ToSpielzeile(spieleGeaendert, zeile, k.getGrosserfinal2()); }
             if (first) { mergeKleinerFinalToSpielzeile(spieleGeaendert, k, zeile); first = false; }
-            else { mergeKleinerFinalToSpielzeile(spieleGeaendert, k, zeile); mergeGrosserFinalToSpielzeile(spieleGeaendert, zeile, letztesFinale); }
+            else { mergeKleinerFinalToSpielzeile(spieleGeaendert, k, zeile); if (letztesFinale != null) { mergeGrosserFinalToSpielzeile(spieleGeaendert, zeile, letztesFinale); } }
             letztesFinale = k.getGrosserFinal(); finalspieleZeilenGeaendert.add(zeile);
         }
-        SpielZeile zeile = finalspieleZeilen.remove(0);
-        mergeGrosserFinalToSpielzeile(spieleGeaendert, zeile, letztesFinale); finalspieleZeilenGeaendert.add(zeile);
+        if (!finalspieleZeilen.isEmpty() && letztesFinale != null) {
+            SpielZeile zeile = finalspieleZeilen.remove(0);
+            mergeGrosserFinalToSpielzeile(spieleGeaendert, zeile, letztesFinale); finalspieleZeilenGeaendert.add(zeile);
+        }
         spielRepo.saveAll(spieleGeaendert); spielzeilenRepo.saveAll(finalspieleZeilenGeaendert);
     }
 
