@@ -52,6 +52,10 @@ public class D4GeneratePaarungenAndSpiele {
         for (int i = 0; i < mannschaften.size(); i++) {
             final Mannschaft kandidat = mannschaften.get(i);
             Gruppe gruppeKandidat = kandidat.getGruppe();
+            if (gruppeKandidat == null) {
+                log.warn("Mannschaft '{}' hat keine Gruppe zugewiesen, ueberspringe", kandidat.getName());
+                continue;
+            }
             for (int k = i + 1; k < mannschaften.size(); k++) {
                 Spiel spiel = new Spiel(); spiel.setGame(game); spiel.setIdString(IDGeneratorContainer.getNext());
                 spiel.setKategorieName(gruppeKandidat.getKategorie().getName()); spiel = spielRepo.save(spiel);
