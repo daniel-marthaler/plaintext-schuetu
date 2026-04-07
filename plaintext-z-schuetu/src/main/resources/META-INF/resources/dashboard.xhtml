@@ -61,12 +61,12 @@
                     </p:column>
 
                     <p:column headerText="" style="width:20%;">
-                        <p:commandButton icon="fa fa-play" value="#{i18n.t('auswählen')}" update=":fm"
+                        <p:commandButton icon="pi pi-play" value="#{i18n.t('auswählen')}" update=":fm"
                                          oncomplete="location.reload();"
                                          action="#{gameSelectionHolder.selectGame(gm.gameName)}"
                                          rendered="#{gm.initialisiert and (not gameSelectionHolder.hasGame() or not gm.gameName.equals(gameSelectionHolder.game.model.gameName))}"/>
 
-                        <p:commandButton icon="fa fa-cog" value="#{i18n.t('initialisieren')}" update=":fm"
+                        <p:commandButton icon="pi pi-cog" value="#{i18n.t('initialisieren')}" update=":fm"
                                          oncomplete="location.reload();"
                                          action="#{gameRoot.selectGame(gm.gameName)}"
                                          rendered="#{not gm.initialisiert and plaintextSecurity.ifGranted('root')}" />
@@ -78,21 +78,21 @@
 
                     <p:column headerText="" style="width:auto;" rendered="#{plaintextSecurity.ifGranted('root')}">
                         <div style="display: flex; gap: 0.4rem; justify-content: flex-end;">
-                            <p:commandButton icon="fa fa-pencil" title="#{i18n.t('Umbenennen')}"
+                            <p:commandButton icon="pi pi-pencil" title="#{i18n.t('Umbenennen')}"
                                              actionListener="#{gameBackingBean.prepareRename(gm.gameName)}"
                                              update=":fm:dlgRenameId"
                                              oncomplete="PF('dlgRename').show();"/>
 
-                            <p:commandButton icon="fa fa-copy" title="#{i18n.t('Kopieren')}"
+                            <p:commandButton icon="pi pi-copy" title="#{i18n.t('Kopieren')}"
                                              actionListener="#{gameBackingBean.prepareCopy(gm.gameName)}"
                                              update=":fm:dlgCopyId"
                                              oncomplete="PF('dlgCopy').show();"/>
 
-                            <p:commandButton icon="fa fa-trash" title="#{i18n.t('Löschen')}" update=":fm" action="#{gameService.deleteGame(gm.gameName)}">
-                                <p:confirm header="#{i18n.t('Achtung !!!')}" message="#{i18n.t('Turnier wirklich löschen')}" icon="fa fa-exclamation-triangle"/>
+                            <p:commandButton icon="pi pi-trash" title="#{i18n.t('Löschen')}" update=":fm" action="#{gameService.deleteGame(gm.gameName)}">
+                                <p:confirm header="#{i18n.t('Achtung !!!')}" message="#{i18n.t('Turnier wirklich löschen')}" icon="pi pi-exclamation-triangle"/>
                                 <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
-                                    <p:commandButton value="#{i18n.t('Ja')}" type="button" styleClass="ui-confirmdialog-yes" icon="fa fa-check"/>
-                                    <p:commandButton value="#{i18n.t('Nein')}" type="button" styleClass="ui-confirmdialog-no" icon="fa fa-times"/>
+                                    <p:commandButton value="#{i18n.t('Ja')}" type="button" styleClass="ui-confirmdialog-yes" icon="pi pi-check"/>
+                                    <p:commandButton value="#{i18n.t('Nein')}" type="button" styleClass="ui-confirmdialog-no" icon="pi pi-times"/>
                                 </p:confirmDialog>
                             </p:commandButton>
                         </div>

@@ -214,14 +214,14 @@
 
                             <p:commandButton value="Löschen" action="#{mannschaftBackingBean.delete()}">
                                 <p:confirm header="Bitte Bestätigen" message="Wirklich löschen?"
-                                           icon="fa fa-exclamation-triangle" rendered="#{gameSelectionHolder.isAnmeldung()}"/>
+                                           icon="pi pi-exclamation-triangle" rendered="#{gameSelectionHolder.isAnmeldung()}"/>
                             </p:commandButton>
 
                             <p:confirmDialog global="true" showEffect="fade" hideEffect="explode">
                                 <p:commandButton value="Ja" type="button" styleClass="ui-confirmdialog-yes"
-                                                 icon="fa fa-check" action="delete" ajax="false"/>
+                                                 icon="pi pi-check" action="delete" ajax="false"/>
                                 <p:commandButton value="Nein" type="button" styleClass="ui-confirmdialog-no"
-                                                 icon="fa fa-times"/>
+                                                 icon="pi pi-times"/>
                             </p:confirmDialog>
 
                         </p:panelGrid>
@@ -387,7 +387,7 @@
                                          autoResize="false"/>
 
                         <h:panelGroup layout="block">
-                            <p:commandButton action="#{mannschaftBackingBean.copyOld()}" icon="fa fa-backward"
+                            <p:commandButton action="#{mannschaftBackingBean.copyOld()}" icon="pi pi-arrow-left"
                                              value="kopieren" execute="@form"
                                              update="@form"/>
                         </h:panelGroup>

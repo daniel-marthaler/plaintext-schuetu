@@ -74,11 +74,11 @@
                             <p:column headerText="Samstag">
                                 <p:commandButton actionListener="#{spielzeilenBackingBean.togglePause(zeile.guid)}"
                                                  update="fm"
-                                                 icon="fa fa-pause"
+                                                 icon="pi pi-pause"
                                                  rendered="#{zeile.pause}" onstart="PF('blockIt').show()" oncomplete="PF('blockIt').hide()">
                                 </p:commandButton>
                                 <p:commandButton actionListener="#{spielzeilenBackingBean.togglePause(zeile.guid)}"
-                                                 update="fm" icon="fa fa-check"
+                                                 update="fm" icon="pi pi-check"
                                                  rendered="#{!zeile.pause}" onstart="PF('blockIt').show()" oncomplete="PF('blockIt').hide()">
                                 </p:commandButton>
                             </p:column>
@@ -103,13 +103,13 @@
                             <p:column headerText="Sonntag">
                                 <p:commandButton actionListener="#{spielzeilenBackingBean.togglePause(zeile.guid)}"
                                                  update="fm"
-                                                 icon="fa fa-pause"
+                                                 icon="pi pi-pause"
                                                  rendered="#{zeile.pause}"
                                                  onstart="PF('blockIt').show()"
                                                  oncomplete="PF('blockIt').hide()">
                                 </p:commandButton>
                                 <p:commandButton actionListener="#{spielzeilenBackingBean.togglePause(zeile.guid)}"
-                                                 update="fm" icon="fa fa-check"
+                                                 update="fm" icon="pi pi-check"
                                                  rendered="#{!zeile.pause}"
                                                  onstart="PF('blockIt').show()"
                                                  oncomplete="PF('blockIt').hide()">

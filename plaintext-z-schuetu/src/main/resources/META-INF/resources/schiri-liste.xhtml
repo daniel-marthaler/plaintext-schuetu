@@ -19,7 +19,7 @@
             <input type="hidden" name="_csrf" value="#{_csrf.token}"/>
 
             <p:commandButton actionListener="#{schirisBackingBean.selectSchiri('null')}"
-                             icon="fa fa-plus" update="fm"
+                             icon="pi pi-plus" update="fm"
                              value="Schiri anlegen"/>
 
             <h:outputLabel value=" | "/>
@@ -93,7 +93,7 @@
 
 
             <p:contextMenu for="tbl">
-                <p:menuitem value="Delete" update="tbl" icon="fa fa-flash" action="#{schirisBackingBean.delete()}"/>
+                <p:menuitem value="Delete" update="tbl" icon="pi pi-trash" action="#{schirisBackingBean.delete()}"/>
             </p:contextMenu>
 
 

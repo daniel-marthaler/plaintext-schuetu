@@ -104,7 +104,7 @@
                     <f:facet name="header">
                         <h:outputText value="#{i18n.t('Notizen')}"/>
                     </f:facet>
-                    <p:commandButton id="notizenButton" icon="fa fa-sticky-note"
+                    <p:commandButton id="notizenButton" icon="pi pi-file"
                                      onclick="PF('dlge#{ri}').show();" type="button"
                                      rendered="#{mannschaft.notizen.length() > 0}"/>
                     <p:dialog id="notizen_dialog" header="#{i18n.t('Notizen zu dieser Mannschaft')}"
