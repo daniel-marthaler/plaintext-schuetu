@@ -85,14 +85,18 @@ public class B1KategorienZuordner {
                     try { keyMinusOne = kKeys.get(i - 1); } catch (IndexOutOfBoundsException e) { log.debug("keine tiefere kategorie: " + keyActual); continue; }
                     Kategorie kategorieMinusOne = kategorieRepo.findById(map.get(keyMinusOne).getId()).get();
                     if (kategorieMinusOne != null && kategorieMinusOne.getGruppeA().getMannschaften().size() > 0) {
-                        List<Mannschaft> manns = temp.getGruppeA().getMannschaften();
+                        List<Mannschaft> manns = new ArrayList<>(temp.getGruppeA().getMannschaften());
+                        // Erst aus alter Gruppe entfernen (unique constraint)
+                        temp.getGruppeA().getMannschaften().clear();
+                        temp.getGruppeB().getMannschaften().clear();
+                        gruppeRepo.save(temp.getGruppeA());
+                        gruppeRepo.save(temp.getGruppeB());
+                        kategorieRepo.delete(temp);
+                        map.remove(keyActual);
+                        // Dann in neue Gruppe einfügen
                         for (Mannschaft mannschaft : manns) { mannschaft.setGruppe(kategorieMinusOne.getGruppeA()); kategorieMinusOne.getGruppeA().getMannschaften().add(mannschaft); }
                         kategorieMinusOne.getGruppeA().getMannschaften().sort(new MannschaftsNameComparator());
-                        map.remove(keyActual);
-                        for (Mannschaft mt : temp.getGruppeA().getMannschaften()) { mt.setGruppe(null); this.mannschaftRepo.save(mt); }
-                        for (Mannschaft mt : temp.getGruppeB().getMannschaften()) { mt.setGruppe(null); this.mannschaftRepo.save(mt); }
-                        kategorieRepo.delete(temp);
-                        if (kategorieMinusOne != null) { kategorieRepo.save(kategorieMinusOne); }
+                        kategorieRepo.save(kategorieMinusOne);
                     }
                 }
             }
@@ -100,18 +104,20 @@ public class B1KategorienZuordner {
     }
 
     private boolean plusOneBigger(Map<String, Kategorie> map, String keyActual, Kategorie temp, Kategorie kategoriePlusOne) {
-        List<Mannschaft> manns = temp.getGruppeA().getMannschaften();
-        for (Mannschaft mannschaft : manns) { mannschaft.setGruppe(kategoriePlusOne.getGruppeA()); kategoriePlusOne.getGruppeA().getMannschaften().add(mannschaft); }
-        kategoriePlusOne.getGruppeA().getMannschaften().sort(new MannschaftsNameComparator());
-        map.remove(keyActual);
+        List<Mannschaft> manns = new ArrayList<>(temp.getGruppeA().getMannschaften());
+        // Erst aus alter Gruppe entfernen und speichern (unique constraint)
+        temp.getGruppeA().getMannschaften().clear();
         Gruppe a = temp.getGruppeA(); Gruppe b = temp.getGruppeB();
         a.setKategorie(null); b.setKategorie(null);
         a = gruppeRepo.save(a); b = gruppeRepo.save(b);
         temp.setGruppeA(null); temp.setGruppeB(null);
-        gruppeRepo.save(a); gruppeRepo.save(b);
         kategorieRepo.save(temp);
         gruppeRepo.deleteById(a.getId()); gruppeRepo.deleteById(b.getId());
+        // Dann in neue Gruppe einfügen
+        for (Mannschaft mannschaft : manns) { mannschaft.setGruppe(kategoriePlusOne.getGruppeA()); kategoriePlusOne.getGruppeA().getMannschaften().add(mannschaft); }
+        kategoriePlusOne.getGruppeA().getMannschaften().sort(new MannschaftsNameComparator());
         kategorieRepo.save(kategoriePlusOne);
+        map.remove(keyActual);
         return true;
     }
 
