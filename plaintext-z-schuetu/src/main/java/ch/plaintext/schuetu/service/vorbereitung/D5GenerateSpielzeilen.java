@@ -42,7 +42,7 @@ public class D5GenerateSpielzeilen {
             if ((start.getHourOfDay() > MITTAG) && sonntag) { zeile.setFinale(true); }
             if (sonntag && (start.getHourOfDay() <= MITTAG)) { zeile.setSpieltageszeit(SpielTageszeit.SONNTAGMORGEN); }
             if (!sonntag && (start.getHourOfDay() < MITTAG)) { zeile.setSpieltageszeit(SpielTageszeit.SAMSTAGMORGEN); }
-            if (!sonntag && (start.getHourOfDay() > MITTAG)) { zeile.setSpieltageszeit(SpielTageszeit.SAMSTAGNACHMITTAG); }
+            if (!sonntag && (start.getHourOfDay() >= MITTAG)) { zeile.setSpieltageszeit(SpielTageszeit.SAMSTAGNACHMITTAG); }
             zeile.setStart(start.toDate());
             zeilen.add(zeile);
             zeile.setSonntag(sonntag);

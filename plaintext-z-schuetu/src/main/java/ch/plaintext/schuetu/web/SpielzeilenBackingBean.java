@@ -244,14 +244,35 @@ public class SpielzeilenBackingBean {
 
         vertString = "";
 
+        // Reload from DB to ensure entities are managed in current persistence context
+        this.zeilea = spielZeilenRepository.findById(zeilea.getId()).orElse(null);
+        this.zeileb = spielZeilenRepository.findById(zeileb.getId()).orElse(null);
+        if (zeilea == null || zeileb == null) {
+            log.error("SpielZeile nicht gefunden fuer Vertauschung");
+            reset();
+            return;
+        }
+
         Spiel a = this.zeilea.getSpiel(platzA);
         Spiel b = this.zeileb.getSpiel(platzB);
+
+        // Convert placeholders to null (empty slots)
+        if (a != null && a.isPlatzhalter()) { a = null; }
+        if (b != null && b.isPlatzhalter()) { b = null; }
 
         this.zeilea.setSpiel(b, platzA);
         this.zeileb.setSpiel(a, platzB);
 
-        this.zeilea = save(this.zeilea);
-        this.zeileb = save(this.zeileb);
+        // Update start times to match new time slots
+        if (a != null) { a.setStart(zeileb.getStart()); }
+        if (b != null) { b.setStart(zeilea.getStart()); }
+
+        spielZeilenRepository.save(this.zeilea);
+        spielZeilenRepository.save(this.zeileb);
+
+        // Reload session lists to reflect changes
+        samstag = spielZeilenRepository.findSpieleSamstag(gameHolder.getGame().getModel().getGameName());
+        sonntag = spielZeilenRepository.findSpieleSonntag(gameHolder.getGame().getModel().getGameName());
 
         reset();
 
@@ -372,27 +393,10 @@ public class SpielzeilenBackingBean {
     }
 
     public SpielZeile save(SpielZeile zl) {
-
-        if (zl.getA().toString().equals("-")) {
-            zl.setA(null);
-            zl = spielZeilenRepository.save(zl);
-        }
-
-        if (zl.getB().toString().equals("-")) {
-            zl.setB(null);
-            zl = spielZeilenRepository.save(zl);
-        }
-
-        if (zl.getC().toString().equals("-")) {
-            zl.setC(null);
-            zl = spielZeilenRepository.save(zl);
-        }
-
-        if (zl.getD().toString().equals("-")) {
-            zl.setD(null);
-            zl = spielZeilenRepository.save(zl);
-        }
-
+        if (zl.getA().isPlatzhalter()) { zl.setA(null); }
+        if (zl.getB().isPlatzhalter()) { zl.setB(null); }
+        if (zl.getC().isPlatzhalter()) { zl.setC(null); }
+        if (zl.getD().isPlatzhalter()) { zl.setD(null); }
         return spielZeilenRepository.save(zl);
     }
 

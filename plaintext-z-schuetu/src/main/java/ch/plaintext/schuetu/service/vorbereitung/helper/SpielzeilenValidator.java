@@ -16,9 +16,10 @@ public class SpielzeilenValidator {
         int zweipausenBisKlasse = model.getZweiPausenBisKlasse();
         for (Mannschaft m : zeileJetzt.getAllMannschaften()) { m.setKonflikt(false); }
         String ret = "";
-        Set<Mannschaft> konflikte = new HashSet<>();
-        ret = pruefeObInVorherigerZeileVorhanden(zeileVorVorher, zeileJetzt, ret, konflikte, true, zweipausenBisKlasse);
-        ret = pruefeObInVorherigerZeileVorhanden(zeileVorher, zeileJetzt, ret, konflikte, false, zweipausenBisKlasse);
+        Set<Mannschaft> konflikteVorVorher = new HashSet<>();
+        ret = pruefeObInVorherigerZeileVorhanden(zeileVorVorher, zeileJetzt, ret, konflikteVorVorher, true, zweipausenBisKlasse);
+        Set<Mannschaft> konflikteVorher = new HashSet<>();
+        ret = pruefeObInVorherigerZeileVorhanden(zeileVorher, zeileJetzt, ret, konflikteVorher, false, zweipausenBisKlasse);
         ret = pruefeDoppelteIngleicherZeile(zeileJetzt, ret);
         zeileJetzt.setKonfliktText(ret);
         return ret;

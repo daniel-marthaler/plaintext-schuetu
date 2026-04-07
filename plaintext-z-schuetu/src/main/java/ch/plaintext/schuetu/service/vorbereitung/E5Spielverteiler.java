@@ -148,7 +148,7 @@ public class E5Spielverteiler {
                 if (ieg == iB) { if (isSamstagNachNeuekategoriesperre(zeile)) { if (helper.isFirstSpielNotInGruppe(spiel)) { firstEgal = spiel; } } else { firstEgal = spiel; } } ieg++;
             }
             if (zeile.getSpieltageszeit() == spiel.getMannschaftA().getKategorie().getSpielwunsch()) {
-                if (ineg == iB) { if (isSamstagNachNeuekategoriesperre(zeile)) { if (helper.isFirstSpielNotInGruppe(spiel)) { return spiel; } } else { firstEgal = spiel; } } ineg++;
+                if (ineg == iB) { if (isSamstagNachNeuekategoriesperre(zeile)) { if (helper.isFirstSpielNotInGruppe(spiel)) { return spiel; } } else { return spiel; } } ineg++;
             }
         }
         return firstEgal;

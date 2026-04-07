@@ -18,10 +18,10 @@ public interface SpielZeilenRepository extends JpaRepository<SpielZeile, Long> {
     @Query("select o from SpielZeile o where o.finale = false and o.game= ?1 order by o.start asc ")
     List<SpielZeile> findGruppenSpielZeilen(String game);
 
-    @Query("select o from SpielZeile o where o.sonntag = true and o.game= ?1")
+    @Query("select o from SpielZeile o where o.sonntag = true and o.game= ?1 order by o.start asc")
     List<SpielZeile> findSpieleSonntag(String game);
 
-    @Query("select o from SpielZeile o where o.sonntag = false and o.game= ?1")
+    @Query("select o from SpielZeile o where o.sonntag = false and o.game= ?1 order by o.start asc")
     List<SpielZeile> findSpieleSamstag(String game);
 
     @Query("select o from SpielZeile o where o.phase = 0 and (o.a is not null or o.b is not null or o.c is not null) and o.game= ?1 order by o.start asc")
