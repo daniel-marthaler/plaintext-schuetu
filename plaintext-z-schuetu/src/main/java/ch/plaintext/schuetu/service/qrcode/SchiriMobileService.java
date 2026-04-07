@@ -66,6 +66,12 @@ public class SchiriMobileService {
             if (spiel != null) {
                 Schiri schiri = new Schiri();
                 schiri.setName(name);
+                if (name != null && name.contains(" ")) {
+                    schiri.setVorname(name.substring(0, name.indexOf(' ')));
+                    schiri.setNachname(name.substring(name.indexOf(' ') + 1));
+                } else {
+                    schiri.setNachname(name);
+                }
                 schiri.setTelefon(telefon);
                 schiri.setGame(spiel.getGame());
                 schiri.setAktiviert(true);
