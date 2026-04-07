@@ -57,15 +57,16 @@ public class D4GeneratePaarungenAndSpiele {
                 continue;
             }
             for (int k = i + 1; k < mannschaften.size(); k++) {
-                Spiel spiel = new Spiel(); spiel.setGame(game); spiel.setIdString(IDGeneratorContainer.getNext());
-                spiel.setKategorieName(gruppeKandidat.getKategorie().getName()); spiel = spielRepo.save(spiel);
-                spiel.setMannschaftA(kandidat); spiel.setMannschaftB(mannschaften.get(k)); spiel = spielRepo.save(spiel);
+                Spiel spiel = new Spiel();
+                spiel.setGame(game);
+                spiel.setIdString(IDGeneratorContainer.getNext());
+                spiel.setKategorieName(gruppeKandidat.getKategorie().getName());
+                spiel.setMannschaftA(kandidat);
+                spiel.setMannschaftB(mannschaften.get(k));
+                spiel = spielRepo.save(spiel);
                 if (toBGruppe) { gruppeKandidat = gruppeKandidat.getKategorie().getGruppeB(); }
-                List<Spiel> spiele = gruppeKandidat.getSpiele();
-                gruppeKandidat.getSpiele().clear(); gruppeKandidat = this.gruppeRepo.save(gruppeKandidat);
-                for (Spiel sp : spiele) { gruppeKandidat.getSpiele().add(sp); }
                 gruppeKandidat.getSpiele().add(spiel);
-                this.gruppeRepo.save(gruppeKandidat);
+                gruppeKandidat = this.gruppeRepo.save(gruppeKandidat);
             }
         }
         mannschaftRepo.saveAll(mannschaften);
