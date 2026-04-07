@@ -38,8 +38,8 @@ public class D4GeneratePaarungenAndSpiele {
                 continue;
             }
             final List<Mannschaft> b = kategorie.getGruppeB() != null ? kategorie.getGruppeB().getMannschaften() : List.of();
-            if (a.size() == 3) { assign(a, true, game); } else if (!b.isEmpty()) { assign(b, false, game); }
-            assign(a, false, game);
+            if (a.size() == 3) { assign(a, true, game, kategorie); } else if (!b.isEmpty()) { assign(b, false, game, kategorie); }
+            assign(a, false, game, kategorie);
             kategorie = kategorieRepo.findById(kategorie.getId()).get();
             spieleCount += kategorie.getSpiele().size();
             log.info("paarungen und spiele zu kategorie " + kategorie.getName() + " zugeordnet: " + kategorie.getSpiele().size());
@@ -48,25 +48,20 @@ public class D4GeneratePaarungenAndSpiele {
         log.info(" zugeordnet total: " + spieleCount);
     }
 
-    private void assign(final List<Mannschaft> mannschaften, boolean toBGruppe, String game) {
+    private void assign(final List<Mannschaft> mannschaften, boolean toBGruppe, String game, Kategorie kategorie) {
+        Gruppe gruppeZiel = toBGruppe ? kategorie.getGruppeB() : kategorie.getGruppeA();
         for (int i = 0; i < mannschaften.size(); i++) {
             final Mannschaft kandidat = mannschaften.get(i);
-            Gruppe gruppeKandidat = kandidat.getGruppe();
-            if (gruppeKandidat == null) {
-                log.warn("Mannschaft '{}' hat keine Gruppe zugewiesen, ueberspringe", kandidat.getName());
-                continue;
-            }
             for (int k = i + 1; k < mannschaften.size(); k++) {
                 Spiel spiel = new Spiel();
                 spiel.setGame(game);
                 spiel.setIdString(IDGeneratorContainer.getNext());
-                spiel.setKategorieName(gruppeKandidat.getKategorie().getName());
+                spiel.setKategorieName(kategorie.getName());
                 spiel.setMannschaftA(kandidat);
                 spiel.setMannschaftB(mannschaften.get(k));
                 spiel = spielRepo.save(spiel);
-                if (toBGruppe) { gruppeKandidat = gruppeKandidat.getKategorie().getGruppeB(); }
-                gruppeKandidat.getSpiele().add(spiel);
-                gruppeKandidat = this.gruppeRepo.save(gruppeKandidat);
+                gruppeZiel.getSpiele().add(spiel);
+                gruppeZiel = this.gruppeRepo.save(gruppeZiel);
             }
         }
         mannschaftRepo.saveAll(mannschaften);
