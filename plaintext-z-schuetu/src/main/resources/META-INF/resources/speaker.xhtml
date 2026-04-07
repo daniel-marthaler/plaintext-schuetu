@@ -107,7 +107,7 @@
                     <p:column>
                         <f:facet name="header">
                         </f:facet>
-                        <p:commandButton action="no" icon="ui-icon-check" disabled="true"/>
+                        <p:commandButton action="no" icon="fa fa-check" disabled="true"/>
                     </p:column>
 
                 </p:dataTable>
@@ -147,7 +147,7 @@
 
                     <p:column>
                         <f:facet name="header"/>
-                        <p:commandButton id="b11" icon="ui-icon-check"
+                        <p:commandButton id="b11" icon="fa fa-check"
                                          disabled="#{!gameSelectionHolder.game.durchfuehrung.readyToVorbereiten}"
                                          update="fm" ajax="false"
                                          actionListener="#{gameSelectionHolder.game.durchfuehrung.vorbereitet()}"/>
@@ -198,7 +198,7 @@
                     <p:column>
                         <f:facet name="header">
                         </f:facet>
-                        <p:commandButton id="play" icon="ui-icon-check" widgetVar="plpl"
+                        <p:commandButton id="play" icon="fa fa-check" widgetVar="plpl"
                                          disabled="#{!gameSelectionHolder.game.durchfuehrung.readyToSpielen}"
                                          actionListener="#{gameSelectionHolder.game.durchfuehrung.spielen()}"
                                          update="fm" ajax="false">
@@ -252,7 +252,7 @@
                     <p:column style="width: 10%" rendered="#{gameSelectionHolder.game.model.abbrechenZulassen}">
                         <f:facet name="header">
                         </f:facet>
-                        <p:commandButton icon="ui-icon-check" update="fm" ajax="false"
+                        <p:commandButton icon="fa fa-check" update="fm" ajax="false"
                                          actionListener="#{gameSelectionHolder.game.durchfuehrung.beenden()}"
                                          disabled="#{!gameSelectionHolder.game.model.abbrechenZulassen}">
                         </p:commandButton>

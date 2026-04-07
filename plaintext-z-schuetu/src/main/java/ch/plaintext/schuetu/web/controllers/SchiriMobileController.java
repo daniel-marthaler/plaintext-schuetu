@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.security.web.csrf.CsrfToken;
 import java.text.SimpleDateFormat;
 
 /**
@@ -41,10 +42,20 @@ public class SchiriMobileController {
      * Wenn das Spiel bereits eingetragen ist (fertigEingetragen=true), wird die
      * Kontrollierer-Ansicht angezeigt, damit ein zweiter Scan das Ergebnis bestaetigen kann.
      */
+    private void initCsrf(HttpServletRequest request) {
+        CsrfToken csrf = (CsrfToken) request.getAttribute(CsrfToken.class.getName());
+        if (csrf != null) {
+            viewRenderer.setCsrf(csrf.getParameterName(), csrf.getToken());
+        } else {
+            viewRenderer.setCsrf(null, null);
+        }
+    }
+
     @GetMapping(value = "/{token}", produces = MediaType.TEXT_HTML_VALUE)
     @ResponseBody
     public String showMobilePage(@PathVariable String token, HttpServletRequest request,
                                   HttpServletResponse response, Model model) {
+        initCsrf(request);
 
         SchiriRegistration reg = schiriMobileService.getRegistration(token);
         if (reg == null) {
@@ -123,8 +134,10 @@ public class SchiriMobileController {
     public String registerSchiri(@PathVariable String token,
                                  @RequestParam String name,
                                  @RequestParam(required = false) String telefon,
+                                 HttpServletRequest request,
                                  HttpServletResponse response,
                                  Model model) {
+        initCsrf(request);
 
         boolean success = schiriMobileService.registerSchiri(token, name, telefon);
 
@@ -178,7 +191,9 @@ public class SchiriMobileController {
     public String eintragen(@PathVariable String token,
                              @RequestParam int toreA,
                              @RequestParam int toreB,
+                             HttpServletRequest request,
                              Model model) {
+        initCsrf(request);
 
         boolean success = schiriMobileService.eintragenSpiel(token, toreA, toreB);
 
@@ -231,7 +246,9 @@ public class SchiriMobileController {
     @ResponseBody
     public String kontrolle(@PathVariable String token,
                              @RequestParam String aktion,
+                             HttpServletRequest request,
                              Model model) {
+        initCsrf(request);
 
         if ("bestaetigen".equals(aktion)) {
             boolean success = schiriMobileService.bestaetigeSpiel(token);

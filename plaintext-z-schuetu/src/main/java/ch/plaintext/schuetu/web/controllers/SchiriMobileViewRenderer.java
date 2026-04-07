@@ -8,6 +8,21 @@ import java.util.Map;
 @Component
 public class SchiriMobileViewRenderer {
 
+    private String csrfToken;
+    private String csrfParameterName;
+
+    public void setCsrf(String parameterName, String token) {
+        this.csrfParameterName = parameterName;
+        this.csrfToken = token;
+    }
+
+    private String csrfField() {
+        if (csrfToken != null && csrfParameterName != null) {
+            return "<input type=\"hidden\" name=\"" + esc(csrfParameterName) + "\" value=\"" + esc(csrfToken) + "\"/>";
+        }
+        return "";
+    }
+
     public String render(Model model) {
         Map<String, Object> m = model.asMap();
         String status = str(m, "status");
@@ -48,6 +63,7 @@ public class SchiriMobileViewRenderer {
             sb.append("<div class=\"spiel-info-text\">").append(esc(spielInfo)).append("</div>");
         }
         sb.append("<form method=\"post\" action=\"/nosec/schiri-mobile/").append(esc(token)).append("/register\">");
+        sb.append(csrfField());
         sb.append("<div class=\"form-group\"><label for=\"name\">Dein Name</label>");
         sb.append("<input type=\"text\" id=\"name\" name=\"name\" placeholder=\"Vor- und Nachname\" required autocomplete=\"name\"/></div>");
         sb.append("<div class=\"form-group\"><label for=\"telefon\">Telefonnummer</label>");
@@ -73,6 +89,7 @@ public class SchiriMobileViewRenderer {
 
         if (!str(m, "spielId").isEmpty()) {
             sb.append("<form method=\"post\" action=\"/nosec/schiri-mobile/").append(esc(token)).append("/eintragen\">");
+            sb.append(csrfField());
             sb.append("<div class=\"score-display\" style=\"padding:10px 0;\">");
             sb.append(renderScoreTeamInput(str(m, "spielTeamA"), "scoreA", "toreA"));
             sb.append("<div class=\"score-separator\">:</div>");
@@ -107,8 +124,8 @@ public class SchiriMobileViewRenderer {
                 "<div class=\"row\"><span class=\"label\">Schiri</span><span class=\"value\">" + esc(str(m, "spielSchiri")) + "</span></div></div>" +
                 renderScoreDisplay(m) +
                 "<div class=\"btn-group\">" +
-                "<form method=\"post\" action=\"/nosec/schiri-mobile/" + esc(token) + "/kontrolle\" style=\"flex:1;display:flex;\"><input type=\"hidden\" name=\"aktion\" value=\"bestaetigen\"/><button type=\"submit\" class=\"btn btn-confirm\" style=\"flex:1;\">Bestaetigen</button></form>" +
-                "<form method=\"post\" action=\"/nosec/schiri-mobile/" + esc(token) + "/kontrolle\" style=\"flex:1;display:flex;\"><input type=\"hidden\" name=\"aktion\" value=\"zurueckweisen\"/><button type=\"submit\" class=\"btn btn-reject\" style=\"flex:1;\">Zurueckweisen</button></form></div>";
+                "<form method=\"post\" action=\"/nosec/schiri-mobile/" + esc(token) + "/kontrolle\" style=\"flex:1;display:flex;\">" + csrfField() + "<input type=\"hidden\" name=\"aktion\" value=\"bestaetigen\"/><button type=\"submit\" class=\"btn btn-confirm\" style=\"flex:1;\">Bestaetigen</button></form>" +
+                "<form method=\"post\" action=\"/nosec/schiri-mobile/" + esc(token) + "/kontrolle\" style=\"flex:1;display:flex;\">" + csrfField() + "<input type=\"hidden\" name=\"aktion\" value=\"zurueckweisen\"/><button type=\"submit\" class=\"btn btn-reject\" style=\"flex:1;\">Zurueckweisen</button></form></div>";
     }
 
     private String renderKontrolleDone(Map<String, Object> m) {

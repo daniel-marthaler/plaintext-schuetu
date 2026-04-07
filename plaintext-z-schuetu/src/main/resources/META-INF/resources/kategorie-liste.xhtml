@@ -79,20 +79,21 @@
 
                         <p:column size="2" lable="Spielwunsch">
                             <p:commandButton action="#{kategorieBackingBean.spielwunschEintragen(kategorie.id)}"
-                                             value="#{kategorie.spielwunsch.toString()}" update=":fm" ajax="true"/>
+                                             value="#{kategorie.spielwunsch.toString()}" update=":fm" ajax="true"
+                                             style="margin-right: 0.5rem;"/>
                         </p:column>
 
                         <p:column size="2" lable="Verschieben">
 
                             <p:commandButton
                                     action="#{kategorieBackingBean.manuelleZuordnungDurchziehen(mannschaft.name,'-')}"
-                                    rendered="#{!kategorie.getFirst()}" icon="ui-icon-circle-arrow-n" update=":fm"
-                                    ajax="true"/>
+                                    rendered="#{!kategorie.getFirst()}" icon="fa fa-arrow-up" update=":fm"
+                                    ajax="true" title="#{i18n.t('Nach oben')}" style="margin-right: 0.3rem;"/>
 
                             <p:commandButton
                                     action="#{kategorieBackingBean.manuelleZuordnungDurchziehen(mannschaft.name, '+')}"
-                                    rendered="#{!kategorie.getLast()}" icon="ui-icon-circle-arrow-s" update=":fm"
-                                    ajax="true"/>
+                                    rendered="#{!kategorie.getLast()}" icon="fa fa-arrow-down" update=":fm"
+                                    ajax="true" title="#{i18n.t('Nach unten')}"/>
 
                         </p:column>
                     </p:dataTable>
