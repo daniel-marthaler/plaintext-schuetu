@@ -88,6 +88,13 @@
                                              update=":fm:dlgCopyId"
                                              oncomplete="PF('dlgCopy').show();"/>
 
+                            <a href="#{request.contextPath}/api/tournament/export/#{gm.gameName}"
+                               title="#{i18n.t('Exportieren')}"
+                               class="ui-button ui-widget ui-corner-all ui-button-icon-only"
+                               style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center; width:2.357rem; height:2.357rem;">
+                                <span class="pi pi-download"/>
+                            </a>
+
                             <p:commandButton icon="pi pi-trash" title="#{i18n.t('Löschen')}" update=":fm" action="#{gameService.deleteGame(gm.gameName)}">
                                 <p:confirm header="#{i18n.t('Achtung !!!')}" message="#{i18n.t('Turnier wirklich löschen')}" icon="pi pi-exclamation-triangle"/>
                                 <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
@@ -135,6 +142,55 @@
                     </h:panelGrid>
                 </p:dialog>
 
+            </p:fieldset>
+
+            <!-- Turnier importieren -->
+            <p:fieldset legend="#{i18n.t('Turnier importieren')}" toggleable="true" collapsed="true"
+                        style="margin-top: 1rem;" rendered="#{plaintextSecurity.ifGranted('root')}">
+                <div style="display: flex; align-items: flex-end; gap: 1rem; flex-wrap: wrap;">
+                    <div>
+                        <h:outputLabel value="#{i18n.t('JSON-Datei:')}"/>
+                        <br/>
+                        <input type="file" id="importFile" accept=".json" style="margin-top:4px;"/>
+                    </div>
+                    <div>
+                        <h:outputLabel value="#{i18n.t('Turniername:')}"/>
+                        <br/>
+                        <input type="text" id="importName" placeholder="#{i18n.t('Neuer Turniername')}"
+                               class="ui-inputfield ui-widget" style="margin-top:4px; width:250px;"/>
+                    </div>
+                    <div>
+                        <button type="button" onclick="importTournament()" class="ui-button ui-widget"
+                                style="padding: 0.5rem 1rem; cursor: pointer;">
+                            <i class="pi pi-upload" style="margin-right:4px;"/> #{i18n.t('Importieren')}
+                        </button>
+                    </div>
+                </div>
+                <p:messages id="importMessages"/>
+                <script type="text/javascript">
+                    //<![CDATA[
+                    function importTournament() {
+                        var fileInput = document.getElementById('importFile');
+                        var nameInput = document.getElementById('importName');
+                        if (!fileInput.files.length) { alert('Bitte eine JSON-Datei auswählen'); return; }
+                        if (!nameInput.value.trim()) { alert('Bitte einen Turniernamen eingeben'); return; }
+                        var formData = new FormData();
+                        formData.append('file', fileInput.files[0]);
+                        formData.append('name', nameInput.value.trim());
+                        var csrfToken = document.querySelector('input[name="_csrf"]').value;
+                        formData.append('_csrf', csrfToken);
+                        fetch('#{request.contextPath}/api/tournament/import', {
+                            method: 'POST',
+                            body: formData
+                        }).then(function(r) {
+                            return r.text().then(function(t) { return {ok: r.ok, text: t}; });
+                        }).then(function(res) {
+                            if (res.ok) { alert('Import erfolgreich: ' + res.text); location.reload(); }
+                            else { alert('Import fehlgeschlagen: ' + res.text); }
+                        }).catch(function(e) { alert('Fehler: ' + e); });
+                    }
+                    //]]>
+                </script>
             </p:fieldset>
         </h:form>
     </ui:define>

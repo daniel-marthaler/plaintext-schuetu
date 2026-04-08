@@ -1,5 +1,7 @@
 package ch.plaintext.schuetu.web;
 
+import ch.plaintext.schuetu.entity.Schiri;
+import ch.plaintext.schuetu.repository.SchiriRepository;
 import ch.plaintext.schuetu.service.qrcode.SchiriMobileService;
 import ch.plaintext.schuetu.service.qrcode.SchiriMobileService.SchiriRegistration;
 import lombok.Data;
@@ -26,6 +28,9 @@ public class SchiriFreigabeBackingBean implements Serializable {
 
     @Autowired
     private transient SchiriMobileService schiriMobileService;
+
+    @Autowired
+    private transient SchiriRepository schiriRepository;
 
     private String selectedToken;
 
@@ -57,6 +62,21 @@ public class SchiriFreigabeBackingBean implements Serializable {
     public void reject(String token) {
         schiriMobileService.rejectSchiri(token);
         log.info("Schiri abgelehnt: Token {}", token);
+    }
+
+    /**
+     * Loescht das Passwort eines Schiris (erzwingt Neusetzung beim naechsten Zugriff)
+     */
+    public void deletePassword(String token) {
+        SchiriRegistration reg = schiriMobileService.getRegistration(token);
+        if (reg != null && reg.getSchiriId() != null) {
+            schiriRepository.findById(reg.getSchiriId()).ifPresent(schiri -> {
+                schiri.setPasswordHash(null);
+                schiriRepository.save(schiri);
+                reg.setHasPassword(false);
+                log.info("Passwort geloescht fuer Schiri: {} (Token {})", reg.getSchiriName(), token);
+            });
+        }
     }
 
     /**

@@ -12,7 +12,7 @@ import ch.plaintext.boot.menu.MenuAnnotation;
         title = "Start",
         link = "dashboard.htm",
         parent = "",
-        order = 10,
+        order = 0,
         icon = "pi pi-arrow-right",
         roles = {"user", "exportierer", "admin"}
 )
