@@ -281,7 +281,7 @@ public class TournamentExportService {
         dto.setToreB(s.getToreB());
         dto.setToreABestaetigt(s.getToreABestaetigt());
         dto.setToreBBestaetigt(s.getToreBBestaetigt());
-        dto.setFertigGespielt(s.isFertigGespielt());
+        dto.setFertigGespielt(s.getFertiggespielt());
         dto.setFertigEingetragen(s.isFertigEingetragen());
         dto.setFertigBestaetigt(s.isFertigBestaetigt());
         dto.setZurueckgewiesen(s.isZurueckgewiesen());
