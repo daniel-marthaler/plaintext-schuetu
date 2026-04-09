@@ -155,17 +155,20 @@ public class SpielzeilenBackingBean {
     public void setZeilea(String in) {
         if (in.equals("reset")) {
             reset();
+            return;
         }
         if (zeilesa.isEmpty()) {
             platzA = "a";
             zeilesa = in + "a";
             zeilea = findZeile(zeilesa);
+            if (zeilea == null) { log.warn("SpielZeile nicht gefunden: {}", zeilesa); reset(); return; }
             zeilea.setAdisabled(true);
             vertString = vertString + zeilesa;
         } else {
             platzB = "a";
             zeilesb = in + "a";
             zeileb = findZeile(zeilesb);
+            if (zeileb == null) { log.warn("SpielZeile nicht gefunden: {}", zeilesb); reset(); return; }
             vertString = vertString + "-" + zeilesb;
             vertausche();
         }
@@ -174,17 +177,20 @@ public class SpielzeilenBackingBean {
     public void setZeileb(String in) {
         if (in.equals("reset")) {
             reset();
+            return;
         }
         if (zeilesa.isEmpty()) {
             platzA = "b";
             zeilesa = in + "b";
             zeilea = findZeile(zeilesa);
+            if (zeilea == null) { log.warn("SpielZeile nicht gefunden: {}", zeilesa); reset(); return; }
             zeilea.setBdisabled(true);
             vertString = vertString + zeilesa;
         } else {
             platzB = "b";
             zeilesb = in + "b";
             zeileb = findZeile(zeilesb);
+            if (zeileb == null) { log.warn("SpielZeile nicht gefunden: {}", zeilesb); reset(); return; }
             vertString = vertString + "-" + zeilesb;
             vertausche();
         }
@@ -193,18 +199,20 @@ public class SpielzeilenBackingBean {
     public void setZeilec(String in) {
         if (in.equals("reset")) {
             reset();
+            return;
         }
-
         if (zeilesa.isEmpty()) {
             platzA = "c";
             zeilesa = in + "c";
             zeilea = findZeile(zeilesa);
+            if (zeilea == null) { log.warn("SpielZeile nicht gefunden: {}", zeilesa); reset(); return; }
             zeilea.setCdisabled(true);
             vertString = vertString + zeilesa;
         } else {
             platzB = "c";
             zeilesb = in + "c";
             zeileb = findZeile(zeilesb);
+            if (zeileb == null) { log.warn("SpielZeile nicht gefunden: {}", zeilesb); reset(); return; }
             vertString = vertString + "-" + zeilesb;
             vertausche();
         }
@@ -213,18 +221,20 @@ public class SpielzeilenBackingBean {
     public void setZeiled(String in) {
         if (in.equals("reset")) {
             reset();
+            return;
         }
-
         if (zeilesa.isEmpty()) {
             platzA = "d";
             zeilesa = in + "d";
             zeilea = findZeile(zeilesa);
+            if (zeilea == null) { log.warn("SpielZeile nicht gefunden: {}", zeilesa); reset(); return; }
             zeilea.setDdisabled(true);
             vertString = vertString + zeilesa;
         } else {
             platzB = "d";
             zeilesb = in + "d";
             zeileb = findZeile(zeilesb);
+            if (zeileb == null) { log.warn("SpielZeile nicht gefunden: {}", zeilesb); reset(); return; }
             vertString = vertString + "-" + zeilesb;
             vertausche();
         }
@@ -232,50 +242,49 @@ public class SpielzeilenBackingBean {
 
 
     private void vertausche() {
+        try {
+            log.info("VERT: " + vertString);
 
-        log.info("VERT: " + vertString);
+            Korrektur korrektur = new Korrektur();
+            korrektur.setGame(this.gameHolder.getGameName());
+            korrektur.setTyp("vertauschung");
+            korrektur.setWert(vertString);
 
-        Korrektur korrektur = new Korrektur();
-        korrektur.setGame(this.gameHolder.getGameName());
-        korrektur.setTyp("vertauschung");
-        korrektur.setWert(vertString);
+            korrekturRepository.save(korrektur);
 
-        korrekturRepository.save(korrektur);
+            // Reload from DB to ensure entities are managed in current persistence context
+            this.zeilea = spielZeilenRepository.findById(zeilea.getId()).orElse(null);
+            this.zeileb = spielZeilenRepository.findById(zeileb.getId()).orElse(null);
+            if (zeilea == null || zeileb == null) {
+                log.error("SpielZeile nicht gefunden fuer Vertauschung");
+                return;
+            }
 
-        vertString = "";
+            Spiel a = this.zeilea.getSpiel(platzA);
+            Spiel b = this.zeileb.getSpiel(platzB);
 
-        // Reload from DB to ensure entities are managed in current persistence context
-        this.zeilea = spielZeilenRepository.findById(zeilea.getId()).orElse(null);
-        this.zeileb = spielZeilenRepository.findById(zeileb.getId()).orElse(null);
-        if (zeilea == null || zeileb == null) {
-            log.error("SpielZeile nicht gefunden fuer Vertauschung");
+            // Convert placeholders to null (empty slots)
+            if (a != null && a.isPlatzhalter()) { a = null; }
+            if (b != null && b.isPlatzhalter()) { b = null; }
+
+            this.zeilea.setSpiel(b, platzA);
+            this.zeileb.setSpiel(a, platzB);
+
+            // Update start times to match new time slots
+            if (a != null) { a.setStart(zeileb.getStart()); }
+            if (b != null) { b.setStart(zeilea.getStart()); }
+
+            spielZeilenRepository.save(this.zeilea);
+            spielZeilenRepository.save(this.zeileb);
+
+            // Reload session lists to reflect changes
+            samstag = spielZeilenRepository.findSpieleSamstag(gameHolder.getGame().getModel().getGameName());
+            sonntag = spielZeilenRepository.findSpieleSonntag(gameHolder.getGame().getModel().getGameName());
+        } catch (Exception e) {
+            log.error("Fehler bei Vertauschung: {}", vertString, e);
+        } finally {
             reset();
-            return;
         }
-
-        Spiel a = this.zeilea.getSpiel(platzA);
-        Spiel b = this.zeileb.getSpiel(platzB);
-
-        // Convert placeholders to null (empty slots)
-        if (a != null && a.isPlatzhalter()) { a = null; }
-        if (b != null && b.isPlatzhalter()) { b = null; }
-
-        this.zeilea.setSpiel(b, platzA);
-        this.zeileb.setSpiel(a, platzB);
-
-        // Update start times to match new time slots
-        if (a != null) { a.setStart(zeileb.getStart()); }
-        if (b != null) { b.setStart(zeilea.getStart()); }
-
-        spielZeilenRepository.save(this.zeilea);
-        spielZeilenRepository.save(this.zeileb);
-
-        // Reload session lists to reflect changes
-        samstag = spielZeilenRepository.findSpieleSamstag(gameHolder.getGame().getModel().getGameName());
-        sonntag = spielZeilenRepository.findSpieleSonntag(gameHolder.getGame().getModel().getGameName());
-
-        reset();
-
     }
 
     public List<Mannschaft> getAllRelevant4Check(Spiel spiel) {

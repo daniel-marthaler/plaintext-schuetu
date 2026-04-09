@@ -117,7 +117,7 @@ public class EinstellungenBackingBean {
                     field.setAccessible(true);
                     try {
                         String value = (String) field.get(m);
-                        if (value != null && value.contains("\\u00")) {
+                        if (value != null && value.contains("\\u")) {
                             String fixed = fixUnicodeEscapes(value);
                             if (!fixed.equals(value)) {
                                 field.set(m, fixed);
@@ -163,7 +163,7 @@ public class EinstellungenBackingBean {
                     field.setAccessible(true);
                     try {
                         String value = (String) field.get(s);
-                        if (value != null && value.contains("\\u00")) {
+                        if (value != null && value.contains("\\u")) {
                             String fixed = fixUnicodeEscapes(value);
                             if (!fixed.equals(value)) {
                                 field.set(s, fixed);
