@@ -134,12 +134,14 @@ public class SchiriMobileController {
     public String registerSchiri(@PathVariable String token,
                                  @RequestParam String name,
                                  @RequestParam(required = false) String telefon,
+                                 @RequestParam(required = false) String loginName,
+                                 @RequestParam(required = false) String password,
                                  HttpServletRequest request,
                                  HttpServletResponse response,
                                  Model model) {
         initCsrf(request);
 
-        boolean success = schiriMobileService.registerSchiri(token, name, telefon);
+        boolean success = schiriMobileService.registerSchiri(token, name, telefon, loginName, password);
 
         if (success) {
             // Auto-approve - no admin approval needed

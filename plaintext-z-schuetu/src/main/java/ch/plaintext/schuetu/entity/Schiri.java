@@ -36,6 +36,10 @@ public class Schiri extends SuperModel implements CreationDateProvider {
 
     private String telefon;
 
+    private String passwordHash;
+
+    private String loginName;
+
     public String getShName() {
         return vorname + " " + nachname;
     }

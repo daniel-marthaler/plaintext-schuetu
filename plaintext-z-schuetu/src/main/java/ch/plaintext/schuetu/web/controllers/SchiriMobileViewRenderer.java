@@ -66,8 +66,12 @@ public class SchiriMobileViewRenderer {
         sb.append(csrfField());
         sb.append("<div class=\"form-group\"><label for=\"name\">Dein Name</label>");
         sb.append("<input type=\"text\" id=\"name\" name=\"name\" placeholder=\"Vor- und Nachname\" required autocomplete=\"name\"/></div>");
+        sb.append("<div class=\"form-group\"><label for=\"loginName\">Login-Name (optional)</label>");
+        sb.append("<input type=\"text\" id=\"loginName\" name=\"loginName\" placeholder=\"Wunsch-Login\" autocomplete=\"username\"/></div>");
         sb.append("<div class=\"form-group\"><label for=\"telefon\">Telefonnummer</label>");
         sb.append("<input type=\"tel\" id=\"telefon\" name=\"telefon\" placeholder=\"+41 79 123 45 67\" autocomplete=\"tel\"/></div>");
+        sb.append("<div class=\"form-group\"><label for=\"password\">Passwort</label>");
+        sb.append("<input type=\"password\" id=\"password\" name=\"password\" placeholder=\"Passwort setzen\" autocomplete=\"new-password\"/></div>");
         sb.append("<button type=\"submit\" class=\"btn btn-primary\">Registrieren</button></form>");
         return sb.toString();
     }

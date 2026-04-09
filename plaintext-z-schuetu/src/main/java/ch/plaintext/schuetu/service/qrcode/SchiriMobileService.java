@@ -9,6 +9,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -28,6 +31,7 @@ public class SchiriMobileService {
     private SchiriRepository schiriRepository;
 
     private final Map<String, SchiriRegistration> registrations = new ConcurrentHashMap<>();
+    private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     /**
      * Erstellt einen neuen Token fuer einen Schirizettel (wird beim Generieren der Schirizettel aufgerufen)
@@ -51,6 +55,10 @@ public class SchiriMobileService {
     }
 
     public boolean registerSchiri(String token, String name, String telefon) {
+        return registerSchiri(token, name, telefon, null, null);
+    }
+
+    public boolean registerSchiri(String token, String name, String telefon, String loginName, String password) {
         SchiriRegistration reg = registrations.get(token);
         if (reg == null) {
             log.warn("Token nicht gefunden: {}", token);
@@ -58,6 +66,7 @@ public class SchiriMobileService {
         }
         reg.setSchiriName(name);
         reg.setTelefon(telefon);
+        reg.setLoginName(loginName);
         reg.setRegistered(true);
 
         // Schiri in DB speichern und mit dem Spiel verknuepfen
@@ -73,6 +82,11 @@ public class SchiriMobileService {
                     schiri.setNachname(name);
                 }
                 schiri.setTelefon(telefon);
+                schiri.setLoginName(loginName);
+                if (password != null && !password.isBlank()) {
+                    schiri.setPasswordHash(passwordEncoder.encode(password));
+                    reg.setHasPassword(true);
+                }
                 schiri.setGame(spiel.getGame());
                 schiri.setAktiviert(true);
                 schiri.setMatchcount(1);
@@ -86,7 +100,7 @@ public class SchiriMobileService {
             }
         }
 
-        log.info("Schiri registriert: {} (Tel: {}) fuer Token {}", name, telefon, token);
+        log.info("Schiri registriert: {} (Login: {}, Tel: {}) fuer Token {}", name, loginName, telefon, token);
         return true;
     }
 
@@ -230,6 +244,8 @@ public class SchiriMobileService {
         private String token;
         private String schiriName;
         private String telefon;
+        private String loginName;
+        private boolean hasPassword;
         private Long schiriId;
         private boolean registered;
         private boolean approved;
