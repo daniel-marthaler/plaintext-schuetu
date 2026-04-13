@@ -1,22 +1,24 @@
 package ch.plaintext.schuetu.web.controllers;
 
-import org.springframework.stereotype.Controller;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 /**
- * Forwards all non-asset requests under /nosec/speaker-app/ to the SPA index.html.
- * Static assets (js, css, etc.) are served directly by Spring Boot's resource handling.
+ * Serves the Speaker SPA index.html directly, bypassing the FacesServlet
+ * which intercepts *.html requests.
  */
-@Controller
+@RestController
 public class SchiriAppForwardController {
 
-    @GetMapping("/nosec/speaker-app")
-    public String forwardRoot() {
-        return "forward:/nosec/speaker-app/index.html";
-    }
-
-    @GetMapping("/nosec/speaker-app/")
-    public String forwardRootSlash() {
-        return "forward:/nosec/speaker-app/index.html";
+    @GetMapping(value = {"/nosec/speaker-app", "/nosec/speaker-app/", "/nosec/speaker-app/index.html"},
+                produces = MediaType.TEXT_HTML_VALUE)
+    public String serveIndex() throws IOException {
+        var resource = new ClassPathResource("static/nosec/speaker-app/index.html");
+        return resource.getContentAsString(StandardCharsets.UTF_8);
     }
 }
