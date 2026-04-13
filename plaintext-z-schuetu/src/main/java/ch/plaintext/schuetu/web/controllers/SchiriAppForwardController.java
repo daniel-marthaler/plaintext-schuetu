@@ -15,7 +15,7 @@ import java.nio.charset.StandardCharsets;
 @RestController
 public class SchiriAppForwardController {
 
-    @GetMapping(value = {"/nosec/speaker-app", "/nosec/speaker-app/", "/nosec/speaker-app/index.html"},
+    @GetMapping(value = {"/nosec/speaker-app", "/nosec/speaker-app/"},
                 produces = MediaType.TEXT_HTML_VALUE)
     public String serveIndex() throws IOException {
         var resource = new ClassPathResource("static/nosec/speaker-app/index.html");
