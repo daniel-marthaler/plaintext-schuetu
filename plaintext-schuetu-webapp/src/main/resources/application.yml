@@ -53,6 +53,10 @@ joinfaces:
 mad:
   autologin: true
 
+schuetu:
+  mysql:
+    pw: ${SCHUETU_MYSQL_PW:}
+
 plaintext:
   version: '@project.version@'
   stage: ${PLAINTEXT_ENV:dev}

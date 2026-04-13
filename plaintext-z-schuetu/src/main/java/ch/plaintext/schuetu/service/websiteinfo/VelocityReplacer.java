@@ -145,6 +145,7 @@ public class VelocityReplacer {
         InputStream input = VelocityReplacer.class.getClassLoader().getResourceAsStream(templatePath);
         if (input == null) {
             log.error("template: websitetemplate.vm not available");
+            return "<p>Fehler: Website-Template nicht verfügbar</p>";
         }
 
         Einstellungen einstellungen = info.getEinstellungen(game);

@@ -16,6 +16,10 @@
         <h:form id="fm">
             <input type="hidden" name="_csrf" value="#{_csrf.token}"/>
 
+            <p:blockUI block="fm" widgetVar="blockIt">
+                <i class="pi pi-spin pi-spinner" style="font-size:2rem"/>
+            </p:blockUI>
+
             <p:messages/>
 
             <p:fieldset legend="Spieleinstellungen">

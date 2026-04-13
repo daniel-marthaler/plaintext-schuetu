@@ -55,7 +55,7 @@ public class Zeitgeber implements GameConnectable {
         }
 
         if (game == null) {
-            log.error("achtung Zeitgeber, mit Null model");
+            log.debug("Zeitgeber: kein Game selektiert");
             return;
         }
 
