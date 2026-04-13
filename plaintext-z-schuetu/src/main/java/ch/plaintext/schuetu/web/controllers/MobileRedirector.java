@@ -1,6 +1,6 @@
 package ch.plaintext.schuetu.web.controllers;
 
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -14,7 +14,7 @@ import jakarta.servlet.http.HttpServletResponse;
  * @author info@emad.ch
  * @since 1.2.8
  */
-@Component
+@Controller
 @RequestMapping(value = "/nosec")
 public class MobileRedirector {
 
