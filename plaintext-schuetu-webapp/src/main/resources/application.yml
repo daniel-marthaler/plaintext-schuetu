@@ -68,6 +68,12 @@ plaintext:
   schiri:
     mobile:
       base-url: ${SCHIRI_MOBILE_BASE_URL:https://schuelerturnier.plaintext.ch}
+  juriwagen:
+    token-secret: ${JURIWAGEN_TOKEN_SECRET:default-dev-secret-change-in-prod-min-32-chars!!}
+    token-validity-hours: 12
+  security:
+    csrfIgnorePatterns:
+      - /api/juriwagen/**
 
 logging:
   level:
