@@ -43,6 +43,6 @@ public class JuriwagenTokenController {
         );
 
         log.info("Juriwagen token generated for user {} game {}", plaintextSecurity.getUser(), game);
-        return "redirect:/speaker-app/index.html?token=" + token;
+        return "redirect:/nosec/speaker-app/index.html?token=" + token;
     }
 }
