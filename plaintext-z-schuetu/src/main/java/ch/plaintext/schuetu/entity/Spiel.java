@@ -13,6 +13,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.ManyToOne;
+import java.util.Locale;
 import jakarta.persistence.Transient;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -349,7 +350,7 @@ public class Spiel extends SuperModel implements CreationDateProvider {
     }
 
     public String getDateFormatted() {
-        SimpleDateFormat fmt = new SimpleDateFormat("EEE HH:mm");
+        SimpleDateFormat fmt = new SimpleDateFormat("EEE HH:mm", Locale.GERMAN);
         return fmt.format(start);
     }
 
