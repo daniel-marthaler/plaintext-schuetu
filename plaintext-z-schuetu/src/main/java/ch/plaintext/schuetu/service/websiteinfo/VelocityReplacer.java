@@ -7,7 +7,6 @@ import ch.plaintext.schuetu.model.Einstellungen;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
-import org.apache.velocity.runtime.RuntimeConstants;
 import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -136,8 +135,8 @@ public class VelocityReplacer {
         StringWriter sw = new StringWriter();
 
         VelocityEngine ve = new VelocityEngine();
-        ve.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");
-        ve.setProperty("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
+        ve.setProperty("resource.loaders", "classpath");
+        ve.setProperty("resource.loader.classpath.class", ClasspathResourceLoader.class.getName());
 
         ve.init();
 
