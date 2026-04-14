@@ -100,6 +100,9 @@ public class EinstellungenBackingBean {
             if (zeile.getC() != null) {
                 zeile.getC().setPlatz(PlatzEnum.C);
             }
+            if (zeile.getD() != null) {
+                zeile.getD().setPlatz(PlatzEnum.D);
+            }
 
             spielZeilenRepository.save(zeile);
         }

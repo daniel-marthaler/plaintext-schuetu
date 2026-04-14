@@ -52,6 +52,9 @@ public class VelocityReplacer {
     @Autowired
     private JdbcUpdate replacer;
 
+    @Autowired
+    private ch.plaintext.schuetu.service.SpielzeilenService spielzeilenService;
+
     private static Map<String, String> pages = new ConcurrentHashMap<>();
     private static Map<String, String> urls = new ConcurrentHashMap<>();
 
@@ -92,6 +95,11 @@ public class VelocityReplacer {
 
     public void dump(String game) {
         Game gm = root.selectGame(game);
+
+        // Plätze und Zeiten von Spielzeilen auf Spiele synchronisieren
+        spielzeilenService.spielZeitenAnpassen();
+        log.info("Plätze/Zeiten von Spielzeilen synchronisiert vor Upload für {}", game);
+
         String id = gm.getModel().getWebsiteId();
         String url = gm.getModel().getWebsiteUrl();
 
