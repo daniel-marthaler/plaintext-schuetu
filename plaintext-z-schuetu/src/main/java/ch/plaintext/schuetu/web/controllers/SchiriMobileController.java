@@ -300,6 +300,7 @@ public class SchiriMobileController {
         model.addAttribute("spielToreA", spiel.getToreA());
         model.addAttribute("spielToreB", spiel.getToreB());
         model.addAttribute("spielSchiri", spiel.getSchiriName() != null ? spiel.getSchiriName() : "-");
+        model.addAttribute("spielKontrolle", spiel.getKontrolle() != null ? spiel.getKontrolle() : "-");
         model.addAttribute("spielFertigBestaetigt", spiel.isFertigBestaetigt());
     }
 

@@ -217,10 +217,66 @@ graph TB
 | Reverse Proxy | Nginx | 1.27 |
 | CI/CD | GitHub Actions | v2 |
 
+## Spielablauf: Eintragen und Kontrolle (ab v1.171.0)
+
+```mermaid
+stateDiagram-v2
+    [*] --> FertigGespielt: Spiel beendet (Timer/Speaker)
+    FertigGespielt --> Eingetragen: Schiri traegt Tore ein
+    Eingetragen --> Bestaetigt: Kontrolleur bestaetigt
+    Eingetragen --> Zurueckgewiesen: Kontrolleur weist zurueck
+    Zurueckgewiesen --> FertigGespielt: Erneut eintragen
+    Eingetragen --> Korrigiert: Kontrolleur korrigiert Tore
+    Korrigiert --> Bestaetigt
+    Bestaetigt --> [*]: Resultat fuer Rangliste
+```
+
+**Wichtig:** Eintragen und Kontrolle sind zwei getrennte Schritte. Der Schiri traegt die Tore ein (fertigEingetragen=true), der Kontrolleur (Admin) prueft und bestaetigt (fertigBestaetigt=true). Erst nach Bestaetigung wird das Resultat in die Rangliste uebernommen.
+
+## MQTT Event-System (ab v1.163.0)
+
+```mermaid
+graph LR
+    subgraph "Primaer-Instanz (OUT)"
+        APP1[Schuetu App]
+        PUB[MqttEventPublisher]
+        APP1 --> PUB
+    end
+
+    BROKER[MQTT Broker<br/>Eclipse Paho v5]
+
+    subgraph "Backup-Instanz (IN)"
+        CON[MqttEventConsumer]
+        APP2[Schuetu App]
+        DB2[(consumed_messages)]
+        CON --> APP2
+        CON --> DB2
+    end
+
+    PUB -->|retain + hash| BROKER
+    BROKER -->|subscribe| CON
+```
+
+- Konfiguration ueber GameModel (Adresse, Port, Topic, IN/OUT Modus)
+- Alle Events mit retain=true und eindeutigem Hash zur Deduplizierung
+- DB-Tabelle `mqtt_consumed_message` fuer bereits verarbeitete Nachrichten
+
+## Integrationstest-Framework (ab v1.165.0)
+
+Automatisches Durchspielen eines kompletten Turniers fuer Testspiele (Name beginnt mit "Test"):
+- **Auto-Speaker:** Klickt automatisch Vorbereiten und Start
+- **Auto-Schiri:** Traegt Resultate ein (letzte Stelle der Mannschaftsnummer)
+- **Auto-Kontrolleur:** Bestaetigt eingetragene Resultate
+
+Laeuft in Background-Threads mit AtomicBoolean-Flags und @Transactional Service.
+
 ## Wichtige Entwurfsentscheidungen
 
 1. **LAZY Fetching** - Alle JPA-Beziehungen verwenden LAZY Loading, um das PostgreSQL-1664-Spalten-Limit nicht zu überschreiten
 2. **Open-Session-In-View** - Aktiviert (`spring.jpa.open-in-view: true`), damit LAZY Loading in JSF-Views funktioniert
-3. **Session-Scoped Beans** - GameSelectionHolder, Backing Beans etc. sind session-scoped für Turnier-Kontext
+3. **Session-Scoped Beans** - GameSelectionHolder, Backing Beans etc. sind session-scoped fuer Turnier-Kontext
 4. **Blue-Green Deployment** - Zero-Downtime-Deployments via Nginx Upstream-Switching
-5. **HSQLDB-Import** - REST-Endpoint `/nosec/api/import/hsqldb` für Datenmigration von der alten App
+5. **HSQLDB-Import** - REST-Endpoint `/nosec/api/import/hsqldb` fuer Datenmigration von der alten App
+6. **Getrennte Eintragen/Kontrolle** - Schiri traegt ein, Admin kontrolliert (2-Augen-Prinzip)
+7. **MQTT-basierte Synchronisation** - Ersetzt alte REST-basierte BackupSync-Loesung
+8. **@Transactional Services fuer Background-Threads** - IntegrationTestService kapselt DB-Operationen in Transaktionen, da Background-Threads keinen HTTP-Request-Context haben

@@ -306,6 +306,8 @@
                     </p:tab>
 
                     <p:tab title="Integrationstest" disabled="#{!integrationTestBackingBean.testGame}">
+                        <p:poll interval="3" update="fm:integrationStatusPanel" rendered="#{integrationTestBackingBean.speakerRunning or integrationTestBackingBean.schiriRunning or integrationTestBackingBean.kontrolleurRunning}"/>
+                        <h:panelGroup id="integrationStatusPanel">
                         <h:panelGrid columns="2" cellpadding="10">
 
                             <h:outputText value="Nur aktiv fuer Spiele die mit 'Test' beginnen." style="font-style:italic;color:#888;"/>
@@ -372,6 +374,7 @@
                                              update="fm" styleClass="ui-button-danger" style="font-weight:bold;"/>
 
                         </h:panelGrid>
+                        </h:panelGroup>
                     </p:tab>
 
                     <p:tab title="MQTT">

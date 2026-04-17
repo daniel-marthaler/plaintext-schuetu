@@ -16,11 +16,16 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import jakarta.annotation.PreDestroy;
 
 /**
  * Backing Bean fuer den Integrationstest-Tab.
  * Ermoeglicht automatisches Durchspielen eines kompletten Turniers.
  * Nur aktiv wenn der Spielname mit "Test" beginnt.
+ * Die Threads laufen unabhaengig von der HTTP-Session weiter,
+ * werden aber bei Session-Destroy sauber gestoppt.
  */
 @Component
 @Scope("session")
@@ -39,23 +44,26 @@ public class IntegrationTestBackingBean {
     private ScheduledFuture<?> schiriFuture;
     private ScheduledFuture<?> kontrolleurFuture;
 
+    // Thread-safe Flags fuer sofortigen Stop
+    private final AtomicBoolean speakerActive = new AtomicBoolean(false);
+    private final AtomicBoolean schiriActive = new AtomicBoolean(false);
+    private final AtomicBoolean kontrolleurActive = new AtomicBoolean(false);
+
     // Erfasste Referenzen fuer Background-Threads
     private SpielDurchfuehrung capturedDurchfuehrung;
     private ResultateVerarbeiter capturedResultate;
     private String capturedGameName;
 
     @Getter
-    private boolean speakerRunning = false;
-    @Getter
-    private boolean schiriRunning = false;
-    @Getter
-    private boolean kontrolleurRunning = false;
-    @Getter
     private String speakerStatus = "Gestoppt";
     @Getter
     private String schiriStatus = "Gestoppt";
     @Getter
     private String kontrolleurStatus = "Gestoppt";
+
+    public boolean isSpeakerRunning() { return speakerActive.get(); }
+    public boolean isSchiriRunning() { return schiriActive.get(); }
+    public boolean isKontrolleurRunning() { return kontrolleurActive.get(); }
 
     public boolean isTestGame() {
         if (!gameSelectionHolder.hasGame()) {
@@ -75,21 +83,22 @@ public class IntegrationTestBackingBean {
     // --- Auto-Speaker ---
 
     public void startSpeaker() {
-        if (!isTestGame() || speakerRunning) return;
+        if (!isTestGame() || speakerActive.get()) return;
         captureGameReferences();
-        speakerRunning = true;
+        speakerActive.set(true);
         speakerStatus = "Laeuft";
         speakerFuture = executor.scheduleWithFixedDelay(this::speakerTick, 0, 2, TimeUnit.SECONDS);
         log.info("Auto-Speaker gestartet");
     }
 
     public void stopSpeaker() {
-        if (speakerFuture != null) speakerFuture.cancel(false);
-        speakerRunning = false;
+        speakerActive.set(false);
+        if (speakerFuture != null) speakerFuture.cancel(true);
         speakerStatus = "Gestoppt";
     }
 
     private void speakerTick() {
+        if (!speakerActive.get()) return;
         try {
             if (!capturedDurchfuehrung.getList2ZumVorbereiten().isEmpty() && capturedDurchfuehrung.getReadyToVorbereiten()) {
                 capturedDurchfuehrung.vorbereitet();
@@ -109,24 +118,26 @@ public class IntegrationTestBackingBean {
     // --- Auto-Schiri ---
 
     public void startSchiri() {
-        if (!isTestGame() || schiriRunning) return;
+        if (!isTestGame() || schiriActive.get()) return;
         captureGameReferences();
-        schiriRunning = true;
+        schiriActive.set(true);
         schiriStatus = "Laeuft";
         schiriFuture = executor.scheduleWithFixedDelay(this::schiriTick, 1, 2, TimeUnit.SECONDS);
         log.info("Auto-Schiri gestartet");
     }
 
     public void stopSchiri() {
-        if (schiriFuture != null) schiriFuture.cancel(false);
-        schiriRunning = false;
+        schiriActive.set(false);
+        if (schiriFuture != null) schiriFuture.cancel(true);
         schiriStatus = "Gestoppt";
     }
 
     private void schiriTick() {
+        if (!schiriActive.get()) return;
         try {
             List<Spiel> einzutragende = testService.findAllEinzutragende(capturedGameName);
             for (Spiel spiel : einzutragende) {
+                if (!schiriActive.get()) return;
                 String result = testService.autoEintragen(spiel.getId());
                 if (result != null) {
                     schiriStatus = "Eingetragen: " + result;
@@ -141,24 +152,26 @@ public class IntegrationTestBackingBean {
     // --- Auto-Kontrolleur ---
 
     public void startKontrolleur() {
-        if (!isTestGame() || kontrolleurRunning) return;
+        if (!isTestGame() || kontrolleurActive.get()) return;
         captureGameReferences();
-        kontrolleurRunning = true;
+        kontrolleurActive.set(true);
         kontrolleurStatus = "Laeuft";
         kontrolleurFuture = executor.scheduleWithFixedDelay(this::kontrolleurTick, 2, 2, TimeUnit.SECONDS);
         log.info("Auto-Kontrolleur gestartet");
     }
 
     public void stopKontrolleur() {
-        if (kontrolleurFuture != null) kontrolleurFuture.cancel(false);
-        kontrolleurRunning = false;
+        kontrolleurActive.set(false);
+        if (kontrolleurFuture != null) kontrolleurFuture.cancel(true);
         kontrolleurStatus = "Gestoppt";
     }
 
     private void kontrolleurTick() {
+        if (!kontrolleurActive.get()) return;
         try {
             List<Spiel> zuBestaetigen = testService.findAllZuBestaetigen(capturedGameName);
             for (Spiel spiel : zuBestaetigen) {
+                if (!kontrolleurActive.get()) return;
                 String result = testService.autoBestaetigen(spiel.getId(), capturedResultate);
                 if (result != null) {
                     kontrolleurStatus = "Bestaetigt: " + result;
@@ -168,6 +181,13 @@ public class IntegrationTestBackingBean {
             kontrolleurStatus = "Fehler: " + e.getMessage();
             log.error("Auto-Kontrolleur Fehler", e);
         }
+    }
+
+    @PreDestroy
+    public void destroy() {
+        log.info("IntegrationTestBackingBean wird zerstoert - stoppe alle Threads");
+        stopAll();
+        executor.shutdownNow();
     }
 
     // --- Alle starten/stoppen ---

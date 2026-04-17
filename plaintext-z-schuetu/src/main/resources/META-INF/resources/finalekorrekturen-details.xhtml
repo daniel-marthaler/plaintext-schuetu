@@ -14,7 +14,15 @@
 
             <p:messages/>
 
-            <h:panelGrid columns="2" id="inputelements">
+            <h:panelGroup rendered="#{finaleBackingBean.selected == null}">
+                <p:panel header="Keine Kategorie ausgewaehlt">
+                    <h:outputText value="Bitte zuerst eine Kategorie in der Finalekorrekturen-Liste auswaehlen." style="color:#888;"/>
+                    <br/><br/>
+                    <p:commandButton value="Zur Liste" action="finalekorrekturen-liste" styleClass="ui-button-info"/>
+                </p:panel>
+            </h:panelGroup>
+
+            <h:panelGrid columns="2" id="inputelements" rendered="#{finaleBackingBean.selected != null}">
 
                 <h:outputLabel value="Kategorie:"/>
                 <h:outputLabel value="#{finaleBackingBean.selected.name}"/>

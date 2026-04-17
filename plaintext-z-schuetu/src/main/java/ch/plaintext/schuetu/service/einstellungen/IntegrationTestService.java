@@ -48,8 +48,10 @@ public class IntegrationTestService {
             spiel.setEintrager("Auto-Schiri");
             spiel.setSchiriName("Auto-Schiri");
             spielRepository.save(spiel);
-            log.info("Auto-Schiri: Spiel {} = {}:{}", spiel.getIdString(), toreA, toreB);
-            return spiel.getIdString() + " (" + toreA + ":" + toreB + ")";
+            String mannA = spiel.getMannschaftA().getName();
+            String mannB = spiel.getMannschaftB().getName();
+            log.info("Auto-Schiri: Spiel {} {} vs {} = {}:{}", spiel.getIdString(), mannA, mannB, toreA, toreB);
+            return spiel.getIdString() + " - " + mannA + " vs " + mannB + " (" + toreA + ":" + toreB + ")";
         }
         return null;
     }
@@ -65,7 +67,9 @@ public class IntegrationTestService {
         spiel.setKontrolle("Auto-Kontrolleur");
         spielRepository.save(spiel);
         resultate.signalFertigesSpiel(spielId);
-        log.info("Auto-Kontrolleur: Spiel {} bestaetigt", spiel.getIdString());
-        return spiel.getIdString();
+        String mannA = spiel.getMannschaftA() != null ? spiel.getMannschaftA().getName() : "?";
+        String mannB = spiel.getMannschaftB() != null ? spiel.getMannschaftB().getName() : "?";
+        log.info("Auto-Kontrolleur: {} {} vs {} ({}:{}) bestaetigt", spiel.getIdString(), mannA, mannB, spiel.getToreA(), spiel.getToreB());
+        return spiel.getIdString() + " - " + mannA + " vs " + mannB + " (" + spiel.getToreA() + ":" + spiel.getToreB() + ")";
     }
 }

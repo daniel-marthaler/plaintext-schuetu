@@ -27,7 +27,7 @@
 
             <br/> <br/>
 
-            <p:dataTable id="mann" var="mannsch" value="#{eintragenBackingBean.penalty.finalList}" draggableRows="true"
+            <p:dataTable id="mann" var="mannsch" value="#{eintragenBackingBean.getPenalty() != null ? eintragenBackingBean.penalty.finalList : null}" draggableRows="true"
                          rendered="#{eintragenBackingBean.getPenalty() != null}">
                 <p:ajax event="rowReorder" listener="#{eintragenBackingBean.onRowReorder}" update=":fm"/>
                 <f:facet name="header">
@@ -144,19 +144,16 @@
                         </td>
                     </tr>
                     <tr align="center">
-                        <td colspan="1" rowspan="1">1 <input disabled="disabled" name="1" value="1" type="checkbox"/>2
-                            <input disabled="disabled" name="1"
-                                   value="1"
-                                   type="checkbox"/>3
-                            <input disabled="disabled" name="1" value="1" type="checkbox"/>4 <input disabled="disabled"
-                                                                                                    name="1" value="1"
-                                                                                                    type="checkbox"/>5
-                            <input disabled="disabled" name="1" value="1" type="checkbox"/>6 <input disabled="disabled"
-                                                                                                    name="1" value="1"
-                                                                                                    type="checkbox"/>7
-                            <input disabled="disabled" name="1" value="1" type="checkbox"/>8 <input disabled="disabled"
-                                                                                                    name="1" value="1"
-                                                                                                    type="checkbox"/>
+                        <td colspan="1" rowspan="1">
+                            <p:commandLink value="0" action="#{eintragenBackingBean.selected.setToreA(0)}" update="fm" style="padding:4px 8px;font-size:14pt;"/> &#160;
+                            <p:commandLink value="1" action="#{eintragenBackingBean.selected.setToreA(1)}" update="fm" style="padding:4px 8px;font-size:14pt;"/> &#160;
+                            <p:commandLink value="2" action="#{eintragenBackingBean.selected.setToreA(2)}" update="fm" style="padding:4px 8px;font-size:14pt;"/> &#160;
+                            <p:commandLink value="3" action="#{eintragenBackingBean.selected.setToreA(3)}" update="fm" style="padding:4px 8px;font-size:14pt;"/> &#160;
+                            <p:commandLink value="4" action="#{eintragenBackingBean.selected.setToreA(4)}" update="fm" style="padding:4px 8px;font-size:14pt;"/> &#160;
+                            <p:commandLink value="5" action="#{eintragenBackingBean.selected.setToreA(5)}" update="fm" style="padding:4px 8px;font-size:14pt;"/> &#160;
+                            <p:commandLink value="6" action="#{eintragenBackingBean.selected.setToreA(6)}" update="fm" style="padding:4px 8px;font-size:14pt;"/> &#160;
+                            <p:commandLink value="7" action="#{eintragenBackingBean.selected.setToreA(7)}" update="fm" style="padding:4px 8px;font-size:14pt;"/> &#160;
+                            <p:commandLink value="8" action="#{eintragenBackingBean.selected.setToreA(8)}" update="fm" style="padding:4px 8px;font-size:14pt;"/>
                         </td>
                     </tr>
 
@@ -177,19 +174,16 @@
                         </td>
                     </tr>
                     <tr align="center">
-                        <td colspan="1" rowspan="1">1 <input disabled="disabled" name="1" value="1" type="checkbox"/>2
-                            <input disabled="disabled" name="1"
-                                   value="1"
-                                   type="checkbox"/>3
-                            <input disabled="disabled" name="1" value="1" type="checkbox"/>4 <input disabled="disabled"
-                                                                                                    name="1" value="1"
-                                                                                                    type="checkbox"/>5
-                            <input disabled="disabled" name="1" value="1" type="checkbox"/>6 <input disabled="disabled"
-                                                                                                    name="1" value="1"
-                                                                                                    type="checkbox"/>7
-                            <input disabled="disabled" name="1" value="1" type="checkbox"/>8 <input disabled="disabled"
-                                                                                                    name="1" value="1"
-                                                                                                    type="checkbox"/>
+                        <td colspan="1" rowspan="1">
+                            <p:commandLink value="0" action="#{eintragenBackingBean.selected.setToreB(0)}" update="fm" style="padding:4px 8px;font-size:14pt;"/> &#160;
+                            <p:commandLink value="1" action="#{eintragenBackingBean.selected.setToreB(1)}" update="fm" style="padding:4px 8px;font-size:14pt;"/> &#160;
+                            <p:commandLink value="2" action="#{eintragenBackingBean.selected.setToreB(2)}" update="fm" style="padding:4px 8px;font-size:14pt;"/> &#160;
+                            <p:commandLink value="3" action="#{eintragenBackingBean.selected.setToreB(3)}" update="fm" style="padding:4px 8px;font-size:14pt;"/> &#160;
+                            <p:commandLink value="4" action="#{eintragenBackingBean.selected.setToreB(4)}" update="fm" style="padding:4px 8px;font-size:14pt;"/> &#160;
+                            <p:commandLink value="5" action="#{eintragenBackingBean.selected.setToreB(5)}" update="fm" style="padding:4px 8px;font-size:14pt;"/> &#160;
+                            <p:commandLink value="6" action="#{eintragenBackingBean.selected.setToreB(6)}" update="fm" style="padding:4px 8px;font-size:14pt;"/> &#160;
+                            <p:commandLink value="7" action="#{eintragenBackingBean.selected.setToreB(7)}" update="fm" style="padding:4px 8px;font-size:14pt;"/> &#160;
+                            <p:commandLink value="8" action="#{eintragenBackingBean.selected.setToreB(8)}" update="fm" style="padding:4px 8px;font-size:14pt;"/>
                         </td>
                     </tr>
 
@@ -197,7 +191,10 @@
                 </table>
 
                 <br/>
-                <br/>
+                <p:commandButton action="#{eintragenBackingBean.eintragen()}" value="#{i18n.t('eintragen')}"
+                                 execute="@form" update="@form" disabled="#{!eintragenBackingBean.eintragOK()}"
+                                 styleClass="ui-button-success" style="width:100%;padding:12px;font-size:14pt;"/>
+                <br/><br/>
 
             </h:panelGroup>
 

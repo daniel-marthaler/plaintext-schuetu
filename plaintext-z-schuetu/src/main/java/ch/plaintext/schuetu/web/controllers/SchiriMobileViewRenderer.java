@@ -137,7 +137,9 @@ public class SchiriMobileViewRenderer {
         return "<div class=\"icon\">&#9989;</div>" +
                 "<div class=\"status-badge status-approved\">" + (msg.isEmpty() ? "Ergebnis bestaetigt" : esc(msg)) + "</div>" +
                 "<div class=\"game-info\"><div class=\"row\"><span class=\"label\">Zeit</span><span class=\"value\">" + esc(str(m, "spielZeit")) + "</span></div>" +
-                "<div class=\"row\"><span class=\"label\">Platz</span><span class=\"value\">" + esc(str(m, "spielPlatz")) + "</span></div></div>" +
+                "<div class=\"row\"><span class=\"label\">Platz</span><span class=\"value\">" + esc(str(m, "spielPlatz")) + "</span></div>" +
+                "<div class=\"row\"><span class=\"label\">Schiri</span><span class=\"value\">" + esc(str(m, "spielSchiri")) + "</span></div>" +
+                "<div class=\"row\"><span class=\"label\">Kontrolleur</span><span class=\"value\">" + esc(str(m, "spielKontrolle")) + "</span></div></div>" +
                 renderScoreDisplay(m);
     }
 
