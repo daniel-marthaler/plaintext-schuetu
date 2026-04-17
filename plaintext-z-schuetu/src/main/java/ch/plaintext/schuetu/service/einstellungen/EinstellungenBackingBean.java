@@ -199,6 +199,11 @@ public class EinstellungenBackingBean {
         return sb.toString();
     }
 
+    public void fixAll() {
+        fixUmlaute();
+        fixSchiris();
+    }
+
     public void persistDateAndFixPlaetze() {
         persistDate();
         fixPlaetze();

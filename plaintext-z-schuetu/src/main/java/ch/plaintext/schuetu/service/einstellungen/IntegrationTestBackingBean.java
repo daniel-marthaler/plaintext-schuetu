@@ -1,7 +1,10 @@
 package ch.plaintext.schuetu.service.einstellungen;
 
 import ch.plaintext.schuetu.entity.Spiel;
+import ch.plaintext.schuetu.service.Game;
 import ch.plaintext.schuetu.service.GameSelectionHolder;
+import ch.plaintext.schuetu.service.spieldurchfuehrung.EintragerService;
+import ch.plaintext.schuetu.service.spieldurchfuehrung.SpielDurchfuehrung;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +21,9 @@ import java.util.concurrent.TimeUnit;
  * Backing Bean fuer den Integrationstest-Tab.
  * Ermoeglicht automatisches Durchspielen eines kompletten Turniers.
  * Nur aktiv wenn der Spielname mit "Test" beginnt.
+ *
+ * Die Game-Referenz wird beim Start erfasst, damit die Background-Threads
+ * nicht auf den Session-Scope zugreifen muessen.
  */
 @Component
 @Scope("session")
@@ -32,6 +38,10 @@ public class IntegrationTestBackingBean {
     private ScheduledFuture<?> speakerFuture;
     private ScheduledFuture<?> schiriFuture;
     private ScheduledFuture<?> kontrolleurFuture;
+
+    // Erfasste Referenzen fuer Background-Threads (kein Session-Scope noetig)
+    private SpielDurchfuehrung capturedDurchfuehrung;
+    private EintragerService capturedEintragen;
 
     @Getter
     private boolean speakerRunning = false;
@@ -54,10 +64,20 @@ public class IntegrationTestBackingBean {
         return gameName != null && gameName.startsWith("Test");
     }
 
+    /**
+     * Erfasst die Game-Referenzen aus dem Session-Scope (wird im HTTP-Thread aufgerufen).
+     */
+    private void captureGameReferences() {
+        Game game = gameSelectionHolder.getGame();
+        capturedDurchfuehrung = game.getDurchfuehrung();
+        capturedEintragen = game.getEintragen();
+    }
+
     // --- Auto-Speaker ---
 
     public void startSpeaker() {
         if (!isTestGame() || speakerRunning) return;
+        captureGameReferences();
         speakerRunning = true;
         speakerStatus = "Laeuft";
         speakerFuture = executor.scheduleWithFixedDelay(this::speakerTick, 0, 2, TimeUnit.SECONDS);
@@ -75,19 +95,15 @@ public class IntegrationTestBackingBean {
 
     private void speakerTick() {
         try {
-            var durchfuehrung = gameSelectionHolder.getGame().getDurchfuehrung();
-
-            // Wenn Spiele zur Vorbereitung bereit sind -> vorbereiten
-            if (!durchfuehrung.getList2ZumVorbereiten().isEmpty() && durchfuehrung.getReadyToVorbereiten()) {
-                durchfuehrung.vorbereitet();
+            if (!capturedDurchfuehrung.getList2ZumVorbereiten().isEmpty() && capturedDurchfuehrung.getReadyToVorbereiten()) {
+                capturedDurchfuehrung.vorbereitet();
                 speakerStatus = "Vorbereitet";
                 log.debug("Auto-Speaker: vorbereitet()");
                 return;
             }
 
-            // Wenn Spiele vorbereitet sind und gestartet werden koennen -> spielen
-            if (!durchfuehrung.getList3Vorbereitet().isEmpty() && durchfuehrung.getReadyToSpielen()) {
-                durchfuehrung.spielen();
+            if (!capturedDurchfuehrung.getList3Vorbereitet().isEmpty() && capturedDurchfuehrung.getReadyToSpielen()) {
+                capturedDurchfuehrung.spielen();
                 speakerStatus = "Gestartet";
                 log.debug("Auto-Speaker: spielen()");
             }
@@ -101,6 +117,7 @@ public class IntegrationTestBackingBean {
 
     public void startSchiri() {
         if (!isTestGame() || schiriRunning) return;
+        captureGameReferences();
         schiriRunning = true;
         schiriStatus = "Laeuft";
         schiriFuture = executor.scheduleWithFixedDelay(this::schiriTick, 1, 2, TimeUnit.SECONDS);
@@ -118,8 +135,7 @@ public class IntegrationTestBackingBean {
 
     private void schiriTick() {
         try {
-            var eintragen = gameSelectionHolder.getGame().getEintragen();
-            List<Spiel> einzutragende = eintragen.findAllEinzutragende();
+            List<Spiel> einzutragende = capturedEintragen.findAllEinzutragende();
 
             for (Spiel spiel : einzutragende) {
                 if (spiel.getMannschaftA() != null && spiel.getMannschaftB() != null) {
@@ -127,7 +143,7 @@ public class IntegrationTestBackingBean {
                     int toreB = spiel.getMannschaftB().getTeamNummer() % 10;
                     spiel.setToreA(toreA);
                     spiel.setToreB(toreB);
-                    eintragen.eintragen(List.of(spiel), String.valueOf(spiel.getId()), "Auto-Schiri");
+                    capturedEintragen.eintragen(List.of(spiel), String.valueOf(spiel.getId()), "Auto-Schiri");
                     schiriStatus = "Eingetragen: " + spiel.getIdString() + " (" + toreA + ":" + toreB + ")";
                     log.debug("Auto-Schiri: {} = {}:{}", spiel.getIdString(), toreA, toreB);
                 }
@@ -142,6 +158,7 @@ public class IntegrationTestBackingBean {
 
     public void startKontrolleur() {
         if (!isTestGame() || kontrolleurRunning) return;
+        captureGameReferences();
         kontrolleurRunning = true;
         kontrolleurStatus = "Laeuft";
         kontrolleurFuture = executor.scheduleWithFixedDelay(this::kontrolleurTick, 2, 2, TimeUnit.SECONDS);
@@ -159,11 +176,10 @@ public class IntegrationTestBackingBean {
 
     private void kontrolleurTick() {
         try {
-            var eintragen = gameSelectionHolder.getGame().getEintragen();
-            List<Spiel> zuBestaetigen = eintragen.findAllZuBestaetigen();
+            List<Spiel> zuBestaetigen = capturedEintragen.findAllZuBestaetigen();
 
             for (Spiel spiel : zuBestaetigen) {
-                eintragen.bestaetigen(List.of(spiel), String.valueOf(spiel.getId()), "ok");
+                capturedEintragen.bestaetigen(List.of(spiel), String.valueOf(spiel.getId()), "ok");
                 kontrolleurStatus = "Bestaetigt: " + spiel.getIdString();
                 log.debug("Auto-Kontrolleur: bestaetigt {}", spiel.getIdString());
             }

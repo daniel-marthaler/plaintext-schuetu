@@ -297,14 +297,8 @@
 
                     <p:tab title="Fixes">
                         <h:panelGrid columns="1" cellpadding="10">
-                            <p:commandButton value="Umlaute in Mannschaften korrigieren"
-                                             action="#{einstellungenBackingBean.fixUmlaute()}"
-                                             onstart="PF('blockIt').show()"
-                                             oncomplete="PF('blockIt').hide()"
-                                             update="fm"/>
-
-                            <p:commandButton value="Schiris korrigieren (Vorname/Nachname + Umlaute)"
-                                             action="#{einstellungenBackingBean.fixSchiris()}"
+                            <p:commandButton value="Umlaute und Schiris korrigieren"
+                                             action="#{einstellungenBackingBean.fixAll()}"
                                              onstart="PF('blockIt').show()"
                                              oncomplete="PF('blockIt').hide()"
                                              update="fm"/>
