@@ -3,7 +3,7 @@ package ch.plaintext.schuetu.service.einstellungen;
 import ch.plaintext.schuetu.entity.Spiel;
 import ch.plaintext.schuetu.service.Game;
 import ch.plaintext.schuetu.service.GameSelectionHolder;
-import ch.plaintext.schuetu.service.spieldurchfuehrung.EintragerService;
+import ch.plaintext.schuetu.service.ResultateVerarbeiter;
 import ch.plaintext.schuetu.service.spieldurchfuehrung.SpielDurchfuehrung;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -21,9 +21,6 @@ import java.util.concurrent.TimeUnit;
  * Backing Bean fuer den Integrationstest-Tab.
  * Ermoeglicht automatisches Durchspielen eines kompletten Turniers.
  * Nur aktiv wenn der Spielname mit "Test" beginnt.
- *
- * Die Game-Referenz wird beim Start erfasst, damit die Background-Threads
- * nicht auf den Session-Scope zugreifen muessen.
  */
 @Component
 @Scope("session")
@@ -33,15 +30,19 @@ public class IntegrationTestBackingBean {
     @Autowired
     private GameSelectionHolder gameSelectionHolder;
 
+    @Autowired
+    private IntegrationTestService testService;
+
     private final ScheduledExecutorService executor = Executors.newScheduledThreadPool(3);
 
     private ScheduledFuture<?> speakerFuture;
     private ScheduledFuture<?> schiriFuture;
     private ScheduledFuture<?> kontrolleurFuture;
 
-    // Erfasste Referenzen fuer Background-Threads (kein Session-Scope noetig)
+    // Erfasste Referenzen fuer Background-Threads
     private SpielDurchfuehrung capturedDurchfuehrung;
-    private EintragerService capturedEintragen;
+    private ResultateVerarbeiter capturedResultate;
+    private String capturedGameName;
 
     @Getter
     private boolean speakerRunning = false;
@@ -64,13 +65,11 @@ public class IntegrationTestBackingBean {
         return gameName != null && gameName.startsWith("Test");
     }
 
-    /**
-     * Erfasst die Game-Referenzen aus dem Session-Scope (wird im HTTP-Thread aufgerufen).
-     */
     private void captureGameReferences() {
         Game game = gameSelectionHolder.getGame();
         capturedDurchfuehrung = game.getDurchfuehrung();
-        capturedEintragen = game.getEintragen();
+        capturedResultate = game.getResultate();
+        capturedGameName = game.getModel().getGameName();
     }
 
     // --- Auto-Speaker ---
@@ -85,12 +84,9 @@ public class IntegrationTestBackingBean {
     }
 
     public void stopSpeaker() {
-        if (speakerFuture != null) {
-            speakerFuture.cancel(false);
-        }
+        if (speakerFuture != null) speakerFuture.cancel(false);
         speakerRunning = false;
         speakerStatus = "Gestoppt";
-        log.info("Auto-Speaker gestoppt");
     }
 
     private void speakerTick() {
@@ -98,14 +94,11 @@ public class IntegrationTestBackingBean {
             if (!capturedDurchfuehrung.getList2ZumVorbereiten().isEmpty() && capturedDurchfuehrung.getReadyToVorbereiten()) {
                 capturedDurchfuehrung.vorbereitet();
                 speakerStatus = "Vorbereitet";
-                log.debug("Auto-Speaker: vorbereitet()");
                 return;
             }
-
             if (!capturedDurchfuehrung.getList3Vorbereitet().isEmpty() && capturedDurchfuehrung.getReadyToSpielen()) {
                 capturedDurchfuehrung.spielen();
                 speakerStatus = "Gestartet";
-                log.debug("Auto-Speaker: spielen()");
             }
         } catch (Exception e) {
             speakerStatus = "Fehler: " + e.getMessage();
@@ -125,28 +118,19 @@ public class IntegrationTestBackingBean {
     }
 
     public void stopSchiri() {
-        if (schiriFuture != null) {
-            schiriFuture.cancel(false);
-        }
+        if (schiriFuture != null) schiriFuture.cancel(false);
         schiriRunning = false;
         schiriStatus = "Gestoppt";
-        log.info("Auto-Schiri gestoppt");
     }
 
     private void schiriTick() {
         try {
-            List<Spiel> einzutragende = capturedEintragen.findAllEinzutragende();
-
+            List<Spiel> einzutragende = testService.findAllEinzutragende(capturedGameName);
             for (Spiel spiel : einzutragende) {
-                if (spiel.getMannschaftA() != null && spiel.getMannschaftB() != null) {
-                    int toreA = spiel.getMannschaftA().getTeamNummer() % 10;
-                    int toreB = spiel.getMannschaftB().getTeamNummer() % 10;
-                    spiel.setToreA(toreA);
-                    spiel.setToreB(toreB);
-                    capturedEintragen.eintragen(List.of(spiel), String.valueOf(spiel.getId()), "Auto-Schiri");
-                    schiriStatus = "Eingetragen: " + spiel.getIdString() + " (" + toreA + ":" + toreB + ")";
-                    log.debug("Auto-Schiri: {} = {}:{}", spiel.getIdString(), toreA, toreB);
-                }
+                testService.autoEintragen(spiel.getId());
+                int toreA = spiel.getMannschaftA() != null ? spiel.getMannschaftA().getTeamNummer() % 10 : 0;
+                int toreB = spiel.getMannschaftB() != null ? spiel.getMannschaftB().getTeamNummer() % 10 : 0;
+                schiriStatus = "Eingetragen: " + spiel.getIdString() + " (" + toreA + ":" + toreB + ")";
             }
         } catch (Exception e) {
             schiriStatus = "Fehler: " + e.getMessage();
@@ -166,22 +150,17 @@ public class IntegrationTestBackingBean {
     }
 
     public void stopKontrolleur() {
-        if (kontrolleurFuture != null) {
-            kontrolleurFuture.cancel(false);
-        }
+        if (kontrolleurFuture != null) kontrolleurFuture.cancel(false);
         kontrolleurRunning = false;
         kontrolleurStatus = "Gestoppt";
-        log.info("Auto-Kontrolleur gestoppt");
     }
 
     private void kontrolleurTick() {
         try {
-            List<Spiel> zuBestaetigen = capturedEintragen.findAllZuBestaetigen();
-
+            List<Spiel> zuBestaetigen = testService.findAllZuBestaetigen(capturedGameName);
             for (Spiel spiel : zuBestaetigen) {
-                capturedEintragen.bestaetigen(List.of(spiel), String.valueOf(spiel.getId()), "ok");
+                testService.autoBestaetigen(spiel.getId(), capturedResultate);
                 kontrolleurStatus = "Bestaetigt: " + spiel.getIdString();
-                log.debug("Auto-Kontrolleur: bestaetigt {}", spiel.getIdString());
             }
         } catch (Exception e) {
             kontrolleurStatus = "Fehler: " + e.getMessage();
