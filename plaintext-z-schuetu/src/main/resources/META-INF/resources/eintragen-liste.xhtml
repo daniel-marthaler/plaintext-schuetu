@@ -19,13 +19,7 @@
 
             <p:growl severity="error" style="'font-size' : '12pt','width' : '100px'"/>
 
-            <p:commandButton action="#{eintragenBackingBean.eintragen()}" icon="" value="#{i18n.t('eintragen')}"
-                             execute="@form" update="@form" disabled="#{!eintragenBackingBean.eintragOK()}"/>
-
-
             <br/>
-
-            <br/> <br/>
 
             <p:dataTable id="mann" var="mannsch" value="#{eintragenBackingBean.getPenalty() != null ? eintragenBackingBean.penalty.finalList : null}" draggableRows="true"
                          rendered="#{eintragenBackingBean.getPenalty() != null}">
@@ -145,15 +139,17 @@
                     </tr>
                     <tr align="center">
                         <td colspan="1" rowspan="1">
-                            <p:commandLink value="0" action="#{eintragenBackingBean.selected.setToreA(0)}" update="fm" style="padding:4px 8px;font-size:14pt;"/> &#160;
-                            <p:commandLink value="1" action="#{eintragenBackingBean.selected.setToreA(1)}" update="fm" style="padding:4px 8px;font-size:14pt;"/> &#160;
-                            <p:commandLink value="2" action="#{eintragenBackingBean.selected.setToreA(2)}" update="fm" style="padding:4px 8px;font-size:14pt;"/> &#160;
-                            <p:commandLink value="3" action="#{eintragenBackingBean.selected.setToreA(3)}" update="fm" style="padding:4px 8px;font-size:14pt;"/> &#160;
-                            <p:commandLink value="4" action="#{eintragenBackingBean.selected.setToreA(4)}" update="fm" style="padding:4px 8px;font-size:14pt;"/> &#160;
-                            <p:commandLink value="5" action="#{eintragenBackingBean.selected.setToreA(5)}" update="fm" style="padding:4px 8px;font-size:14pt;"/> &#160;
-                            <p:commandLink value="6" action="#{eintragenBackingBean.selected.setToreA(6)}" update="fm" style="padding:4px 8px;font-size:14pt;"/> &#160;
-                            <p:commandLink value="7" action="#{eintragenBackingBean.selected.setToreA(7)}" update="fm" style="padding:4px 8px;font-size:14pt;"/> &#160;
-                            <p:commandLink value="8" action="#{eintragenBackingBean.selected.setToreA(8)}" update="fm" style="padding:4px 8px;font-size:14pt;"/>
+                            <p:commandButton value="0" action="#{eintragenBackingBean.selected.setToreA(0)}" process="@this" update="fm" style="min-width:36px;height:36px;margin:2px;font-size:12pt;" styleClass="ui-button-outlined"/>
+                            <p:commandButton value="1" action="#{eintragenBackingBean.selected.setToreA(1)}" process="@this" update="fm" style="min-width:36px;height:36px;margin:2px;font-size:12pt;" styleClass="ui-button-outlined"/>
+                            <p:commandButton value="2" action="#{eintragenBackingBean.selected.setToreA(2)}" process="@this" update="fm" style="min-width:36px;height:36px;margin:2px;font-size:12pt;" styleClass="ui-button-outlined"/>
+                            <p:commandButton value="3" action="#{eintragenBackingBean.selected.setToreA(3)}" process="@this" update="fm" style="min-width:36px;height:36px;margin:2px;font-size:12pt;" styleClass="ui-button-outlined"/>
+                            <p:commandButton value="4" action="#{eintragenBackingBean.selected.setToreA(4)}" process="@this" update="fm" style="min-width:36px;height:36px;margin:2px;font-size:12pt;" styleClass="ui-button-outlined"/>
+                            <p:commandButton value="5" action="#{eintragenBackingBean.selected.setToreA(5)}" process="@this" update="fm" style="min-width:36px;height:36px;margin:2px;font-size:12pt;" styleClass="ui-button-outlined"/>
+                            <p:commandButton value="6" action="#{eintragenBackingBean.selected.setToreA(6)}" process="@this" update="fm" style="min-width:36px;height:36px;margin:2px;font-size:12pt;" styleClass="ui-button-outlined"/>
+                            <p:commandButton value="7" action="#{eintragenBackingBean.selected.setToreA(7)}" process="@this" update="fm" style="min-width:36px;height:36px;margin:2px;font-size:12pt;" styleClass="ui-button-outlined"/>
+                            <p:commandButton value="8" action="#{eintragenBackingBean.selected.setToreA(8)}" process="@this" update="fm" style="min-width:36px;height:36px;margin:2px;font-size:12pt;" styleClass="ui-button-outlined"/>
+                            <p:commandButton value="9" action="#{eintragenBackingBean.selected.setToreA(9)}" process="@this" update="fm" style="min-width:36px;height:36px;margin:2px;font-size:12pt;" styleClass="ui-button-outlined"/>
+                            <p:commandButton value="10" action="#{eintragenBackingBean.selected.setToreA(10)}" process="@this" update="fm" style="min-width:36px;height:36px;margin:2px;font-size:12pt;" styleClass="ui-button-outlined"/>
                         </td>
                     </tr>
 
@@ -175,15 +171,17 @@
                     </tr>
                     <tr align="center">
                         <td colspan="1" rowspan="1">
-                            <p:commandLink value="0" action="#{eintragenBackingBean.selected.setToreB(0)}" update="fm" style="padding:4px 8px;font-size:14pt;"/> &#160;
-                            <p:commandLink value="1" action="#{eintragenBackingBean.selected.setToreB(1)}" update="fm" style="padding:4px 8px;font-size:14pt;"/> &#160;
-                            <p:commandLink value="2" action="#{eintragenBackingBean.selected.setToreB(2)}" update="fm" style="padding:4px 8px;font-size:14pt;"/> &#160;
-                            <p:commandLink value="3" action="#{eintragenBackingBean.selected.setToreB(3)}" update="fm" style="padding:4px 8px;font-size:14pt;"/> &#160;
-                            <p:commandLink value="4" action="#{eintragenBackingBean.selected.setToreB(4)}" update="fm" style="padding:4px 8px;font-size:14pt;"/> &#160;
-                            <p:commandLink value="5" action="#{eintragenBackingBean.selected.setToreB(5)}" update="fm" style="padding:4px 8px;font-size:14pt;"/> &#160;
-                            <p:commandLink value="6" action="#{eintragenBackingBean.selected.setToreB(6)}" update="fm" style="padding:4px 8px;font-size:14pt;"/> &#160;
-                            <p:commandLink value="7" action="#{eintragenBackingBean.selected.setToreB(7)}" update="fm" style="padding:4px 8px;font-size:14pt;"/> &#160;
-                            <p:commandLink value="8" action="#{eintragenBackingBean.selected.setToreB(8)}" update="fm" style="padding:4px 8px;font-size:14pt;"/>
+                            <p:commandButton value="0" action="#{eintragenBackingBean.selected.setToreB(0)}" process="@this" update="fm" style="min-width:36px;height:36px;margin:2px;font-size:12pt;" styleClass="ui-button-outlined"/>
+                            <p:commandButton value="1" action="#{eintragenBackingBean.selected.setToreB(1)}" process="@this" update="fm" style="min-width:36px;height:36px;margin:2px;font-size:12pt;" styleClass="ui-button-outlined"/>
+                            <p:commandButton value="2" action="#{eintragenBackingBean.selected.setToreB(2)}" process="@this" update="fm" style="min-width:36px;height:36px;margin:2px;font-size:12pt;" styleClass="ui-button-outlined"/>
+                            <p:commandButton value="3" action="#{eintragenBackingBean.selected.setToreB(3)}" process="@this" update="fm" style="min-width:36px;height:36px;margin:2px;font-size:12pt;" styleClass="ui-button-outlined"/>
+                            <p:commandButton value="4" action="#{eintragenBackingBean.selected.setToreB(4)}" process="@this" update="fm" style="min-width:36px;height:36px;margin:2px;font-size:12pt;" styleClass="ui-button-outlined"/>
+                            <p:commandButton value="5" action="#{eintragenBackingBean.selected.setToreB(5)}" process="@this" update="fm" style="min-width:36px;height:36px;margin:2px;font-size:12pt;" styleClass="ui-button-outlined"/>
+                            <p:commandButton value="6" action="#{eintragenBackingBean.selected.setToreB(6)}" process="@this" update="fm" style="min-width:36px;height:36px;margin:2px;font-size:12pt;" styleClass="ui-button-outlined"/>
+                            <p:commandButton value="7" action="#{eintragenBackingBean.selected.setToreB(7)}" process="@this" update="fm" style="min-width:36px;height:36px;margin:2px;font-size:12pt;" styleClass="ui-button-outlined"/>
+                            <p:commandButton value="8" action="#{eintragenBackingBean.selected.setToreB(8)}" process="@this" update="fm" style="min-width:36px;height:36px;margin:2px;font-size:12pt;" styleClass="ui-button-outlined"/>
+                            <p:commandButton value="9" action="#{eintragenBackingBean.selected.setToreB(9)}" process="@this" update="fm" style="min-width:36px;height:36px;margin:2px;font-size:12pt;" styleClass="ui-button-outlined"/>
+                            <p:commandButton value="10" action="#{eintragenBackingBean.selected.setToreB(10)}" process="@this" update="fm" style="min-width:36px;height:36px;margin:2px;font-size:12pt;" styleClass="ui-button-outlined"/>
                         </td>
                     </tr>
 
@@ -192,7 +190,7 @@
 
                 <br/>
                 <p:commandButton action="#{eintragenBackingBean.eintragen()}" value="#{i18n.t('eintragen')}"
-                                 execute="@form" update="@form" disabled="#{!eintragenBackingBean.eintragOK()}"
+                                 process="Schirizettel" update="@form" disabled="#{!eintragenBackingBean.eintragOK()}"
                                  styleClass="ui-button-success" style="width:100%;padding:12px;font-size:14pt;"/>
                 <br/><br/>
 

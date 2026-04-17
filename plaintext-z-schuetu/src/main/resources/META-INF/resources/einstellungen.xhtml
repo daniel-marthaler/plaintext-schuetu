@@ -306,8 +306,8 @@
                     </p:tab>
 
                     <p:tab title="Integrationstest" disabled="#{!integrationTestBackingBean.testGame}">
-                        <p:poll interval="3" update="fm:integrationStatusPanel" rendered="#{integrationTestBackingBean.speakerRunning or integrationTestBackingBean.schiriRunning or integrationTestBackingBean.kontrolleurRunning}"/>
                         <h:panelGroup id="integrationStatusPanel">
+                        <p:poll interval="3" update="fm:integrationStatusPanel" autoStart="true"/>
                         <h:panelGrid columns="2" cellpadding="10">
 
                             <h:outputText value="Nur aktiv fuer Spiele die mit 'Test' beginnen." style="font-style:italic;color:#888;"/>
@@ -325,10 +325,10 @@
 
                             <p:commandButton value="Start" action="#{integrationTestBackingBean.startSpeaker()}"
                                              disabled="#{!integrationTestBackingBean.testGame or integrationTestBackingBean.speakerRunning}"
-                                             update="fm" styleClass="ui-button-success"/>
+                                             process="@this" update="fm" styleClass="ui-button-success"/>
                             <p:commandButton value="Stop" action="#{integrationTestBackingBean.stopSpeaker()}"
                                              disabled="#{!integrationTestBackingBean.speakerRunning}"
-                                             update="fm" styleClass="ui-button-danger"/>
+                                             process="@this" update="fm" styleClass="ui-button-danger"/>
 
                             <p:separator/>
                             <p:separator/>
@@ -342,10 +342,10 @@
 
                             <p:commandButton value="Start" action="#{integrationTestBackingBean.startSchiri()}"
                                              disabled="#{!integrationTestBackingBean.testGame or integrationTestBackingBean.schiriRunning}"
-                                             update="fm" styleClass="ui-button-success"/>
+                                             process="@this" update="fm" styleClass="ui-button-success"/>
                             <p:commandButton value="Stop" action="#{integrationTestBackingBean.stopSchiri()}"
                                              disabled="#{!integrationTestBackingBean.schiriRunning}"
-                                             update="fm" styleClass="ui-button-danger"/>
+                                             process="@this" update="fm" styleClass="ui-button-danger"/>
 
                             <p:separator/>
                             <p:separator/>
@@ -359,19 +359,19 @@
 
                             <p:commandButton value="Start" action="#{integrationTestBackingBean.startKontrolleur()}"
                                              disabled="#{!integrationTestBackingBean.testGame or integrationTestBackingBean.kontrolleurRunning}"
-                                             update="fm" styleClass="ui-button-success"/>
+                                             process="@this" update="fm" styleClass="ui-button-success"/>
                             <p:commandButton value="Stop" action="#{integrationTestBackingBean.stopKontrolleur()}"
                                              disabled="#{!integrationTestBackingBean.kontrolleurRunning}"
-                                             update="fm" styleClass="ui-button-danger"/>
+                                             process="@this" update="fm" styleClass="ui-button-danger"/>
 
                             <p:separator/>
                             <p:separator/>
 
                             <p:commandButton value="Alle starten" action="#{integrationTestBackingBean.startAll()}"
                                              disabled="#{!integrationTestBackingBean.testGame}"
-                                             update="fm" styleClass="ui-button-success" style="font-weight:bold;"/>
+                                             process="@this" update="fm" styleClass="ui-button-success" style="font-weight:bold;"/>
                             <p:commandButton value="Alle stoppen" action="#{integrationTestBackingBean.stopAll()}"
-                                             update="fm" styleClass="ui-button-danger" style="font-weight:bold;"/>
+                                             process="@this" update="fm" styleClass="ui-button-danger" style="font-weight:bold;"/>
 
                         </h:panelGrid>
                         </h:panelGroup>

@@ -40,6 +40,9 @@ public class MatrixModernBean {
     @Setter
     private int activeTabIndex = 0;
 
+    private List<MatrixKategorieModel> cachedModels = null;
+    private String cachedGameName = null;
+
     /**
      * Returns all Kategorie models for the current game, structured for JSF rendering.
      */
@@ -49,8 +52,13 @@ public class MatrixModernBean {
             return Collections.emptyList();
         }
 
+        String gameName = holder.getGameName();
+        if (cachedModels != null && gameName.equals(cachedGameName)) {
+            return cachedModels;
+        }
+
         try {
-            List<Kategorie> kategorien = kategorieRepository.findByGame(holder.getGameName());
+            List<Kategorie> kategorien = kategorieRepository.findByGame(gameName);
             List<MatrixKategorieModel> result = new ArrayList<>();
 
             for (Kategorie kat : kategorien) {
@@ -88,6 +96,8 @@ public class MatrixModernBean {
             }
 
             result.sort(Comparator.comparing(MatrixKategorieModel::getKategorieName));
+            cachedModels = result;
+            cachedGameName = gameName;
             return result;
         } catch (Exception e) {
             log.error("Fehler beim Laden der Matrix-Daten: {}", e.getMessage(), e);
@@ -177,6 +187,7 @@ public class MatrixModernBean {
                         }
                         zelle.setAmSpielen(spiel.isAmSpielen());
                         zelle.setFertig(spiel.getToreABestaetigt() > -1);
+                        zelle.setEingetragen(spiel.isFertigEingetragen() && !zelle.isFertig());
 
                         if (zelle.isFertig()) {
                             if (spiel.getMannschaftA() != null && spiel.getMannschaftA().getName().equals(mannschaft.getName())) {
@@ -185,6 +196,14 @@ public class MatrixModernBean {
                             } else {
                                 zelle.setToreEigene(spiel.getToreABestaetigt());
                                 zelle.setToreGegner(spiel.getToreBBestaetigt());
+                            }
+                        } else if (zelle.isEingetragen()) {
+                            if (spiel.getMannschaftA() != null && spiel.getMannschaftA().getName().equals(mannschaft.getName())) {
+                                zelle.setToreEigene(spiel.getToreB());
+                                zelle.setToreGegner(spiel.getToreA());
+                            } else {
+                                zelle.setToreEigene(spiel.getToreA());
+                                zelle.setToreGegner(spiel.getToreB());
                             }
                         }
                     } else {
@@ -247,6 +266,8 @@ public class MatrixModernBean {
     }
 
     public void refresh() {
+        cachedModels = null;
+        cachedGameName = null;
         log.info("Matrix-Modern: Daten aktualisiert");
     }
 }

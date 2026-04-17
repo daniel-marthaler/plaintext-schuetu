@@ -99,13 +99,10 @@
                                 <span class="pi pi-download"/>
                             </a>
 
-                            <p:commandButton icon="pi pi-trash" title="#{i18n.t('Löschen')}" update=":fm" action="#{gameService.deleteGame(gm.gameName)}">
-                                <p:confirm header="#{i18n.t('Achtung !!!')}" message="#{i18n.t('Turnier wirklich löschen')}" icon="pi pi-exclamation-triangle"/>
-                                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
-                                    <p:commandButton value="#{i18n.t('Ja')}" type="button" styleClass="ui-confirmdialog-yes" icon="pi pi-check"/>
-                                    <p:commandButton value="#{i18n.t('Nein')}" type="button" styleClass="ui-confirmdialog-no" icon="pi pi-times"/>
-                                </p:confirmDialog>
-                            </p:commandButton>
+                            <p:commandButton icon="pi pi-trash" title="#{i18n.t('Löschen')}"
+                                             actionListener="#{gameBackingBean.prepareDelete(gm.gameName)}"
+                                             update=":fm:dlgDeleteId"
+                                             oncomplete="PF('dlgDelete').show();"/>
                         </div>
                     </p:column>
 
@@ -146,55 +143,79 @@
                     </h:panelGrid>
                 </p:dialog>
 
+                <p:dialog header="#{i18n.t('Achtung !!!')}" widgetVar="dlgDelete" id="dlgDeleteId" resizable="false"
+                          closable="true" modal="true" showEffect="fade" hideEffect="fade"
+                          onHide="document.getElementById('fm:delCheck1').checked=false;document.getElementById('fm:delCheck2').checked=false;document.getElementById('fm:btnDeleteJa').disabled=true;PF('btnDeleteJa').disable();">
+                    <h:panelGrid columns="1" cellpadding="5">
+                        <h:outputText value="#{i18n.t('Turnier')} '#{gameBackingBean.deleteGameName}' #{i18n.t('wirklich löschen')}?"
+                                      style="font-size:1.1em;"/>
+                        <p:separator/>
+                        <h:panelGroup>
+                            <h:selectBooleanCheckbox id="delCheck1" onclick="toggleDeleteButton()"/>
+                            <h:outputLabel for="delCheck1" value=" #{i18n.t('Wirklich löschen')}" style="cursor:pointer;"/>
+                        </h:panelGroup>
+                        <h:panelGroup>
+                            <h:selectBooleanCheckbox id="delCheck2" onclick="toggleDeleteButton()"/>
+                            <h:outputLabel for="delCheck2" value=" #{i18n.t('Ganz wirklich löschen')}" style="cursor:pointer;"/>
+                        </h:panelGroup>
+                        <p:separator/>
+                        <div style="display:flex; gap:0.5rem; justify-content:flex-end;">
+                            <p:commandButton id="btnDeleteJa" widgetVar="btnDeleteJa" value="#{i18n.t('Ja')}" icon="pi pi-check"
+                                             disabled="true"
+                                             action="#{gameBackingBean.deleteGame()}" update=":fm"
+                                             oncomplete="PF('dlgDelete').hide();"/>
+                            <p:commandButton value="#{i18n.t('Nein')}" icon="pi pi-times" type="button"
+                                             onclick="PF('dlgDelete').hide();"/>
+                        </div>
+                    </h:panelGrid>
+                    <script type="text/javascript">
+                        //<![CDATA[
+                        function toggleDeleteButton() {
+                            var c1 = document.getElementById('fm:delCheck1').checked;
+                            var c2 = document.getElementById('fm:delCheck2').checked;
+                            if (c1 && c2) {
+                                PF('btnDeleteJa').enable();
+                            } else {
+                                PF('btnDeleteJa').disable();
+                            }
+                        }
+                        //]]>
+                    </script>
+                </p:dialog>
+
             </p:fieldset>
 
-            <!-- Turnier importieren -->
+        </h:form>
+
+        <!-- Turnier importieren - eigenes Form fuer multipart/form-data -->
+        <h:form id="fmImport" enctype="multipart/form-data" rendered="#{plaintextSecurity.ifGranted('root')}">
+            <input type="hidden" name="_csrf" value="#{_csrf.token}"/>
             <p:fieldset legend="#{i18n.t('Turnier importieren')}" toggleable="true" collapsed="true"
-                        style="margin-top: 1rem;" rendered="#{plaintextSecurity.ifGranted('root')}">
-                <div style="display: flex; align-items: flex-end; gap: 1rem; flex-wrap: wrap;">
+                        style="margin-top: 1rem;">
+                <p:messages id="importMessages" showDetail="true" closable="true"/>
+                <div style="display: flex; align-items: flex-end; gap: 1rem; flex-wrap: wrap; margin-top: 0.5rem;">
                     <div>
                         <h:outputLabel value="#{i18n.t('JSON-Datei:')}"/>
                         <br/>
-                        <input type="file" id="importFile" accept=".json" style="margin-top:4px;"/>
+                        <p:fileUpload id="importFile" value="#{gameBackingBean.importFile}"
+                                      mode="simple" skinSimple="true"
+                                      accept=".json"
+                                      style="margin-top:4px;"/>
                     </div>
                     <div>
                         <h:outputLabel value="#{i18n.t('Turniername:')}"/>
                         <br/>
-                        <input type="text" id="importName" placeholder="#{i18n.t('Neuer Turniername')}"
-                               class="ui-inputfield ui-widget" style="margin-top:4px; width:250px;"/>
+                        <p:inputText id="importName" value="#{gameBackingBean.importName}"
+                                     placeholder="#{i18n.t('Neuer Turniername')}"
+                                     style="margin-top:4px; width:250px;"/>
                     </div>
                     <div>
-                        <button type="button" onclick="importTournament()" class="ui-button ui-widget"
-                                style="padding: 0.5rem 1rem; cursor: pointer;">
-                            <i class="pi pi-upload" style="margin-right:4px;"/> #{i18n.t('Importieren')}
-                        </button>
+                        <p:commandButton value="#{i18n.t('Importieren')}" icon="pi pi-upload"
+                                         action="#{gameBackingBean.importTournament()}"
+                                         ajax="false"
+                                         style="padding: 0.5rem 1rem;"/>
                     </div>
                 </div>
-                <p:messages id="importMessages"/>
-                <script type="text/javascript">
-                    //<![CDATA[
-                    function importTournament() {
-                        var fileInput = document.getElementById('importFile');
-                        var nameInput = document.getElementById('importName');
-                        if (!fileInput.files.length) { alert('Bitte eine JSON-Datei auswählen'); return; }
-                        if (!nameInput.value.trim()) { alert('Bitte einen Turniernamen eingeben'); return; }
-                        var formData = new FormData();
-                        formData.append('file', fileInput.files[0]);
-                        formData.append('name', nameInput.value.trim());
-                        var csrfToken = document.querySelector('input[name="_csrf"]').value;
-                        formData.append('_csrf', csrfToken);
-                        fetch('#{request.contextPath}/api/tournament/import', {
-                            method: 'POST',
-                            body: formData
-                        }).then(function(r) {
-                            return r.text().then(function(t) { return {ok: r.ok, text: t}; });
-                        }).then(function(res) {
-                            if (res.ok) { alert('Import erfolgreich: ' + res.text); location.reload(); }
-                            else { alert('Import fehlgeschlagen: ' + res.text); }
-                        }).catch(function(e) { alert('Fehler: ' + e); });
-                    }
-                    //]]>
-                </script>
             </p:fieldset>
         </h:form>
     </ui:define>

@@ -20,6 +20,7 @@ public class MatrixZelleModel implements Serializable {
     private int toreEigene = -1;
     private int toreGegner = -1;
     private boolean fertig;
+    private boolean eingetragen;
     private boolean amSpielen;
     private boolean diagonal;
 
@@ -33,6 +34,9 @@ public class MatrixZelleModel implements Serializable {
         }
         if (amSpielen) {
             return "matrix-live";
+        }
+        if (eingetragen && !fertig) {
+            return "matrix-eingetragen";
         }
         if (!fertig) {
             return "matrix-pending";
@@ -52,6 +56,9 @@ public class MatrixZelleModel implements Serializable {
     public String getResultat() {
         if (diagonal) {
             return "";
+        }
+        if (eingetragen && !fertig) {
+            return toreEigene + ":" + toreGegner;
         }
         if (!fertig && !amSpielen) {
             return zeit != null ? zeit : "-";

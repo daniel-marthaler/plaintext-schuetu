@@ -2,7 +2,14 @@ package ch.plaintext.schuetu.service;
 
 import ch.plaintext.schuetu.entity.GameModel;
 import ch.plaintext.schuetu.repository.GameRepository;
+import ch.plaintext.schuetu.service.exportimport.TournamentExportDto;
+import ch.plaintext.schuetu.service.exportimport.TournamentImportService;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.faces.application.FacesMessage;
+import jakarta.faces.context.FacesContext;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
+import org.primefaces.model.file.UploadedFile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -16,6 +23,7 @@ import java.util.List;
 @Component
 @Scope("session")
 @Data
+@Slf4j
 public class GameBackingBean {
 
     @Autowired
@@ -27,6 +35,12 @@ public class GameBackingBean {
     @Autowired
     private GameService gameService;
 
+    @Autowired
+    private TournamentImportService importService;
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
     private GameModel selected = new GameModel();
 
     private String renameOldName;
@@ -34,6 +48,11 @@ public class GameBackingBean {
 
     private String copySourceName;
     private String copyNewName;
+
+    private String deleteGameName;
+
+    private UploadedFile importFile;
+    private String importName;
 
     public List<GameModel> displayGames() {
         return root.displayGames();
@@ -70,6 +89,50 @@ public class GameBackingBean {
         }
         copySourceName = null;
         copyNewName = null;
+    }
+
+    public void prepareDelete(String gameName) {
+        this.deleteGameName = gameName;
+    }
+
+    public void deleteGame() {
+        if (deleteGameName != null) {
+            gameService.deleteGame(deleteGameName);
+            root.clearCache();
+        }
+        deleteGameName = null;
+    }
+
+    public void importTournament() {
+        FacesContext ctx = FacesContext.getCurrentInstance();
+        if (importFile == null || importFile.getContent() == null || importFile.getContent().length == 0) {
+            ctx.addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_WARN, "Bitte eine JSON-Datei auswaehlen", null));
+            return;
+        }
+        if (importName == null || importName.trim().isEmpty()) {
+            ctx.addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_WARN, "Bitte einen Turniernamen eingeben", null));
+            return;
+        }
+        try {
+            TournamentExportDto dto = objectMapper.readValue(importFile.getContent(), TournamentExportDto.class);
+            importService.importTournament(dto, importName.trim());
+            log.info("Turnier '{}' erfolgreich importiert als '{}'", dto.getOriginalGameName(), importName);
+            root.clearCache();
+            ctx.addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_INFO, "Import erfolgreich", "Turnier '" + importName.trim() + "' wurde importiert."));
+        } catch (IllegalArgumentException e) {
+            log.warn("Import fehlgeschlagen: {}", e.getMessage());
+            ctx.addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Import fehlgeschlagen", e.getMessage()));
+        } catch (Exception e) {
+            log.error("Fehler beim Import", e);
+            ctx.addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Import fehlgeschlagen", e.getMessage()));
+        }
+        importFile = null;
+        importName = null;
     }
 
 }

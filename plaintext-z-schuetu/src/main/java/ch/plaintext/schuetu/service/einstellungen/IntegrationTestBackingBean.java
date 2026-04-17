@@ -74,21 +74,31 @@ public class IntegrationTestBackingBean {
     }
 
     private void captureGameReferences() {
-        Game game = gameSelectionHolder.getGame();
-        capturedDurchfuehrung = game.getDurchfuehrung();
-        capturedResultate = game.getResultate();
-        capturedGameName = game.getModel().getGameName();
+        try {
+            Game game = gameSelectionHolder.getGame();
+            capturedDurchfuehrung = game.getDurchfuehrung();
+            capturedResultate = game.getResultate();
+            capturedGameName = game.getModel().getGameName();
+        } catch (Exception e) {
+            log.error("Fehler beim Erfassen der Game-Referenzen", e);
+            throw new IllegalStateException("Game-Referenzen konnten nicht erfasst werden: " + e.getMessage(), e);
+        }
     }
 
     // --- Auto-Speaker ---
 
     public void startSpeaker() {
         if (!isTestGame() || speakerActive.get()) return;
-        captureGameReferences();
-        speakerActive.set(true);
-        speakerStatus = "Laeuft";
-        speakerFuture = executor.scheduleWithFixedDelay(this::speakerTick, 0, 2, TimeUnit.SECONDS);
-        log.info("Auto-Speaker gestartet");
+        try {
+            captureGameReferences();
+            speakerActive.set(true);
+            speakerStatus = "Laeuft";
+            speakerFuture = executor.scheduleWithFixedDelay(this::speakerTick, 3, 2, TimeUnit.SECONDS);
+            log.info("Auto-Speaker gestartet");
+        } catch (Exception e) {
+            speakerStatus = "Fehler: " + e.getMessage();
+            log.error("Auto-Speaker Start fehlgeschlagen", e);
+        }
     }
 
     public void stopSpeaker() {
@@ -119,11 +129,16 @@ public class IntegrationTestBackingBean {
 
     public void startSchiri() {
         if (!isTestGame() || schiriActive.get()) return;
-        captureGameReferences();
-        schiriActive.set(true);
-        schiriStatus = "Laeuft";
-        schiriFuture = executor.scheduleWithFixedDelay(this::schiriTick, 1, 2, TimeUnit.SECONDS);
-        log.info("Auto-Schiri gestartet");
+        try {
+            captureGameReferences();
+            schiriActive.set(true);
+            schiriStatus = "Laeuft";
+            schiriFuture = executor.scheduleWithFixedDelay(this::schiriTick, 4, 2, TimeUnit.SECONDS);
+            log.info("Auto-Schiri gestartet");
+        } catch (Exception e) {
+            schiriStatus = "Fehler: " + e.getMessage();
+            log.error("Auto-Schiri Start fehlgeschlagen", e);
+        }
     }
 
     public void stopSchiri() {
@@ -153,11 +168,16 @@ public class IntegrationTestBackingBean {
 
     public void startKontrolleur() {
         if (!isTestGame() || kontrolleurActive.get()) return;
-        captureGameReferences();
-        kontrolleurActive.set(true);
-        kontrolleurStatus = "Laeuft";
-        kontrolleurFuture = executor.scheduleWithFixedDelay(this::kontrolleurTick, 2, 2, TimeUnit.SECONDS);
-        log.info("Auto-Kontrolleur gestartet");
+        try {
+            captureGameReferences();
+            kontrolleurActive.set(true);
+            kontrolleurStatus = "Laeuft";
+            kontrolleurFuture = executor.scheduleWithFixedDelay(this::kontrolleurTick, 5, 2, TimeUnit.SECONDS);
+            log.info("Auto-Kontrolleur gestartet");
+        } catch (Exception e) {
+            kontrolleurStatus = "Fehler: " + e.getMessage();
+            log.error("Auto-Kontrolleur Start fehlgeschlagen", e);
+        }
     }
 
     public void stopKontrolleur() {
