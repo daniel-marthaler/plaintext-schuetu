@@ -45,7 +45,9 @@ public class TournamentExportDto {
         private boolean websiteEnableDownloadLink;
         private boolean automatischesAufholen;
         private boolean automatischesVorbereiten;
+        @Deprecated // Nicht mehr verwendet seit 2026
         private boolean automatischesAnsagen;
+        @Deprecated // Nicht mehr verwendet seit 2026
         private boolean gongEinschalten;
         private boolean abbrechenZulassen;
         private int verschnellerungsFaktor;
@@ -55,7 +57,9 @@ public class TournamentExportDto {
         private int zweiPausenBisKlasse;
         private boolean mobileLinkOn;
         private String mobileLink;
+        @Deprecated // Nicht mehr verwendet seit 2026, ersetzt durch MQTT
         private String backportSync;
+        @Deprecated // Nicht mehr verwendet seit 2026, ersetzt durch MQTT
         private boolean backportSyncOn;
         private boolean uploadOn;
         private boolean behandleFinaleProKlassebeiZusammengefuehrten;

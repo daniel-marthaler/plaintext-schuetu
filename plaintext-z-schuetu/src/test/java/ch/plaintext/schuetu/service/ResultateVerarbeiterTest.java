@@ -6,7 +6,6 @@ import ch.plaintext.schuetu.entity.Penalty;
 import ch.plaintext.schuetu.model.ranglistensortierung.RanglisteneintragHistorie;
 import ch.plaintext.schuetu.repository.KategorieRepository;
 import ch.plaintext.schuetu.repository.SpielRepository;
-import ch.plaintext.schuetu.service.backupsync.BackupSyncProvider;
 import ch.plaintext.schuetu.service.html.HTMLOutConverter;
 import ch.plaintext.schuetu.service.html.HTMLSpielMatrixConverter;
 import ch.plaintext.schuetu.service.html.ModelConverterRangliste;
@@ -43,8 +42,6 @@ class ResultateVerarbeiterTest {
     @Mock
     private ModelConverterRangliste ranglisteConverter;
     @Mock
-    private BackupSyncProvider syncProvider;
-    @Mock
     private PenaltyLoaderFactory penaltyLoaderFactory;
     @Mock
     private Game game;
@@ -60,7 +57,6 @@ class ResultateVerarbeiterTest {
     @Test
     void testSignalFertigesSpiel() {
         verarbeiter.signalFertigesSpiel(42L);
-        verify(syncProvider).signalSpiel(42L, "TestTurnier");
         assertEquals(1, verarbeiter.getQueueSize());
     }
 

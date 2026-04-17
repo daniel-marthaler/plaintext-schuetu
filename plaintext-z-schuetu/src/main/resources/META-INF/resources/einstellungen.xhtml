@@ -93,18 +93,6 @@
                                         value="#{gameSelectionHolder.game.model.abbrechenZulassen}">
                                 </p:selectBooleanCheckbox>
 
-                                <h:outputText value="Gong bei Spielende abspielen"/>
-                                <p:selectBooleanCheckbox
-                                        id="gongEinschalten"
-                                        value="#{gameSelectionHolder.game.model.gongEinschalten}">
-                                </p:selectBooleanCheckbox>
-
-                                <h:outputText value="Automatisch Plätze ansagen"/>
-                                <p:selectBooleanCheckbox
-                                        id="automatischesAnsagen"
-                                        value="#{gameSelectionHolder.game.model.automatischesAnsagen}">
-                                </p:selectBooleanCheckbox>
-
                                 <h:outputText value="Automatisch in den Vorbereitet Status wechseln"/>
 
                                 <p:selectBooleanCheckbox
@@ -210,31 +198,6 @@
                             <p:separator/>
                             <p:separator/>
 
-                            <h:outputText value="Werbung auf Webseite"/>
-                            <h:column>
-                                <p:commandButton id="werbung" actionListener="#{werbungBackingBean.go()}" value="werbung" onstart="PF('blockIt').show()" oncomplete="PF('blockIt').hide()" />
-                            </h:column>
-
-                            <p:separator/>
-                            <p:separator/>
-
-                            <h:outputText value="Spiele Synchronisieren von Adresse: "/>
-                            <p:inputText value="#{gameSelectionHolder.game.model.backportSync}" size="60"/>
-
-                            <h:outputText value="Synchronisation laufen lassen: "/>
-                            <p:selectBooleanCheckbox value="#{gameSelectionHolder.game.model.backportSyncOn}"/>
-
-                            <h:outputText value="Spiele bereits synchronisiert: "/>
-                            <h:outputText value="#{gameSelectionHolder.game.backup.eintraege.size()}"/>
-
-                            <h:outputText value="Spiele bereit um von hier zu beziehen: "/>
-                            <h:outputText value="#{backupSyncProvider.getOutcount(gameSelectionHolder.game.model.getGameName())}"/>
-
-                            <h:outputText value="Eigene Sync Adresse: "/>
-                            <h:outputText value="#{backupSyncProvider.getOwnSync(gameSelectionHolder.game.model.getGameName())}"/>
-
-                            <p:separator/>
-                            <p:separator/>
                             <h:outputText value="Alle Resultate neu berechnen"/>
                             <h:column>
                                 <p:commandButton  actionListener="#{gameSelectionHolder.neuRechnen()}" value="Neu Rechnen" onstart="PF('blockIt').show()" oncomplete="PF('blockIt').hide()"/>
@@ -319,15 +282,15 @@
                         <h:panelGrid columns="2" cellpadding="10">
 
                             <h:outputLabel value="Samstag"/>
-                            <p:calendar value="#{einstellungenBackingBean.samstag}" pattern="dd.MM.yyyy H:mm:ss"/>
+                            <p:calendar value="#{einstellungenBackingBean.samstag}" pattern="dd.MM.yyyy"/>
 
                             <h:outputLabel value="Sonntag"/>
-                            <p:calendar value="#{einstellungenBackingBean.sonntag}" pattern="dd.MM.yyyy H:mm:ss"/>
+                            <p:calendar value="#{einstellungenBackingBean.sonntag}" pattern="dd.MM.yyyy"/>
 
-                            <p:commandButton  value="neue Tage setzen" action="#{einstellungenBackingBean.persistDate()}" onstart="PF('blockIt').show()" oncomplete="PF('blockIt').hide()"/>
-
-                            <h:outputLabel value=""/>
-                            <p:commandButton  value="Plätze von Spielzeilen auf Spiele kopieren" action="#{einstellungenBackingBean.fixPlaetze()}" onstart="PF('blockIt').show()" oncomplete="PF('blockIt').hide()"/>
+                            <p:commandButton value="Tage setzen und Plätze kopieren"
+                                             action="#{einstellungenBackingBean.persistDateAndFixPlaetze()}"
+                                             onstart="PF('blockIt').show()" oncomplete="PF('blockIt').hide()"
+                                             update="fm"/>
 
                         </h:panelGrid>
                     </p:tab>
@@ -345,6 +308,124 @@
                                              onstart="PF('blockIt').show()"
                                              oncomplete="PF('blockIt').hide()"
                                              update="fm"/>
+                        </h:panelGrid>
+                    </p:tab>
+
+                    <p:tab title="Integrationstest" disabled="#{!integrationTestBackingBean.testGame}">
+                        <h:panelGrid columns="2" cellpadding="10">
+
+                            <h:outputText value="Nur aktiv fuer Spiele die mit 'Test' beginnen." style="font-style:italic;color:#888;"/>
+                            <br/>
+
+                            <p:separator/>
+                            <p:separator/>
+
+                            <h:outputText value="Auto-Speaker" style="font-weight:bold;font-size:1.1em;"/>
+                            <h:outputText value="Klickt automatisch Vorbereiten und Start"/>
+
+                            <h:outputText value="Status:"/>
+                            <h:outputText value="#{integrationTestBackingBean.speakerStatus}"
+                                          style="color:#{integrationTestBackingBean.speakerRunning ? 'green' : '#888'}"/>
+
+                            <p:commandButton value="Start" action="#{integrationTestBackingBean.startSpeaker()}"
+                                             disabled="#{!integrationTestBackingBean.testGame or integrationTestBackingBean.speakerRunning}"
+                                             update="fm" styleClass="ui-button-success"/>
+                            <p:commandButton value="Stop" action="#{integrationTestBackingBean.stopSpeaker()}"
+                                             disabled="#{!integrationTestBackingBean.speakerRunning}"
+                                             update="fm" styleClass="ui-button-danger"/>
+
+                            <p:separator/>
+                            <p:separator/>
+
+                            <h:outputText value="Auto-Schiri" style="font-weight:bold;font-size:1.1em;"/>
+                            <h:outputText value="Traegt Resultate ein (letzte Stelle der Mannschaftsnummer)"/>
+
+                            <h:outputText value="Status:"/>
+                            <h:outputText value="#{integrationTestBackingBean.schiriStatus}"
+                                          style="color:#{integrationTestBackingBean.schiriRunning ? 'green' : '#888'}"/>
+
+                            <p:commandButton value="Start" action="#{integrationTestBackingBean.startSchiri()}"
+                                             disabled="#{!integrationTestBackingBean.testGame or integrationTestBackingBean.schiriRunning}"
+                                             update="fm" styleClass="ui-button-success"/>
+                            <p:commandButton value="Stop" action="#{integrationTestBackingBean.stopSchiri()}"
+                                             disabled="#{!integrationTestBackingBean.schiriRunning}"
+                                             update="fm" styleClass="ui-button-danger"/>
+
+                            <p:separator/>
+                            <p:separator/>
+
+                            <h:outputText value="Auto-Kontrolleur" style="font-weight:bold;font-size:1.1em;"/>
+                            <h:outputText value="Bestaetigt eingetragene Resultate automatisch"/>
+
+                            <h:outputText value="Status:"/>
+                            <h:outputText value="#{integrationTestBackingBean.kontrolleurStatus}"
+                                          style="color:#{integrationTestBackingBean.kontrolleurRunning ? 'green' : '#888'}"/>
+
+                            <p:commandButton value="Start" action="#{integrationTestBackingBean.startKontrolleur()}"
+                                             disabled="#{!integrationTestBackingBean.testGame or integrationTestBackingBean.kontrolleurRunning}"
+                                             update="fm" styleClass="ui-button-success"/>
+                            <p:commandButton value="Stop" action="#{integrationTestBackingBean.stopKontrolleur()}"
+                                             disabled="#{!integrationTestBackingBean.kontrolleurRunning}"
+                                             update="fm" styleClass="ui-button-danger"/>
+
+                            <p:separator/>
+                            <p:separator/>
+
+                            <p:commandButton value="Alle starten" action="#{integrationTestBackingBean.startAll()}"
+                                             disabled="#{!integrationTestBackingBean.testGame}"
+                                             update="fm" styleClass="ui-button-success" style="font-weight:bold;"/>
+                            <p:commandButton value="Alle stoppen" action="#{integrationTestBackingBean.stopAll()}"
+                                             update="fm" styleClass="ui-button-danger" style="font-weight:bold;"/>
+
+                        </h:panelGrid>
+                    </p:tab>
+
+                    <p:tab title="MQTT">
+                        <h:panelGrid columns="2" cellpadding="10">
+
+                            <h:outputText value="MQTT Broker Adresse:"/>
+                            <p:inputText value="#{gameSelectionHolder.game.model.mqttBrokerUrl}" size="60"
+                                         placeholder="tcp://192.168.1.224"/>
+
+                            <h:outputText value="MQTT Port:"/>
+                            <p:inputText value="#{gameSelectionHolder.game.model.mqttPort}" size="10"
+                                         placeholder="1883"/>
+
+                            <h:outputText value="MQTT Topic:"/>
+                            <p:inputText value="#{gameSelectionHolder.game.model.mqttTopic}" size="60"
+                                         placeholder="schuetu/events"/>
+
+                            <h:outputText value="Modus:"/>
+                            <p:selectOneRadio value="#{gameSelectionHolder.game.model.mqttMode}">
+                                <f:selectItem itemLabel="OUT (Events senden)" itemValue="OUT"/>
+                                <f:selectItem itemLabel="IN (Events empfangen)" itemValue="IN"/>
+                            </p:selectOneRadio>
+
+                            <h:outputText value="MQTT aktivieren:"/>
+                            <p:selectBooleanCheckbox value="#{gameSelectionHolder.game.model.mqttEnabled}"/>
+
+                            <p:separator/>
+                            <p:separator/>
+
+                            <h:outputText value="Verbindungsstatus:"/>
+                            <h:outputText value="#{mqttBackingBean.connectionStatus}"
+                                          style="color:#{mqttBackingBean.connected ? 'green' : '#888'}"/>
+
+                            <p:commandButton value="Verbinden" action="#{mqttBackingBean.connect()}"
+                                             disabled="#{!gameSelectionHolder.game.model.mqttEnabled}"
+                                             onstart="PF('blockIt').show()" oncomplete="PF('blockIt').hide()"
+                                             update="fm" styleClass="ui-button-success"/>
+                            <p:commandButton value="Trennen" action="#{mqttBackingBean.disconnect()}"
+                                             onstart="PF('blockIt').show()" oncomplete="PF('blockIt').hide()"
+                                             update="fm" styleClass="ui-button-danger"/>
+
+                            <p:separator/>
+                            <p:separator/>
+
+                            <p:commandButton value="Speichern" action="#{gameSelectionHolder.save()}"
+                                             onstart="PF('blockIt').show()" oncomplete="PF('blockIt').hide()"
+                                             update="fm"/>
+
                         </h:panelGrid>
                     </p:tab>
 

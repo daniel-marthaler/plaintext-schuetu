@@ -77,6 +77,41 @@ public class MqttEventPublisher {
     }
 
     /**
+     * SpielZeile in Vorbereitung gesetzt.
+     */
+    public void spielVorbereiten(String gameName) {
+        Map<String, Object> data = baseData();
+        data.put("gameName", gameName);
+        mqttEventService.publishEvent("spiel/vorbereiten", data);
+    }
+
+    /**
+     * Spiel gestartet.
+     */
+    public void spielGestartet(Spiel spiel) {
+        Map<String, Object> data = baseData();
+        data.put("spielId", spiel.getId());
+        if (spiel.getMannschaftA() != null) {
+            data.put("mannschaftA", spiel.getMannschaftA().getName());
+            data.put("mannschaftB", spiel.getMannschaftB().getName());
+        }
+        mqttEventService.publishEvent("spiel/start", data);
+    }
+
+    /**
+     * Spiel beendet (fertig gespielt).
+     */
+    public void spielBeendet(Spiel spiel) {
+        Map<String, Object> data = baseData();
+        data.put("spielId", spiel.getId());
+        if (spiel.getMannschaftA() != null) {
+            data.put("mannschaftA", spiel.getMannschaftA().getName());
+            data.put("mannschaftB", spiel.getMannschaftB().getName());
+        }
+        mqttEventService.publishEvent("spiel/beendet", data);
+    }
+
+    /**
      * Phase changed for a game.
      */
     public void phaseChanged(String gameName, String newPhase) {

@@ -1,6 +1,5 @@
 package ch.plaintext.schuetu.service;
 
-import ch.plaintext.schuetu.service.backupsync.BackupSyncProvider;
 import ch.plaintext.schuetu.service.html.HTMLOutConverter;
 import ch.plaintext.schuetu.service.html.HTMLSpielMatrixConverter;
 import ch.plaintext.schuetu.service.html.ModelConverterRangliste;
@@ -52,9 +51,6 @@ public class ResultateVerarbeiter implements GameConnectable {
 
     @Autowired
     private ModelConverterRangliste ranglisteConverter;
-
-    @Autowired
-    private BackupSyncProvider syncProvider;
 
     @Autowired
     private PenaltyLoaderFactory penaltyLoaderFactory;
@@ -130,10 +126,6 @@ public class ResultateVerarbeiter implements GameConnectable {
     }
 
     public void signalFertigesSpiel(Long id) {
-
-        // to backup
-        syncProvider.signalSpiel(id, game.getModel().getGameName());
-
         spielQueue.offer(id);
         log.info("spiel signalisiert: " + id + " queuesize: " + spielQueue.size());
     }

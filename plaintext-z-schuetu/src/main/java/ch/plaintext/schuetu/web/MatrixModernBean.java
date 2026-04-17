@@ -56,19 +56,30 @@ public class MatrixModernBean {
                 continue;
             }
 
-            // Build model for Gruppe A
-            MatrixKategorieModel modelA = buildKategorieModel(kat, kat.getGruppeA().getMannschaften(), "A", kat.hasVorUndRueckrunde() ? Boolean.TRUE : null);
-            if (modelA != null) {
-                result.add(modelA);
-            }
+            if (kat.hasVorUndRueckrunde()) {
+                // 3 Mannschaften: Vorrunde und Rueckrunde separat anzeigen
+                MatrixKategorieModel modelVorrunde = buildKategorieModel(kat, kat.getGruppeA().getMannschaften(), "Vorrunde", Boolean.TRUE);
+                if (modelVorrunde != null) {
+                    result.add(modelVorrunde);
+                }
+                MatrixKategorieModel modelRueckrunde = buildKategorieModel(kat, kat.getGruppeA().getMannschaften(), "Rueckrunde", Boolean.FALSE);
+                if (modelRueckrunde != null) {
+                    result.add(modelRueckrunde);
+                }
+            } else {
+                // Build model for Gruppe A
+                MatrixKategorieModel modelA = buildKategorieModel(kat, kat.getGruppeA().getMannschaften(), "A", null);
+                if (modelA != null) {
+                    result.add(modelA);
+                }
 
-            // Build model for Gruppe B (if separate group with different teams)
-            if (kat.getGruppeB() != null
-                    && !kat.getGruppeB().getMannschaften().isEmpty()
-                    && !kat.hasVorUndRueckrunde()) {
-                MatrixKategorieModel modelB = buildKategorieModel(kat, kat.getGruppeB().getMannschaften(), "B", Boolean.FALSE);
-                if (modelB != null) {
-                    result.add(modelB);
+                // Build model for Gruppe B (if separate group with different teams)
+                if (kat.getGruppeB() != null
+                        && !kat.getGruppeB().getMannschaften().isEmpty()) {
+                    MatrixKategorieModel modelB = buildKategorieModel(kat, kat.getGruppeB().getMannschaften(), "B", null);
+                    if (modelB != null) {
+                        result.add(modelB);
+                    }
                 }
             }
         }

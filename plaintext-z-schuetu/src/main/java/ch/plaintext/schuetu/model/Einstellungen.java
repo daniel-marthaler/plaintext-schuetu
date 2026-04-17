@@ -31,12 +31,14 @@ public interface Einstellungen {
 
     int getAufholzeitInSekunden();
 
+    @Deprecated // Nicht mehr verwendet seit 2026
     boolean isAutomatischesAnsagen();
 
     boolean isAutomatischesVorbereiten();
 
     boolean isAbbrechenZulassen();
 
+    @Deprecated // Nicht mehr verwendet seit 2026
     boolean isGongEinschalten();
 
     boolean isBehandleFinaleProKlassebeiZusammengefuehrten();

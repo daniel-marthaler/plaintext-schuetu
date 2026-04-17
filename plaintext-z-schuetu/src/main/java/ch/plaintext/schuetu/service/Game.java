@@ -1,6 +1,5 @@
 package ch.plaintext.schuetu.service;
 
-import ch.plaintext.schuetu.service.backupsync.BackupSyncer;
 import ch.plaintext.schuetu.service.spieldurchfuehrung.EintragerService;
 import ch.plaintext.schuetu.service.spieldurchfuehrung.PenaltyService;
 import ch.plaintext.schuetu.service.spieldurchfuehrung.SpielDurchfuehrung;
@@ -53,8 +52,6 @@ public class Game {
 
     private ResultateVerarbeiter resultate;
 
-    private BackupSyncer backup;
-
     private PenaltyService penalty;
 
     @Autowired
@@ -94,9 +91,6 @@ public class Game {
 
         eintragen = ctx.getBean(EintragerService.class);
         eintragen.setGame(this);
-
-        backup = ctx.getBean(BackupSyncer.class);
-        backup.setGame(this);
 
         penalty = ctx.getBean(PenaltyService.class);
         penalty.setGame(this);

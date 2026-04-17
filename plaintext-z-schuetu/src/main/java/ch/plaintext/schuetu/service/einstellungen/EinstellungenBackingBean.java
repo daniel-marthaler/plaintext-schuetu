@@ -199,6 +199,11 @@ public class EinstellungenBackingBean {
         return sb.toString();
     }
 
+    public void persistDateAndFixPlaetze() {
+        persistDate();
+        fixPlaetze();
+    }
+
     public void persistDate() {
 
         Calendar sam = Calendar.getInstance();

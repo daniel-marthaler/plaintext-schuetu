@@ -63,10 +63,12 @@ public class GameModel extends SuperModel implements CreationDateProvider, Einst
 
     private boolean automatischesVorbereiten = false;
 
+    @Deprecated // Nicht mehr verwendet seit 2026, DB-Feld beibehalten
     private boolean automatischesAnsagen = false;
 
     private boolean abbrechenZulassen = false;
 
+    @Deprecated // Nicht mehr verwendet seit 2026, DB-Feld beibehalten
     private boolean gongEinschalten = false;
 
     private boolean behandleFinaleProKlassebeiZusammengefuehrten = true;
@@ -99,10 +101,19 @@ public class GameModel extends SuperModel implements CreationDateProvider, Einst
 
     private String mobileLink = "";
 
+    @Deprecated // Nicht mehr verwendet seit 2026, ersetzt durch MQTT. DB-Feld beibehalten
     private String backportSync = "";
+    @Deprecated // Nicht mehr verwendet seit 2026, ersetzt durch MQTT. DB-Feld beibehalten
     private boolean backportSyncOn = false;
 
     private boolean uploadOn = false;
+
+    // MQTT Konfiguration
+    private String mqttBrokerUrl = "tcp://192.168.1.224";
+    private int mqttPort = 1883;
+    private String mqttTopic = "schuetu/events";
+    private String mqttMode = "OUT"; // OUT oder IN
+    private boolean mqttEnabled = false;
 
     @Deprecated
     private boolean master = false;

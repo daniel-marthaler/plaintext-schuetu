@@ -50,10 +50,12 @@ public class SpielEinstellungen implements Serializable, Einstellungen {
 
     private boolean automatischesVorbereiten = false;
 
+    @Deprecated // Nicht mehr verwendet seit 2026
     private boolean automatischesAnsagen = false;
 
     private boolean abbrechenZulassen = false;
 
+    @Deprecated // Nicht mehr verwendet seit 2026
     private boolean gongEinschalten = false;
 
     private boolean behandleFinaleProKlassebeiZusammengefuehrten = true;
