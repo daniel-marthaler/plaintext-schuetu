@@ -74,6 +74,9 @@ public class GameSelectionHolder {
     @Autowired
     private MqttEventPublisher mqttEventPublisher;
 
+    @Autowired
+    private ch.plaintext.schuetu.service.mqtt.MqttBackingBean mqttBackingBean;
+
     public Boolean hasGame() {
         return game != null;
     }
@@ -85,6 +88,22 @@ public class GameSelectionHolder {
         }
         velocity.dump(game.getModel().getGameName());
         mqttEventPublisher.gameSelected(name);
+
+        // MQTT Auto-Connect wenn fuer dieses Spiel aktiviert
+        if (game.getModel().isMqttEnabled()) {
+            try {
+                mqttBackingBean.connect();
+            } catch (Exception e) {
+                log.warn("MQTT Auto-Connect fehlgeschlagen: {}", e.getMessage());
+            }
+        } else {
+            try {
+                mqttBackingBean.disconnect();
+            } catch (Exception e) {
+                log.debug("MQTT disconnect: {}", e.getMessage());
+            }
+        }
+
         return "dashboard.htm";
     }
 

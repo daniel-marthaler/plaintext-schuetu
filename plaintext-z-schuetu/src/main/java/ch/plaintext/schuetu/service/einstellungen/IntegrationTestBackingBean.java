@@ -127,10 +127,10 @@ public class IntegrationTestBackingBean {
         try {
             List<Spiel> einzutragende = testService.findAllEinzutragende(capturedGameName);
             for (Spiel spiel : einzutragende) {
-                testService.autoEintragen(spiel.getId());
-                int toreA = spiel.getMannschaftA() != null ? spiel.getMannschaftA().getTeamNummer() % 10 : 0;
-                int toreB = spiel.getMannschaftB() != null ? spiel.getMannschaftB().getTeamNummer() % 10 : 0;
-                schiriStatus = "Eingetragen: " + spiel.getIdString() + " (" + toreA + ":" + toreB + ")";
+                String result = testService.autoEintragen(spiel.getId());
+                if (result != null) {
+                    schiriStatus = "Eingetragen: " + result;
+                }
             }
         } catch (Exception e) {
             schiriStatus = "Fehler: " + e.getMessage();
@@ -159,8 +159,10 @@ public class IntegrationTestBackingBean {
         try {
             List<Spiel> zuBestaetigen = testService.findAllZuBestaetigen(capturedGameName);
             for (Spiel spiel : zuBestaetigen) {
-                testService.autoBestaetigen(spiel.getId(), capturedResultate);
-                kontrolleurStatus = "Bestaetigt: " + spiel.getIdString();
+                String result = testService.autoBestaetigen(spiel.getId(), capturedResultate);
+                if (result != null) {
+                    kontrolleurStatus = "Bestaetigt: " + result;
+                }
             }
         } catch (Exception e) {
             kontrolleurStatus = "Fehler: " + e.getMessage();

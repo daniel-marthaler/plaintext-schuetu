@@ -31,10 +31,13 @@ public class IntegrationTestService {
         return spielRepository.findAllZuBestaetigen(gameName);
     }
 
+    /**
+     * Traegt automatisch Resultate ein. Gibt einen Status-String zurueck fuer die UI.
+     */
     @Transactional
-    public void autoEintragen(Long spielId) {
+    public String autoEintragen(Long spielId) {
         Spiel spiel = spielRepository.findById(spielId).orElse(null);
-        if (spiel == null || spiel.isFertigEingetragen()) return;
+        if (spiel == null || spiel.isFertigEingetragen()) return null;
 
         if (spiel.getMannschaftA() != null && spiel.getMannschaftB() != null) {
             int toreA = spiel.getMannschaftA().getTeamNummer() % 10;
@@ -46,13 +49,15 @@ public class IntegrationTestService {
             spiel.setSchiriName("Auto-Schiri");
             spielRepository.save(spiel);
             log.info("Auto-Schiri: Spiel {} = {}:{}", spiel.getIdString(), toreA, toreB);
+            return spiel.getIdString() + " (" + toreA + ":" + toreB + ")";
         }
+        return null;
     }
 
     @Transactional
-    public void autoBestaetigen(Long spielId, ResultateVerarbeiter resultate) {
+    public String autoBestaetigen(Long spielId, ResultateVerarbeiter resultate) {
         Spiel spiel = spielRepository.findById(spielId).orElse(null);
-        if (spiel == null || spiel.isFertigBestaetigt()) return;
+        if (spiel == null || spiel.isFertigBestaetigt()) return null;
 
         spiel.setFertigBestaetigt(true);
         spiel.setToreABestaetigt(spiel.getToreA());
@@ -61,5 +66,6 @@ public class IntegrationTestService {
         spielRepository.save(spiel);
         resultate.signalFertigesSpiel(spielId);
         log.info("Auto-Kontrolleur: Spiel {} bestaetigt", spiel.getIdString());
+        return spiel.getIdString();
     }
 }
