@@ -208,7 +208,7 @@
                     <div class="eintragen-cards">
                         <c:forEach items="#{eintragenBackingBean.einzutragende}" var="spiel" varStatus="loop">
 
-                            <div class="spiel-card">
+                            <h:panelGroup id="card_#{loop.index}" layout="block" styleClass="spiel-card">
                                 <div class="card-status-bar anstehend">&#160;</div>
                                 <div class="spiel-card-header">
                                     <span class="spiel-id">#{spiel.idString}</span>
@@ -275,10 +275,11 @@
                                     <p:commandButton value="Eintragen"
                                                      icon="pi pi-check"
                                                      action="#{eintragenModernBean.eintragen(spiel)}"
+                                                     process="card_#{loop.index}"
                                                      update="fm"
                                                      styleClass="ui-button-success"/>
                                 </div>
-                            </div>
+                            </h:panelGroup>
 
                         </c:forEach>
                     </div>
