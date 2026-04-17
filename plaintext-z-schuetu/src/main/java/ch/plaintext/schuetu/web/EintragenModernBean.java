@@ -66,7 +66,6 @@ public class EintragenModernBean {
         spiele.add(spiel);
 
         holder.getGame().getEintragen().eintragen(spiele, "" + spiel.getId(), selectedSchiri);
-        holder.getGame().getEintragen().bestaetigen(spiele, "" + spiel.getId(), "ok");
         mqttEventPublisher.spielEingetragen(spiel);
 
         // Aufraemen

@@ -1,0 +1,284 @@
+<!--suppress ALL -->
+<ui:composition xmlns:ui="jakarta.faces.facelets"
+                xmlns:h="jakarta.faces.html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="jakarta.faces.core"
+                xmlns:c="jakarta.tags.core"
+                xmlns="http://www.w3.org/1999/xhtml"
+                template="/includes/template.xhtml">
+
+    <ui:define name="title">Kontrolleur</ui:define>
+
+    <ui:define name="page">
+
+        <style>
+            .kontroll-cards {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+                gap: 16px;
+                padding: 8px 0;
+            }
+
+            .kontroll-card {
+                background: var(--pt-surface-0, #fff);
+                border: 2px solid #FFC107;
+                border-radius: 12px;
+                overflow: hidden;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            }
+
+            .kontroll-card-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 10px 16px;
+                background: #FFF8E1;
+                border-bottom: 1px solid #FFC107;
+                font-size: 0.85em;
+                color: #666;
+            }
+
+            .kontroll-card-header .spiel-id {
+                font-weight: bold;
+                color: #F57C00;
+                font-size: 1.1em;
+            }
+
+            .kontroll-card-body { padding: 16px; }
+
+            .kontroll-teams {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 16px;
+                margin-bottom: 12px;
+            }
+
+            .kontroll-team {
+                flex: 1;
+                text-align: center;
+                font-weight: bold;
+                font-size: 1.05em;
+            }
+
+            .kontroll-score {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 12px;
+                margin-bottom: 12px;
+                padding: 12px;
+                background: #f5f5f5;
+                border-radius: 8px;
+            }
+
+            .kontroll-score-value {
+                font-size: 2.5em;
+                font-weight: bold;
+                color: #333;
+                min-width: 50px;
+                text-align: center;
+            }
+
+            .kontroll-score-colon {
+                font-size: 2em;
+                font-weight: bold;
+                color: #999;
+            }
+
+            .kontroll-info {
+                font-size: 0.85em;
+                color: #888;
+                margin-bottom: 8px;
+            }
+
+            .kontroll-actions {
+                display: flex;
+                gap: 8px;
+                padding: 12px 16px 16px 16px;
+            }
+
+            .kontroll-actions .ui-button { flex: 1; }
+
+            .korrektur-form {
+                padding: 12px 16px;
+                background: #FFF3E0;
+                border-top: 1px solid #FFE0B2;
+            }
+
+            .korrektur-form .score-edit {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+                margin-bottom: 8px;
+            }
+
+            .korrektur-form .score-edit .ui-inputfield {
+                width: 60px !important;
+                height: 45px !important;
+                font-size: 1.5em !important;
+                text-align: center !important;
+                font-weight: bold !important;
+                border-radius: 8px !important;
+            }
+
+            .no-kontrolle-msg {
+                text-align: center;
+                padding: 40px 20px;
+                color: #888;
+                font-size: 1.1em;
+            }
+
+            .no-kontrolle-msg i {
+                font-size: 3em;
+                display: block;
+                margin-bottom: 12px;
+                opacity: 0.4;
+            }
+        </style>
+
+        <h:form id="fm">
+            <input type="hidden" name="_csrf" value="#{_csrf.token}"/>
+
+            <p:messages id="msgs" showDetail="true" closable="true"/>
+
+            <p:panel header="Kontrolle - #{kontrolleurBean.gameSelected ? 'Spiele pruefen' : ''}"
+                     rendered="#{kontrolleurBean.gameSelected}" styleClass="ui-fluid" toggleable="true">
+
+                <f:facet name="actions">
+                    <p:commandButton icon="pi pi-refresh" title="Aktualisieren"
+                                     update="fm" styleClass="ui-button-text ui-button-plain"/>
+                </f:facet>
+
+                <p:poll interval="10" update="fm:kontrollePanel"/>
+
+                <h:panelGroup id="kontrollePanel">
+
+                    <h:panelGroup rendered="#{empty kontrolleurBean.zuBestaetigendeSpiele}">
+                        <div class="no-kontrolle-msg">
+                            <i class="pi pi-check-circle">&#160;</i>
+                            Keine Spiele zur Kontrolle vorhanden.
+                        </div>
+                    </h:panelGroup>
+
+                    <div class="kontroll-cards">
+                        <c:forEach items="#{kontrolleurBean.zuBestaetigendeSpiele}" var="spiel" varStatus="loop">
+
+                            <h:panelGroup id="kcard_#{loop.index}" layout="block" styleClass="kontroll-card">
+                                <div class="kontroll-card-header">
+                                    <span class="spiel-id">#{spiel.idString}</span>
+                                    <span>
+                                        <i class="pi pi-map-marker">&#160;</i> Platz #{spiel.platz}
+                                        &#160;|&#160;
+                                        <i class="pi pi-clock">&#160;</i>
+                                        <h:outputText value="#{spiel.start}">
+                                            <f:convertDateTime type="date" pattern="HH:mm" timeZone="Europe/Zurich"/>
+                                        </h:outputText>
+                                    </span>
+                                </div>
+
+                                <div class="kontroll-card-body">
+                                    <div class="kontroll-teams">
+                                        <div class="kontroll-team">#{spiel.mannschaftAName}</div>
+                                        <div style="color:#999;font-weight:bold;">vs</div>
+                                        <div class="kontroll-team">#{spiel.mannschaftBName}</div>
+                                    </div>
+
+                                    <div class="kontroll-score">
+                                        <div class="kontroll-score-value">#{spiel.toreA}</div>
+                                        <div class="kontroll-score-colon">:</div>
+                                        <div class="kontroll-score-value">#{spiel.toreB}</div>
+                                    </div>
+
+                                    <div class="kontroll-info">
+                                        <i class="pi pi-user">&#160;</i> Eingetragen von: #{spiel.eintrager}
+                                        <h:outputText value=" | Schiri: #{spiel.schiriName}" rendered="#{spiel.schiriName ne null and spiel.schiriName ne ''}"/>
+                                    </div>
+                                </div>
+
+                                <div class="kontroll-actions">
+                                    <p:commandButton value="Bestaetigen"
+                                                     icon="pi pi-check"
+                                                     action="#{kontrolleurBean.bestaetigen(spiel)}"
+                                                     process="kcard_#{loop.index}"
+                                                     update="fm"
+                                                     styleClass="ui-button-success"/>
+                                    <p:commandButton value="Korrigieren..."
+                                                     icon="pi pi-pencil"
+                                                     oncomplete="PF('korrekturDlg_#{loop.index}').show()"
+                                                     action="#{kontrolleurBean.prepareKorrektur(spiel)}"
+                                                     process="@this"
+                                                     update="fm:korrekturPanel_#{loop.index}"
+                                                     styleClass="ui-button-warning"/>
+                                    <p:commandButton value="Zurueckweisen"
+                                                     icon="pi pi-times"
+                                                     oncomplete="PF('zurueckDlg_#{loop.index}').show()"
+                                                     process="@this"
+                                                     styleClass="ui-button-danger"/>
+                                </div>
+
+                                <!-- Korrektur Dialog -->
+                                <p:dialog header="Korrektur: #{spiel.idString}" widgetVar="korrekturDlg_#{loop.index}"
+                                          modal="true" resizable="false" width="400">
+                                    <h:panelGroup id="korrekturPanel_#{loop.index}">
+                                        <h:panelGrid columns="2" cellpadding="8">
+                                            <h:outputText value="Tore A:" style="font-weight:bold;"/>
+                                            <p:inputText id="kToreA_#{loop.index}" value="#{kontrolleurBean.korrekturToreA}" size="3"
+                                                         style="font-size:1.5em;text-align:center;width:60px;"/>
+
+                                            <h:outputText value="Tore B:" style="font-weight:bold;"/>
+                                            <p:inputText id="kToreB_#{loop.index}" value="#{kontrolleurBean.korrekturToreB}" size="3"
+                                                         style="font-size:1.5em;text-align:center;width:60px;"/>
+
+                                            <h:outputText value="Bemerkung:" style="font-weight:bold;"/>
+                                            <p:inputTextarea id="kBem_#{loop.index}" value="#{kontrolleurBean.korrekturBemerkung}"
+                                                             rows="3" cols="30"/>
+                                        </h:panelGrid>
+                                        <br/>
+                                        <p:commandButton value="Korrektur speichern" icon="pi pi-save"
+                                                         action="#{kontrolleurBean.korrigieren(spiel)}"
+                                                         process="korrekturPanel_#{loop.index}"
+                                                         update="fm"
+                                                         oncomplete="PF('korrekturDlg_#{loop.index}').hide()"
+                                                         styleClass="ui-button-warning" style="width:100%;"/>
+                                    </h:panelGroup>
+                                </p:dialog>
+
+                                <!-- Zurueckweisen Dialog -->
+                                <p:dialog header="Zurueckweisen: #{spiel.idString}" widgetVar="zurueckDlg_#{loop.index}"
+                                          modal="true" resizable="false" width="400">
+                                    <h:panelGroup id="zurueckPanel_#{loop.index}">
+                                        <h:panelGrid columns="1" cellpadding="8">
+                                            <h:outputText value="Bemerkung (optional):" style="font-weight:bold;"/>
+                                            <p:inputTextarea id="zBem_#{loop.index}" value="#{kontrolleurBean.korrekturBemerkung}"
+                                                             rows="3" cols="40"/>
+                                        </h:panelGrid>
+                                        <br/>
+                                        <p:commandButton value="Zurueckweisen" icon="pi pi-times"
+                                                         action="#{kontrolleurBean.zurueckweisen(spiel)}"
+                                                         process="zurueckPanel_#{loop.index}"
+                                                         update="fm"
+                                                         oncomplete="PF('zurueckDlg_#{loop.index}').hide()"
+                                                         styleClass="ui-button-danger" style="width:100%;"/>
+                                    </h:panelGroup>
+                                </p:dialog>
+
+                            </h:panelGroup>
+
+                        </c:forEach>
+                    </div>
+
+                </h:panelGroup>
+
+            </p:panel>
+
+            <p:panel rendered="#{!kontrolleurBean.gameSelected}" styleClass="ui-fluid">
+                <h:outputText value="Bitte zuerst ein Spiel auswaehlen." style="color:#888;font-size:1.1em;"/>
+            </p:panel>
+
+        </h:form>
+
+    </ui:define>
+
+</ui:composition>

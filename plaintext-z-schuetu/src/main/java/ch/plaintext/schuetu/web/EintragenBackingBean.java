@@ -87,7 +87,6 @@ public class EintragenBackingBean {
         List<Spiel> spiele = new ArrayList<>();
         spiele.add(selected);
         holder.getGame().getEintragen().eintragen(spiele, "" + selected.getId(), selectedSchiri);
-        holder.getGame().getEintragen().bestaetigen(spiele, "" + selected.getId(), "ok");
         mqttEventPublisher.spielEingetragen(selected);
         selected = null;
         selectedSchiri = "";
