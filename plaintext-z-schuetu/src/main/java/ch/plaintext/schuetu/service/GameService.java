@@ -37,6 +37,15 @@ public class GameService {
     @Autowired
     private SchiriRepository schiriRepo;
 
+    @Autowired
+    private GruppeRepository gruppeRepo;
+
+    @Autowired
+    private PenaltyRepository penaltyRepo;
+
+    @Autowired
+    private KorrekturRepository korrekturRepo;
+
     public void deleteGame(String gameName) {
 
         // Kategorien - remove fk's
@@ -143,6 +152,27 @@ public class GameService {
         for (Schiri s : schiris) {
             s.setGame(newName);
             schiriRepo.save(s);
+        }
+
+        // Gruppen
+        List<Gruppe> gruppen = gruppeRepo.findByGame(oldName);
+        for (Gruppe g : gruppen) {
+            g.setGame(newName);
+            gruppeRepo.save(g);
+        }
+
+        // Penalties
+        List<Penalty> penalties = penaltyRepo.findByGame(oldName);
+        for (Penalty p : penalties) {
+            p.setGame(newName);
+            penaltyRepo.save(p);
+        }
+
+        // Korrekturen
+        List<Korrektur> korrekturen = korrekturRepo.findByGame(oldName);
+        for (Korrektur k : korrekturen) {
+            k.setGame(newName);
+            korrekturRepo.save(k);
         }
 
         // GameModel

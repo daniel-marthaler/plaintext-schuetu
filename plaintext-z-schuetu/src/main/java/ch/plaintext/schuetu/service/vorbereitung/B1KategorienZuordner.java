@@ -129,11 +129,11 @@ public class B1KategorienZuordner {
             if (tempKategorie == null) {
                 tempKategorie = new Kategorie(); tempKategorie.setGame(game);
                 tempKategorie = this.kategorieRepo.save(tempKategorie);
-                Gruppe tempGr = new Gruppe(); tempGr.setGeschlecht(mannschaft.getGeschlecht());
+                Gruppe tempGr = new Gruppe(); tempGr.setGeschlecht(mannschaft.getGeschlecht()); tempGr.setGame(game);
                 tempGr = this.gruppeRepo.save(tempGr); tempGr.setKategorie(tempKategorie);
                 tempKategorie.setGruppeA(tempGr); tempKategorie = this.kategorieRepo.save(tempKategorie);
                 gruppeRepo.save(tempGr);
-                Gruppe tempGrB = new Gruppe(); tempGrB.setGeschlecht(mannschaft.getGeschlecht());
+                Gruppe tempGrB = new Gruppe(); tempGrB.setGeschlecht(mannschaft.getGeschlecht()); tempGrB.setGame(game);
                 tempGrB = this.gruppeRepo.save(tempGrB); tempGrB.setKategorie(tempKategorie);
                 tempKategorie.setGruppeB(tempGrB); tempKategorie = this.kategorieRepo.save(tempKategorie);
                 gruppeRepo.save(tempGrB);

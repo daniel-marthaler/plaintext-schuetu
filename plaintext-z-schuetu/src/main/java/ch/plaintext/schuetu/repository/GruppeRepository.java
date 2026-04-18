@@ -8,4 +8,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
  */
 public interface GruppeRepository extends JpaRepository<Gruppe, Long> {
 
+    java.util.List<Gruppe> findByGame(String game);
 }

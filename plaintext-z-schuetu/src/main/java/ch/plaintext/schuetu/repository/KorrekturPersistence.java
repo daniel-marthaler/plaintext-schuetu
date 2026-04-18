@@ -18,9 +18,14 @@ public class KorrekturPersistence {
     private KorrekturRepository repo;
 
     public void save(String typ, String value) {
+        save(typ, value, null);
+    }
+
+    public void save(String typ, String value, String game) {
         Korrektur korr = new Korrektur();
         korr.setTyp(typ);
         korr.setWert(value);
+        korr.setGame(game != null ? game : "");
         korr.setReihenfolge(repo.count() + 1);
         repo.save(korr);
     }
