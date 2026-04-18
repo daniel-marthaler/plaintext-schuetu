@@ -42,6 +42,8 @@ public class MatrixModernBean {
 
     private List<MatrixKategorieModel> cachedModels = null;
     private String cachedGameName = null;
+    private long cacheTimestamp = 0;
+    private static final long CACHE_TTL_MS = 10_000; // 10 Sekunden
 
     /**
      * Returns all Kategorie models for the current game, structured for JSF rendering.
@@ -53,7 +55,10 @@ public class MatrixModernBean {
         }
 
         String gameName = holder.getGameName();
-        if (cachedModels != null && gameName.equals(cachedGameName)) {
+        boolean cacheValid = cachedModels != null
+                && gameName.equals(cachedGameName)
+                && (System.currentTimeMillis() - cacheTimestamp) < CACHE_TTL_MS;
+        if (cacheValid) {
             return cachedModels;
         }
 
@@ -98,6 +103,7 @@ public class MatrixModernBean {
             result.sort(Comparator.comparing(MatrixKategorieModel::getKategorieName));
             cachedModels = result;
             cachedGameName = gameName;
+            cacheTimestamp = System.currentTimeMillis();
             return result;
         } catch (Exception e) {
             log.error("Fehler beim Laden der Matrix-Daten: {}", e.getMessage(), e);
