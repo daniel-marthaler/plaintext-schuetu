@@ -60,17 +60,6 @@ public class HTMLSpielMatrixConverter {
             stringBuffer.append("</td></tr>");
             stringBuffer.append("</td></tr>");
 
-            final Gruppe a = kat.getGruppeA();
-            final Gruppe ub = kat.getGruppeB();
-            final List<Spiel> spiele = new ArrayList<>();
-            for (final Mannschaft mannschaft : a.getMannschaften()) {
-                spiele.addAll(mannschaft.getSpiele());
-            }
-            if (ub != null) {
-                for (final Mannschaft mannschaft : ub.getMannschaften()) {
-                    spiele.addAll(mannschaft.getSpiele());
-                }
-            }
             try {
                 stringBuffer.append("<tr><td>&nbsp;</td><td><p>Letztes Gruppenspiel: ").append(this.sdf.format(kat.getLatestSpiel().getStart())).append("</p></td></tr>");
             } catch (final Exception e) {
@@ -94,14 +83,19 @@ public class HTMLSpielMatrixConverter {
             stringBuilder.append("<tr><td>");
             stringBuilder.append("<b>").append(mannschaft.getName()).append("</b>");
             final List<Spiel> tempSpiele = new ArrayList<>();
-            if ((vorrunde != null && vorrunde) && mannschaft.getSpiele().size() > 0) {
-                tempSpiele.add(mannschaft.getSpiele().get(0));
-                tempSpiele.add(mannschaft.getSpiele().get(1));
-            } else if ((vorrunde != null && !vorrunde) && mannschaft.getSpiele().size() > 2) {
-                tempSpiele.add(mannschaft.getSpiele().get(2));
-                tempSpiele.add(mannschaft.getSpiele().get(3));
-            } else {
-                tempSpiele.addAll(mannschaft.getSpiele());
+            try {
+                List<Spiel> alleSpiele = mannschaft.getSpiele();
+                if ((vorrunde != null && vorrunde) && alleSpiele.size() > 0) {
+                    tempSpiele.add(alleSpiele.get(0));
+                    if (alleSpiele.size() > 1) tempSpiele.add(alleSpiele.get(1));
+                } else if ((vorrunde != null && !vorrunde) && alleSpiele.size() > 2) {
+                    tempSpiele.add(alleSpiele.get(2));
+                    if (alleSpiele.size() > 3) tempSpiele.add(alleSpiele.get(3));
+                } else {
+                    tempSpiele.addAll(alleSpiele);
+                }
+            } catch (Exception e) {
+                log.debug("Spiele nicht ladbar fuer {}: {}", mannschaft.getName(), e.getMessage());
             }
             int iSpalte = 0;
             boolean linefin = false;
