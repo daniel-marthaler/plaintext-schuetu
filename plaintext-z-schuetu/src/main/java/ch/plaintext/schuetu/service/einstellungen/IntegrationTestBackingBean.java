@@ -110,15 +110,24 @@ public class IntegrationTestBackingBean {
     private void speakerTick() {
         if (!speakerActive.get()) return;
         try {
+            int wartend = capturedDurchfuehrung.getList1Wartend().size();
+            int vorbereiten = capturedDurchfuehrung.getList2ZumVorbereiten().size();
+            int vorbereitet = capturedDurchfuehrung.getList3Vorbereitet().size();
+            int spielend = capturedDurchfuehrung.getList4Spielend().size();
+            int beendet = capturedDurchfuehrung.getList5Beendet().size();
+            String stats = "W:" + wartend + " V:" + vorbereiten + " B:" + vorbereitet + " S:" + spielend + " F:" + beendet;
+
             if (!capturedDurchfuehrung.getList2ZumVorbereiten().isEmpty() && capturedDurchfuehrung.getReadyToVorbereiten()) {
                 capturedDurchfuehrung.vorbereitet();
-                speakerStatus = "Vorbereitet";
+                speakerStatus = "Vorbereitet | " + stats;
                 return;
             }
             if (!capturedDurchfuehrung.getList3Vorbereitet().isEmpty() && capturedDurchfuehrung.getReadyToSpielen()) {
                 capturedDurchfuehrung.spielen();
-                speakerStatus = "Gestartet";
+                speakerStatus = "Gestartet | " + stats;
+                return;
             }
+            speakerStatus = "Warte... | " + stats;
         } catch (Exception e) {
             speakerStatus = "Fehler: " + e.getMessage();
             log.error("Auto-Speaker Fehler", e);
