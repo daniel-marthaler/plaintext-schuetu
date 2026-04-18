@@ -123,6 +123,20 @@ public class TournamentImportService {
             gruppe = gruppeRepository.save(gruppe);
             gruppeIdMap.put(gDto.getOriginalId(), gruppe.getId());
             gruppeMap.put(gDto.getOriginalId(), gruppe);
+
+            // Bidirektionale Beziehung: Mannschaft.gruppeA setzen
+            // Gruppe.mannschaften ist eine unidirektionale @OneToMany (Join-Table),
+            // aber Mannschaft.gruppeA ist ein separates @ManyToOne-Feld.
+            // Ohne dieses Setzen liefert mannschaft.getGruppe() null und
+            // die Spielematrix bleibt leer.
+            if (gruppe.getMannschaften() != null) {
+                for (Mannschaft m : gruppe.getMannschaften()) {
+                    if (m.getGruppe() == null) {
+                        m.setGruppe(gruppe);
+                        mannschaftRepository.save(m);
+                    }
+                }
+            }
         }
         log.info("{} Gruppen importiert", gruppeIdMap.size());
 

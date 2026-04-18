@@ -145,7 +145,7 @@
 
                 <p:dialog header="#{i18n.t('Achtung !!!')}" widgetVar="dlgDelete" id="dlgDeleteId" resizable="false"
                           closable="true" modal="true" showEffect="fade" hideEffect="fade"
-                          onHide="document.getElementById('fm:delCheck1').checked=false;document.getElementById('fm:delCheck2').checked=false;document.getElementById('fm:btnDeleteJa').disabled=true;PF('btnDeleteJa').disable();">
+                          onHide="document.getElementById('fm:delCheck1').checked=false;document.getElementById('fm:delCheck2').checked=false;PF('btnDeleteJa').disable();var b=document.getElementById('fm:btnDeleteJa');if(b)b.setAttribute('disabled','disabled');">
                     <h:panelGrid columns="1" cellpadding="5">
                         <h:outputText value="#{i18n.t('Turnier')} '#{gameBackingBean.deleteGameName}' #{i18n.t('wirklich löschen')}?"
                                       style="font-size:1.1em;"/>
@@ -162,8 +162,9 @@
                         <div style="display:flex; gap:0.5rem; justify-content:flex-end;">
                             <p:commandButton id="btnDeleteJa" widgetVar="btnDeleteJa" value="#{i18n.t('Ja')}" icon="pi pi-check"
                                              disabled="true"
-                                             action="#{gameBackingBean.deleteGame()}" update=":fm"
-                                             oncomplete="PF('dlgDelete').hide();"/>
+                                             process="@form" action="#{gameBackingBean.deleteGame()}" update=":fm"
+                                             oncomplete="PF('dlgDelete').hide();"
+                                             onstart="PF('btnDeleteJa').disable();"/>
                             <p:commandButton value="#{i18n.t('Nein')}" icon="pi pi-times" type="button"
                                              onclick="PF('dlgDelete').hide();"/>
                         </div>
@@ -173,10 +174,13 @@
                         function toggleDeleteButton() {
                             var c1 = document.getElementById('fm:delCheck1').checked;
                             var c2 = document.getElementById('fm:delCheck2').checked;
+                            var btn = document.getElementById('fm:btnDeleteJa');
                             if (c1 && c2) {
                                 PF('btnDeleteJa').enable();
+                                if (btn) btn.removeAttribute('disabled');
                             } else {
                                 PF('btnDeleteJa').disable();
+                                if (btn) btn.setAttribute('disabled', 'disabled');
                             }
                         }
                         //]]>

@@ -175,6 +175,26 @@ public class ResultateVerarbeiter implements GameConnectable {
 
     }
 
+    /**
+     * Verarbeitet alle in der Queue wartenden Spiele synchron (sofort).
+     * Wird nach neuberechnenAlleKategorien() aufgerufen, damit die
+     * Ranglisten-Map sofort befuellt ist und nicht auf den naechsten
+     * Scheduled-Lauf gewartet werden muss.
+     */
+    public void processQueueNow() {
+        try {
+            Long id = spielQueue.poll();
+            while (id != null) {
+                initFertigMap();
+                verarbeitePenalty();
+                verarbeiteSpiel(id);
+                id = spielQueue.poll();
+            }
+        } catch (Exception e) {
+            log.error("Fehler bei synchroner Queue-Verarbeitung: {}", e.getMessage(), e);
+        }
+    }
+
     private void verarbeiteSpiel(Long id) {
 
         log.info("verarbeite fertiges spiel: " + id);
