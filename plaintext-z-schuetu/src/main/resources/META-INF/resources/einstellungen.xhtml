@@ -307,7 +307,7 @@
 
                     <p:tab title="Integrationstest" disabled="#{!integrationTestBackingBean.testGame}">
                         <h:panelGroup id="integrationStatusPanel">
-                        <p:poll interval="3" update="fm:integrationStatusPanel" autoStart="true"/>
+                        <p:poll interval="3" update="integrationStatusPanel" autoStart="true"/>
                         <h:panelGrid columns="2" cellpadding="10">
 
                             <h:outputText value="Nur aktiv fuer Spiele die mit 'Test' beginnen." style="font-style:italic;color:#888;"/>
