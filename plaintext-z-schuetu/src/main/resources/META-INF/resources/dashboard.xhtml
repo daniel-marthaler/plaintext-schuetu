@@ -114,7 +114,7 @@
                         <p:inputText value="#{gameBackingBean.selected.gameName}"/>
                         <f:facet name="footer">
                             <br/>
-                            <p:commandButton value="#{i18n.t('Speichern')}" actionListener="#{gameBackingBean.save()}" update=":fm" oncomplete="PF('dlg2').hide()"/>
+                            <p:commandButton value="#{i18n.t('Speichern')}" process=":fm" actionListener="#{gameBackingBean.save()}" update=":fm" oncomplete="PF('dlg2').hide()"/>
                         </f:facet>
                     </h:panelGrid>
                 </p:dialog>
@@ -125,7 +125,7 @@
                         <p:inputText value="#{gameBackingBean.renameNewName}"/>
                         <f:facet name="footer">
                             <br/>
-                            <p:commandButton value="#{i18n.t('Umbenennen')}" actionListener="#{gameBackingBean.rename()}" update=":fm" oncomplete="PF('dlgRename').hide()"/>
+                            <p:commandButton value="#{i18n.t('Umbenennen')}" process=":fm" actionListener="#{gameBackingBean.rename()}" update=":fm" oncomplete="PF('dlgRename').hide()"/>
                         </f:facet>
                     </h:panelGrid>
                 </p:dialog>
@@ -138,14 +138,14 @@
                         <p:inputText value="#{gameBackingBean.copyNewName}"/>
                         <f:facet name="footer">
                             <br/>
-                            <p:commandButton value="#{i18n.t('Kopieren')}" actionListener="#{gameBackingBean.copyGame()}" update=":fm" oncomplete="PF('dlgCopy').hide()"/>
+                            <p:commandButton value="#{i18n.t('Kopieren')}" process=":fm" actionListener="#{gameBackingBean.copyGame()}" update=":fm" oncomplete="PF('dlgCopy').hide()"/>
                         </f:facet>
                     </h:panelGrid>
                 </p:dialog>
 
                 <p:dialog header="#{i18n.t('Achtung !!!')}" widgetVar="dlgDelete" id="dlgDeleteId" resizable="false"
                           closable="true" modal="true" showEffect="fade" hideEffect="fade" appendTo="@(body)"
-                          onHide="try{var c1=document.getElementById('fm:delCheck1');if(c1)c1.checked=false;var c2=document.getElementById('fm:delCheck2');if(c2)c2.checked=false;var w=PF('btnDeleteJa');if(w)w.disable();var b=document.getElementById('fm:btnDeleteJa');if(b)b.setAttribute('disabled','disabled');}catch(e){}">
+                          onShow="try{var c1=document.getElementById('fm:delCheck1');if(c1)c1.checked=false;var c2=document.getElementById('fm:delCheck2');if(c2)c2.checked=false;toggleDeleteButton();}catch(e){}">
                     <h:panelGrid columns="1" cellpadding="5">
                         <h:outputText value="#{i18n.t('Turnier')} '#{gameBackingBean.deleteGameName}' #{i18n.t('wirklich löschen')}?"
                                       style="font-size:1.1em;"/>
@@ -161,30 +161,35 @@
                         <p:separator/>
                         <div style="display:flex; gap:0.5rem; justify-content:flex-end;">
                             <p:commandButton id="btnDeleteJa" widgetVar="btnDeleteJa" value="#{i18n.t('Ja')}" icon="pi pi-check"
-                                             disabled="true"
-                                             process="@form" action="#{gameBackingBean.deleteGame()}" update=":fm"
-                                             oncomplete="PF('dlgDelete').hide();"
-                                             onstart="PF('btnDeleteJa').disable();"/>
+                                             process=":fm" action="#{gameBackingBean.deleteGame()}" update=":fm"
+                                             onclick="if(!bothChecked()){return false;}"
+                                             oncomplete="PF('dlgDelete').hide();"/>
                             <p:commandButton value="#{i18n.t('Nein')}" icon="pi pi-times" type="button"
                                              onclick="PF('dlgDelete').hide();"/>
                         </div>
                     </h:panelGrid>
                     <script type="text/javascript">
                         //<![CDATA[
-                        function toggleDeleteButton() {
+                        function bothChecked() {
                             try {
                                 var c1El = document.getElementById('fm:delCheck1');
                                 var c2El = document.getElementById('fm:delCheck2');
+                                if (!c1El || !c2El) return false;
+                                return c1El.checked === true ? c2El.checked === true : false;
+                            } catch (e) { return false; }
+                        }
+                        function toggleDeleteButton() {
+                            try {
                                 var btn = document.getElementById('fm:btnDeleteJa');
-                                var widget = PF('btnDeleteJa');
-                                var c1 = c1El ? c1El.checked : false;
-                                var c2 = c2El ? c2El.checked : false;
-                                if (c1 && c2) {
-                                    if (widget) widget.enable();
-                                    if (btn) btn.removeAttribute('disabled');
+                                if (!btn) return;
+                                if (bothChecked()) {
+                                    btn.classList.remove('ui-state-disabled');
+                                    btn.style.opacity = '1';
+                                    btn.style.pointerEvents = 'auto';
                                 } else {
-                                    if (widget) widget.disable();
-                                    if (btn) btn.setAttribute('disabled', 'disabled');
+                                    btn.classList.add('ui-state-disabled');
+                                    btn.style.opacity = '0.5';
+                                    btn.style.pointerEvents = 'none';
                                 }
                             } catch (e) { /* no-op */ }
                         }
