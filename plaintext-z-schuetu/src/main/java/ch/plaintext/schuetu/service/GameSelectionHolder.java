@@ -86,7 +86,11 @@ public class GameSelectionHolder {
         if (game == null) {
             return "dashboard.htm";
         }
-        velocity.dump(game.getModel().getGameName());
+        try {
+            velocity.dump(game.getModel().getGameName());
+        } catch (Exception e) {
+            log.warn("velocity.dump() beim Auswaehlen fehlgeschlagen: {}", e.getMessage());
+        }
         mqttEventPublisher.gameSelected(name);
 
         // MQTT Auto-Connect wenn fuer dieses Spiel aktiviert

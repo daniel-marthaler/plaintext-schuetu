@@ -46,7 +46,10 @@ public class GameService {
     @Autowired
     private KorrekturRepository korrekturRepo;
 
+    @Transactional
     public void deleteGame(String gameName) {
+
+        log.info("Deleting game '{}'", gameName);
 
         // Kategorien - remove fk's
         List<Kategorie> kategorien;
@@ -111,8 +114,11 @@ public class GameService {
 
         // Game
         GameModel game = gameRepository.findByGameName(gameName);
-        gameRepository.delete(game);
+        if (game != null) {
+            gameRepository.delete(game);
+        }
 
+        log.info("Game '{}' deleted", gameName);
     }
 
     @Transactional

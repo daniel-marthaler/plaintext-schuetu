@@ -108,7 +108,7 @@
 
                 </p:dataTable>
 
-                <p:dialog header="#{i18n.t('Turnier erstellen')}" widgetVar="dlg2" id="dlg2id" resizable="true">
+                <p:dialog header="#{i18n.t('Turnier erstellen')}" widgetVar="dlg2" id="dlg2id" resizable="true" appendTo="@(body)">
                     <h:panelGrid columns="2" cellpadding="5">
                         <h:outputLabel value="#{i18n.t('Name:')}"/>
                         <p:inputText value="#{gameBackingBean.selected.gameName}"/>
@@ -119,7 +119,7 @@
                     </h:panelGrid>
                 </p:dialog>
 
-                <p:dialog header="#{i18n.t('Turnier umbenennen')}" widgetVar="dlgRename" id="dlgRenameId" resizable="true">
+                <p:dialog header="#{i18n.t('Turnier umbenennen')}" widgetVar="dlgRename" id="dlgRenameId" resizable="true" appendTo="@(body)">
                     <h:panelGrid columns="2" cellpadding="5">
                         <h:outputLabel value="#{i18n.t('Neuer Name:')}"/>
                         <p:inputText value="#{gameBackingBean.renameNewName}"/>
@@ -130,7 +130,7 @@
                     </h:panelGrid>
                 </p:dialog>
 
-                <p:dialog header="#{i18n.t('Turnier kopieren')}" widgetVar="dlgCopy" id="dlgCopyId" resizable="true">
+                <p:dialog header="#{i18n.t('Turnier kopieren')}" widgetVar="dlgCopy" id="dlgCopyId" resizable="true" appendTo="@(body)">
                     <h:panelGrid columns="2" cellpadding="5">
                         <h:outputLabel value="#{i18n.t('Quelle:')}"/>
                         <h:outputText value="#{gameBackingBean.copySourceName}"/>
@@ -144,8 +144,8 @@
                 </p:dialog>
 
                 <p:dialog header="#{i18n.t('Achtung !!!')}" widgetVar="dlgDelete" id="dlgDeleteId" resizable="false"
-                          closable="true" modal="true" showEffect="fade" hideEffect="fade"
-                          onHide="document.getElementById('fm:delCheck1').checked=false;document.getElementById('fm:delCheck2').checked=false;PF('btnDeleteJa').disable();var b=document.getElementById('fm:btnDeleteJa');if(b)b.setAttribute('disabled','disabled');">
+                          closable="true" modal="true" showEffect="fade" hideEffect="fade" appendTo="@(body)"
+                          onHide="try{var c1=document.getElementById('fm:delCheck1');if(c1)c1.checked=false;var c2=document.getElementById('fm:delCheck2');if(c2)c2.checked=false;var w=PF('btnDeleteJa');if(w)w.disable();var b=document.getElementById('fm:btnDeleteJa');if(b)b.setAttribute('disabled','disabled');}catch(e){}">
                     <h:panelGrid columns="1" cellpadding="5">
                         <h:outputText value="#{i18n.t('Turnier')} '#{gameBackingBean.deleteGameName}' #{i18n.t('wirklich löschen')}?"
                                       style="font-size:1.1em;"/>
@@ -172,16 +172,21 @@
                     <script type="text/javascript">
                         //<![CDATA[
                         function toggleDeleteButton() {
-                            var c1 = document.getElementById('fm:delCheck1').checked;
-                            var c2 = document.getElementById('fm:delCheck2').checked;
-                            var btn = document.getElementById('fm:btnDeleteJa');
-                            if (c1 && c2) {
-                                PF('btnDeleteJa').enable();
-                                if (btn) btn.removeAttribute('disabled');
-                            } else {
-                                PF('btnDeleteJa').disable();
-                                if (btn) btn.setAttribute('disabled', 'disabled');
-                            }
+                            try {
+                                var c1El = document.getElementById('fm:delCheck1');
+                                var c2El = document.getElementById('fm:delCheck2');
+                                var btn = document.getElementById('fm:btnDeleteJa');
+                                var widget = PF('btnDeleteJa');
+                                var c1 = c1El ? c1El.checked : false;
+                                var c2 = c2El ? c2El.checked : false;
+                                if (c1 && c2) {
+                                    if (widget) widget.enable();
+                                    if (btn) btn.removeAttribute('disabled');
+                                } else {
+                                    if (widget) widget.disable();
+                                    if (btn) btn.setAttribute('disabled', 'disabled');
+                                }
+                            } catch (e) { /* no-op */ }
                         }
                         //]]>
                     </script>

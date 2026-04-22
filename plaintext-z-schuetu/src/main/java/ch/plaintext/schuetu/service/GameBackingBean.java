@@ -69,12 +69,22 @@ public class GameBackingBean {
     }
 
     public void rename() {
-        if (renameOldName != null && renameNewName != null && !renameNewName.isBlank() && !renameOldName.equals(renameNewName)) {
-            gameService.renameGame(renameOldName, renameNewName);
-            root.clearCache();
+        FacesContext ctx = FacesContext.getCurrentInstance();
+        try {
+            if (renameOldName != null && renameNewName != null && !renameNewName.isBlank() && !renameOldName.equals(renameNewName)) {
+                gameService.renameGame(renameOldName, renameNewName);
+                root.clearCache();
+                ctx.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
+                        "Umbenannt", "'" + renameOldName + "' -> '" + renameNewName + "'"));
+            }
+        } catch (Exception e) {
+            log.error("Fehler beim Umbenennen von '{}' zu '{}'", renameOldName, renameNewName, e);
+            ctx.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                    "Umbenennen fehlgeschlagen", e.getMessage()));
+        } finally {
+            renameOldName = null;
+            renameNewName = null;
         }
-        renameOldName = null;
-        renameNewName = null;
     }
 
     public void prepareCopy(String gameName) {
@@ -83,12 +93,22 @@ public class GameBackingBean {
     }
 
     public void copyGame() {
-        if (copySourceName != null && copyNewName != null && !copyNewName.isBlank()) {
-            gameService.copyGame(copySourceName, copyNewName);
-            root.clearCache();
+        FacesContext ctx = FacesContext.getCurrentInstance();
+        try {
+            if (copySourceName != null && copyNewName != null && !copyNewName.isBlank()) {
+                gameService.copyGame(copySourceName, copyNewName);
+                root.clearCache();
+                ctx.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
+                        "Kopiert", "'" + copySourceName + "' -> '" + copyNewName + "'"));
+            }
+        } catch (Exception e) {
+            log.error("Fehler beim Kopieren von '{}' zu '{}'", copySourceName, copyNewName, e);
+            ctx.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                    "Kopieren fehlgeschlagen", e.getMessage()));
+        } finally {
+            copySourceName = null;
+            copyNewName = null;
         }
-        copySourceName = null;
-        copyNewName = null;
     }
 
     public void prepareDelete(String gameName) {
@@ -96,11 +116,21 @@ public class GameBackingBean {
     }
 
     public void deleteGame() {
-        if (deleteGameName != null) {
-            gameService.deleteGame(deleteGameName);
-            root.clearCache();
+        FacesContext ctx = FacesContext.getCurrentInstance();
+        try {
+            if (deleteGameName != null) {
+                gameService.deleteGame(deleteGameName);
+                root.clearCache();
+                ctx.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
+                        "Geloescht", "Turnier '" + deleteGameName + "' wurde geloescht"));
+            }
+        } catch (Exception e) {
+            log.error("Fehler beim Loeschen von '{}'", deleteGameName, e);
+            ctx.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                    "Loeschen fehlgeschlagen", e.getMessage()));
+        } finally {
+            deleteGameName = null;
         }
-        deleteGameName = null;
     }
 
     public void importTournament() {

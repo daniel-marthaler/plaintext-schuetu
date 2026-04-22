@@ -97,7 +97,8 @@ public class VelocityReplacer {
         Game gm = root.selectGame(game);
 
         // Plätze und Zeiten von Spielzeilen auf Spiele synchronisieren
-        spielzeilenService.spielZeitenAnpassen();
+        // gameName explizit uebergeben, da dump() aus @Scheduled-Threads aufgerufen wird, wo session-scoped gameHolder nicht verfuegbar ist
+        spielzeilenService.spielZeitenAnpassen(game);
         log.info("Plätze/Zeiten von Spielzeilen synchronisiert vor Upload für {}", game);
 
         String id = gm.getModel().getWebsiteId();

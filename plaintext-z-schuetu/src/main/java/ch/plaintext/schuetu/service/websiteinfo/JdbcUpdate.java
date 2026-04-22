@@ -39,27 +39,32 @@ public class JdbcUpdate {
     }
 
     public void update(String update, String id, String col) {
-        try {
-            Connection conn = DriverManager.getConnection(url, user, password);
-            PreparedStatement ps = conn.prepareStatement(statement.replace("col", col));
+        if (id == null || id.isEmpty()) {
+            log.debug("skipped update for col '{}': empty id", col);
+            return;
+        }
+        try (Connection conn = DriverManager.getConnection(url, user, password);
+             PreparedStatement ps = conn.prepareStatement(statement.replace("col", col))) {
             ps.setString(1, update);
             ps.setString(2, id);
             ps.executeUpdate();
-            ps.close();
         } catch (SQLException e) {
             log.warn(e.getMessage(), e);
         }
     }
 
     public String read(String id, String col) {
+        if (id == null || id.isEmpty()) {
+            return "";
+        }
         String ret = "";
-        try {
-            Connection conn = DriverManager.getConnection(url, user, password);
-            PreparedStatement ps = conn.prepareStatement(read.replace("col", col));
+        try (Connection conn = DriverManager.getConnection(url, user, password);
+             PreparedStatement ps = conn.prepareStatement(read.replace("col", col))) {
             ps.setString(1, id);
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                ret = rs.getString(1);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    ret = rs.getString(1);
+                }
             }
         } catch (SQLException e) {
             log.warn(e.getMessage(), e);

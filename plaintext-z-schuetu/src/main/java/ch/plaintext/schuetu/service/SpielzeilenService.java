@@ -28,8 +28,17 @@ public class SpielzeilenService {
     private SpielZeilenRepository spielZeilenRepository;
 
     public void spielZeitenAnpassen() {
+        spielZeitenAnpassen(gameHolder.getGameName());
+    }
 
-        List<SpielZeile> zeilen = spielZeilenRepository.findByGame(gameHolder.getGameName());
+    public void spielZeitenAnpassen(String gameName) {
+
+        if (gameName == null || gameName.isEmpty()) {
+            log.debug("spielZeitenAnpassen skipped: no gameName");
+            return;
+        }
+
+        List<SpielZeile> zeilen = spielZeilenRepository.findByGame(gameName);
 
         for (SpielZeile spielZeile : zeilen) {
             Spiel spiel = spielZeile.getA();
