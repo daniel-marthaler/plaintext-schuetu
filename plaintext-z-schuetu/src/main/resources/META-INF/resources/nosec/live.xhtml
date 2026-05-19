@@ -1,0 +1,164 @@
+<!--suppress ALL -->
+<ui:composition xmlns:ui="jakarta.faces.facelets"
+                xmlns:h="jakarta.faces.html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="jakarta.faces.core"
+                xmlns="http://www.w3.org/1999/xhtml"
+                template="info/template-noframe.xhtml">
+
+    <ui:define name="title">Live</ui:define>
+
+    <ui:define name="page">
+        <style>
+            body {
+                background: #1a1a2e !important;
+                color: #eee !important;
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+            }
+            .live-wrapper {
+                padding: 24px;
+                min-height: 100vh;
+            }
+            .live-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 24px;
+                padding-bottom: 12px;
+                border-bottom: 3px solid #e2b714;
+            }
+            .live-title {
+                font-size: 3em;
+                font-weight: bold;
+                color: #e2b714;
+            }
+            .live-clock {
+                font-size: 3em;
+                font-weight: bold;
+                color: #fff;
+                font-variant-numeric: tabular-nums;
+            }
+            .live-section-title {
+                font-size: 2.2em;
+                color: #e2b714;
+                margin: 24px 0 12px 0;
+                text-transform: uppercase;
+                letter-spacing: 2px;
+            }
+            .live-card {
+                background: #16213e;
+                border-radius: 14px;
+                padding: 18px 24px;
+                margin-bottom: 14px;
+                box-shadow: 0 6px 24px rgba(0,0,0,0.4);
+                display: grid;
+                grid-template-columns: 90px 1fr auto 1fr 110px;
+                gap: 16px;
+                align-items: center;
+                font-size: 2em;
+            }
+            .live-card.live-running {
+                border-left: 8px solid #27ae60;
+                animation: pulseBg 3s infinite;
+            }
+            @keyframes pulseBg {
+                0%, 100% { background: #16213e; }
+                50% { background: #1d2b50; }
+            }
+            .live-platz {
+                font-size: 1.5em;
+                font-weight: bold;
+                color: #e2b714;
+                text-align: center;
+            }
+            .live-team {
+                color: #fff;
+                font-weight: bold;
+            }
+            .live-team.right { text-align: right; }
+            .live-score {
+                font-size: 1.4em;
+                color: #fff;
+                background: #0f3460;
+                padding: 4px 18px;
+                border-radius: 10px;
+                font-variant-numeric: tabular-nums;
+                text-align: center;
+                min-width: 130px;
+            }
+            .live-time {
+                font-size: 1.2em;
+                color: #aaa;
+                text-align: right;
+                font-variant-numeric: tabular-nums;
+            }
+            .live-empty {
+                text-align: center;
+                color: #888;
+                font-size: 1.8em;
+                padding: 40px;
+                font-style: italic;
+            }
+        </style>
+
+        <h:form id="fm">
+            <input type="hidden" name="_csrf" value="#{_csrf.token}"/>
+
+            <p:poll interval="5" update="fm:live"/>
+
+            <h:panelGroup id="live" layout="block" styleClass="live-wrapper">
+
+                <div class="live-header">
+                    <div class="live-title">LIVE</div>
+                    <div class="live-clock">
+                        <h:outputText value="#{liveDisplayBean.uhrzeit}"/>
+                    </div>
+                </div>
+
+                <div class="live-section-title">Am Spielen</div>
+                <ui:repeat value="#{liveDisplayBean.spielendeSpiele}" var="s">
+                    <div class="live-card live-running">
+                        <div class="live-platz">#{s.platz}</div>
+                        <div class="live-team">#{s.mannschaftAName}</div>
+                        <div class="live-score">
+                            <h:outputText value="#{s.toreA &lt; 0 ? 0 : s.toreA}"/>
+                            <h:outputText value=" : "/>
+                            <h:outputText value="#{s.toreB &lt; 0 ? 0 : s.toreB}"/>
+                        </div>
+                        <div class="live-team right">#{s.mannschaftBName}</div>
+                        <div class="live-time">
+                            <h:outputText value="#{s.start}">
+                                <f:convertDateTime type="date" pattern="HH:mm" timeZone="Europe/Zurich"/>
+                            </h:outputText>
+                        </div>
+                    </div>
+                </ui:repeat>
+                <h:panelGroup rendered="#{empty liveDisplayBean.spielendeSpiele}"
+                              layout="block" styleClass="live-empty">
+                    Keine laufenden Spiele
+                </h:panelGroup>
+
+                <div class="live-section-title">Naechste Spiele</div>
+                <ui:repeat value="#{liveDisplayBean.naechsteSpiele}" var="n">
+                    <div class="live-card">
+                        <div class="live-platz">#{n.platz}</div>
+                        <div class="live-team">#{n.mannschaftAName}</div>
+                        <div class="live-score">vs.</div>
+                        <div class="live-team right">#{n.mannschaftBName}</div>
+                        <div class="live-time">
+                            <h:outputText value="#{n.start}">
+                                <f:convertDateTime type="date" pattern="HH:mm" timeZone="Europe/Zurich"/>
+                            </h:outputText>
+                        </div>
+                    </div>
+                </ui:repeat>
+                <h:panelGroup rendered="#{empty liveDisplayBean.naechsteSpiele}"
+                              layout="block" styleClass="live-empty">
+                    Keine geplanten Spiele
+                </h:panelGroup>
+
+            </h:panelGroup>
+
+        </h:form>
+    </ui:define>
+</ui:composition>
