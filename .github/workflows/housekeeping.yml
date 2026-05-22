@@ -27,7 +27,7 @@ permissions:
 jobs:
   run:
     name: ${{ inputs.task }}
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - name: deleteLogs5 — keep latest 5 runs per workflow
         if: inputs.task == 'deleteLogs5'
